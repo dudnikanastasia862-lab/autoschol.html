@@ -3,98 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Автошкола</title>
+<title>Вектор — Автошкола</title>
 <style>
-body { font-family: Arial; padding: 20px; background: #f5f5f5; margin: 0; }
-.box { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
-h1 { font-size: 22px; text-align: center; }
-h2 { font-size: 18px; margin: 20px 0 10px; }
-button { padding: 12px; width: 100%; margin: 8px 0; border: none; border-radius: 6px; font-size: 16px; }
-.btn { background: #667eea; color: white; }
-.btn-del { background: #ff4757; color: white; padding: 8px; width: auto; }
-input { padding: 12px; width: 100%; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-.tab { flex: 1; padding: 12px; background: #e0e0e0; border: none; border-radius: 6px; font-weight: bold; }
-.tab.active { background: #667eea; color: white; }
-.item { padding: 10px; background: #f8f9fa; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 10px 0; }
-.slot { padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 6px; }
-.slot.sel { background: #667eea; color: white; }
-.slot.busy { background: #eee; color: #999; text-decoration: line-through; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.box {
+  max-width: 500px;
+  margin: 0 auto;
+  background: #141414;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #222;
+}
+
+.logo-wrap {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 180px;
+  height: auto;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ff6b00;
+  letter-spacing: 2px;
+  margin-top: 5px;
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 20px 0 10px;
+  color: #fff;
+}
+
+h2.orange {
+  color: #ff6b00;
+}
+
+button {
+  padding: 14px;
+  width: 100%;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-orange {
+  background: #ff6b00;
+  color: #000;
+}
+
+.btn-orange:hover {
+  background: #ff8533;
+  transform: translateY(-1px);
+}
+
+.btn-black {
+  background: #1a1a1a;
+  color: #ff6b00;
+  border: 2px solid #ff6b00;
+}
+
+.btn-black:hover {
+  background: #ff6b00;
+  color: #000;
+}
+
+.btn-danger {
+  background: #ff3b3b;
+  color: #fff;
+  padding: 8px 12px;
+  width: auto;
+  font-size: 14px;
+}
+
+input {
+  padding: 14px;
+  width: 100%;
+  margin: 8px 0;
+  background: #0a0a0a;
+  border: 2px solid #222;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: #ff6b00;
+}
+
+input::placeholder {
+  color: #555;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  background: #1a1a1a;
+  color: #666;
+  border: 2px solid #222;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.tab.active {
+  background: #ff6b00;
+  color: #000;
+  border-color: #ff6b00;
+}
+
+.item {
+  padding: 12px;
+  background: #1a1a1a;
+  margin: 5px 0;
+  border-radius: 8px;
+  border-left: 3px solid #ff6b00;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item span {
+  color: #fff;
+}
+
+.item small {
+  color: #888;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.slot {
+  padding: 12px;
+  text-align: center;
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.slot:hover {
+  border-color: #ff6b00;
+}
+
+.slot.sel {
+  background: #ff6b00;
+  color: #000;
+  border-color: #ff6b00;
+}
+
+.slot.busy {
+  background: #0a0a0a;
+  color: #444;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  border-color: #222;
+}
+
 .hidden { display: none !important; }
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal-box { background: white; padding: 25px; border-radius: 10px; max-width: 350px; width: 90%; }
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: #141414;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 350px;
+  width: 90%;
+  border: 1px solid #ff6b00;
+  text-align: center;
+}
+
+.modal-box h2 {
+  color: #ff6b00;
+  margin-bottom: 15px;
+}
+
+.modal-box p {
+  color: #ccc;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.welcome {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.welcome-icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.divider {
+  height: 1px;
+  background: #222;
+  margin: 15px 0;
+}
+
+.badge {
+  display: inline-block;
+  background: #ff6b00;
+  color: #000;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+}
 </style>
 </head>
 <body>
 
 <div class="box">
-  <h1>🚗 Автошкола</h1>
-  
+
+  <!-- ЛОГОТИП -->
+  <div class="logo-wrap">
+    <svg class="logo" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="60" height="60" rx="8" fill="#ff6b00" transform="rotate(45 40 40)"/>
+      <path d="M30 50 L40 25 L45 40 L55 20" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="80" y="45" font-size="28" font-weight="900" fill="#ff6b00">Вектор</text>
+      <text x="80" y="62" font-size="10" fill="#888" letter-spacing="2">СЕТЬ АВТОШКОЛ</text>
+    </svg>
+  </div>
+
   <div class="tabs">
-    <button class="tab" onclick="openAdmin()">Админ</button>
-    <button class="tab active" onclick="showStudent()">Ученик</button>
+    <button class="tab" onclick="openAdmin()">🔒 АДМИН</button>
+    <button class="tab active" onclick="showStudent()">🎓 УЧЕНИК</button>
   </div>
 
+  <!-- АДМИН -->
   <div id="admin" class="hidden">
-    <h2>Добавить ученика</h2>
-    <input id="fio" placeholder="ФИО">
-    <button class="btn" onclick="addStudent()">Добавить</button>
-    <h2>Список:</h2>
+    <h2 class="orange">Добавить ученика</h2>
+    <input id="fio" placeholder="ФИО ученика">
+    <button class="btn-orange" onclick="addStudent()">Добавить</button>
+
+    <div class="divider"></div>
+
+    <h2>Список допущенных <span class="badge" id="stCount">0</span></h2>
     <div id="list"></div>
-    <h2>Записи:</h2>
+
+    <div class="divider"></div>
+
+    <h2>Записи на экзамен <span class="badge" id="bkCount">0</span></h2>
     <div id="book"></div>
-    <button class="btn" onclick="logout()" style="background:#ff4757;">Выйти</button>
+
+    <div class="divider"></div>
+
+    <button class="btn-black" onclick="logout()">Выйти из админки</button>
   </div>
 
+  <!-- УЧЕНИК: ШАГ 1 -->
   <div id="stu">
     <div id="s1">
-      <div style="text-align:center; padding:20px 0;">
-        <div style="font-size:48px;"></div>
-        <h2>Запись на экзамен</h2>
-        <p style="color:#666;">Введите ФИО</p>
+      <div class="welcome">
+        <div class="welcome-icon">🎓</div>
+        <h2 class="orange">Запись на экзамен по теории</h2>
+        <p style="color:#888; margin-top:8px;">Введите ФИО для проверки допуска</p>
       </div>
-      <input id="sfio" placeholder="ФИО">
-      <button class="btn" onclick="checkStudent()">Проверить допуск</button>
+      <input id="sfio" placeholder="Иванов Иван Иванович">
+      <button class="btn-orange" onclick="checkStudent()">Проверить допуск</button>
     </div>
-    
+
+    <!-- ШАГ 2 -->
     <div id="s2" class="hidden">
-      <h2>Выберите дату</h2>
+      <h2 class="orange">Выберите дату экзамена</h2>
       <input type="date" id="sdate" onchange="renderSlots()">
       <div id="sbox" class="hidden">
-        <h2>Время:</h2>
+        <h2>Свободное время</h2>
         <div id="slots" class="slots"></div>
-        <button class="btn" onclick="bookExam()">Записаться</button>
+        <button class="btn-orange" onclick="bookExam()">Записаться</button>
       </div>
     </div>
-    
+
+    <!-- НЕ ДОПУЩЕН -->
     <div id="s3" class="hidden">
-      <div style="text-align:center; padding:20px 0;">
-        <div style="font-size:48px;">⚠️</div>
-        <h2 style="color:#ff4757;">Не допущен</h2>
-        <p>Обратитесь к менеджеру</p>
+      <div class="welcome">
+        <div class="welcome-icon">⚠️</div>
+        <h2 class="orange">Вы не допущены к экзамену</h2>
+        <p style="color:#888; margin-top:8px;">Обратитесь к менеджеру автошколы «Вектор»</p>
       </div>
-      <button class="btn" onclick="backToStart()">Назад</button>
+      <button class="btn-black" onclick="backToStart()">Назад</button>
     </div>
   </div>
 </div>
 
+<!-- МОДАЛКА ПАРОЛЯ -->
 <div id="pwd" class="modal hidden">
   <div class="modal-box">
-    <h2>🔐 Пароль</h2>
+    <h2>🔐 Вход в админ-панель</h2>
+    <p>Введите пароль</p>
     <input type="password" id="pw" placeholder="Пароль">
-    <div id="err" style="color:red;"></div>
-    <button class="btn" onclick="checkPwd()">Войти</button>
-    <button class="btn" onclick="closePwd()" style="background:#ccc;">Отмена</button>
+    <div id="err" style="color:#ff3b3b; margin:5px 0; font-size:14px;"></div>
+    <button class="btn-orange" onclick="checkPwd()">Войти</button>
+    <button class="btn-black" onclick="closePwd()">Отмена</button>
   </div>
 </div>
 
+<!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ -->
 <div id="conf" class="modal hidden">
   <div class="modal-box">
-    <h2>Подтвердить?</h2>
+    <h2>Подтвердить запись?</h2>
     <p id="cinfo"></p>
-    <button class="btn" onclick="confirmBook()">Да</button>
-    <button class="btn" onclick="closeConf()" style="background:#ccc;">Нет</button>
+    <button class="btn-orange" onclick="confirmBook()">Да, записаться</button>
+    <button class="btn-black" onclick="closeConf()">Отмена</button>
   </div>
 </div>
 
@@ -148,7 +410,7 @@ function checkPwd() {
     document.getElementById('pwd').classList.add('hidden');
     showAdmin();
   } else {
-    document.getElementById('err').textContent = 'Неверно';
+    document.getElementById('err').textContent = 'Неверный пароль';
   }
 }
 
@@ -169,26 +431,29 @@ function addStudent() {
   save();
   document.getElementById('fio').value = '';
   renderAdmin();
-  alert('Добавлено');
+  alert('Ученик добавлен');
 }
 
 function renderAdmin() {
+  document.getElementById('stCount').textContent = students.length;
+  document.getElementById('bkCount').textContent = bookings.length;
+
   var h = '';
   for (var i = 0; i < students.length; i++) {
-    h += '<div class="item"><span>' + students[i].fio + '</span><button class="btn-del" onclick="delSt(' + students[i].id + ')">×</button></div>';
+    h += '<div class="item"><span>' + students[i].fio + '</span><button class="btn-danger" onclick="delSt(' + students[i].id + ')">×</button></div>';
   }
-  document.getElementById('list').innerHTML = h || 'Пусто';
-  
+  document.getElementById('list').innerHTML = h || '<p style="color:#555;">Список пуст</p>';
+
   var h2 = '';
   for (var j = 0; j < bookings.length; j++) {
     var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
-    h2 += '<div class="item">' + bookings[j].fio + ' - ' + d + ' ' + bookings[j].time + '</div>';
+    h2 += '<div class="item"><span>' + bookings[j].fio + '<br><small>📅 ' + d + ' в ' + bookings[j].time + '</small></span></div>';
   }
-  document.getElementById('book').innerHTML = h2 || 'Пусто';
+  document.getElementById('book').innerHTML = h2 || '<p style="color:#555;">Записей нет</p>';
 }
 
 function delSt(id) {
-  if (confirm('Удалить?')) {
+  if (confirm('Удалить ученика?')) {
     students = students.filter(function(s) { return s.id !== id; });
     save();
     renderAdmin();
@@ -198,7 +463,7 @@ function delSt(id) {
 function checkStudent() {
   var f = document.getElementById('sfio').value.trim().toLowerCase();
   if (!f) { alert('Введите ФИО'); return; }
-  
+
   var found = null;
   for (var i = 0; i < students.length; i++) {
     if (students[i].fio.toLowerCase() === f) {
@@ -206,7 +471,7 @@ function checkStudent() {
       break;
     }
   }
-  
+
   if (found) {
     curStudent = found;
     document.getElementById('s1').classList.add('hidden');
@@ -232,7 +497,7 @@ function renderSlots() {
   for (var i = 0; i < bookings.length; i++) {
     if (bookings[i].date === d) busy[bookings[i].time] = true;
   }
-  
+
   var h = '';
   for (var hr = 9; hr < 18; hr++) {
     for (var mn = 0; mn < 60; mn += 15) {
@@ -257,7 +522,7 @@ function bookExam() {
   if (!selTime) { alert('Выберите время'); return; }
   var d = document.getElementById('sdate').value;
   var dd = new Date(d).toLocaleDateString('ru-RU');
-  document.getElementById('cinfo').innerHTML = curStudent.fio + '<br>' + dd + '<br>' + selTime;
+  document.getElementById('cinfo').innerHTML = '<b style="color:#ff6b00;">' + curStudent.fio + '</b><br>📅 ' + dd + '<br>⏰ ' + selTime;
   document.getElementById('conf').classList.remove('hidden');
 }
 
@@ -266,7 +531,7 @@ function confirmBook() {
   bookings.push({id: Date.now(), fio: curStudent.fio, date: d, time: selTime});
   save();
   document.getElementById('conf').classList.add('hidden');
-  alert('Записано!');
+  alert('Вы записаны на экзамен!\nУведомление отправлено менеджеру.');
   showStudent();
 }
 
