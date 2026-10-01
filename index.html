@@ -24,311 +24,189 @@ body {
   border: 1px solid #222;
 }
 
-.logo-wrap {
-  text-align: center;
-  margin-bottom: 20px;
-}
+.logo-wrap { text-align: center; margin-bottom: 20px; }
+.logo { width: 260px; height: auto; }
 
-.logo {
-  width: 220px;
-  height: auto;
-}
-
-h2 {
-  font-size: 18px;
-  margin: 20px 0 10px;
-  color: #fff;
-}
-
-h2.yellow {
-  color: #f5d742;
-}
+h2 { font-size: 18px; margin: 20px 0 10px; color: #fff; }
+h2.yellow { color: #f5d742; }
 
 button {
-  padding: 14px;
-  width: 100%;
-  margin: 8px 0;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
+  padding: 14px; width: 100%; margin: 8px 0;
+  border: none; border-radius: 8px;
+  font-size: 16px; font-weight: 600; cursor: pointer;
   transition: all 0.2s;
 }
-
-.btn-yellow {
-  background: #f5d742;
-  color: #000;
-}
-
-.btn-yellow:hover {
-  background: #ffe066;
-  transform: translateY(-1px);
-}
-
-.btn-black {
-  background: #1a1a1a;
-  color: #f5d742;
-  border: 2px solid #f5d742;
-}
-
-.btn-black:hover {
-  background: #f5d742;
-  color: #000;
-}
-
-.btn-danger {
-  background: #ff3b3b;
-  color: #fff;
-  padding: 8px 12px;
-  width: auto;
-  font-size: 14px;
-}
+.btn-yellow { background: #f5d742; color: #000; }
+.btn-yellow:hover { background: #ffe066; transform: translateY(-1px); }
+.btn-black { background: #1a1a1a; color: #f5d742; border: 2px solid #f5d742; }
+.btn-black:hover { background: #f5d742; color: #000; }
+.btn-danger { background: #ff3b3b; color: #fff; padding: 8px 12px; width: auto; font-size: 14px; }
 
 input {
-  padding: 14px;
-  width: 100%;
-  margin: 8px 0;
-  background: #0a0a0a;
-  border: 2px solid #222;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 15px;
-  box-sizing: border-box;
+  padding: 14px; width: 100%; margin: 8px 0;
+  background: #0a0a0a; border: 2px solid #222;
+  border-radius: 8px; color: #fff; font-size: 15px; box-sizing: border-box;
 }
+input:focus { outline: none; border-color: #f5d742; }
+input::placeholder { color: #555; }
 
-input:focus {
-  outline: none;
-  border-color: #f5d742;
-}
-
-input::placeholder {
-  color: #555;
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
 .tab {
-  flex: 1;
-  padding: 12px;
-  background: #1a1a1a;
-  color: #666;
-  border: 2px solid #222;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 15px;
+  flex: 1; padding: 12px;
+  background: #1a1a1a; color: #666;
+  border: 2px solid #222; border-radius: 8px;
+  font-weight: 700; cursor: pointer; font-size: 15px;
 }
-
-.tab.active {
-  background: #f5d742;
-  color: #000;
-  border-color: #f5d742;
-}
+.tab.active { background: #f5d742; color: #000; border-color: #f5d742; }
 
 .item {
-  padding: 12px;
-  background: #1a1a1a;
-  margin: 5px 0;
-  border-radius: 8px;
+  padding: 12px; background: #1a1a1a;
+  margin: 5px 0; border-radius: 8px;
   border-left: 3px solid #f5d742;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
 }
+.item span { color: #fff; }
+.item small { color: #888; }
 
-.item span {
-  color: #fff;
-}
-
-.item small {
-  color: #888;
-}
-
-.slots {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  margin: 10px 0;
-}
-
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
 .slot {
-  padding: 12px;
-  text-align: center;
-  background: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #fff;
-  font-weight: 600;
+  padding: 12px; text-align: center;
+  background: #1a1a1a; border: 2px solid #333;
+  border-radius: 6px; cursor: pointer;
+  font-size: 14px; color: #fff; font-weight: 600;
 }
-
-.slot:hover {
-  border-color: #f5d742;
-}
-
-.slot.sel {
-  background: #f5d742;
-  color: #000;
-  border-color: #f5d742;
-}
-
-.slot.busy {
-  background: #0a0a0a;
-  color: #444;
-  text-decoration: line-through;
-  cursor: not-allowed;
-  border-color: #222;
-}
+.slot:hover { border-color: #f5d742; }
+.slot.sel { background: #f5d742; color: #000; border-color: #f5d742; }
+.slot.busy { background: #0a0a0a; color: #444; text-decoration: line-through; cursor: not-allowed; border-color: #222; }
 
 .hidden { display: none !important; }
 
 .modal {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   z-index: 100;
 }
-
 .modal-box {
-  background: #141414;
-  padding: 25px;
-  border-radius: 12px;
-  max-width: 350px;
-  width: 90%;
-  border: 1px solid #f5d742;
-  text-align: center;
+  background: #141414; padding: 25px;
+  border-radius: 12px; max-width: 350px; width: 90%;
+  border: 1px solid #f5d742; text-align: center;
 }
+.modal-box h2 { color: #f5d742; margin-bottom: 15px; }
+.modal-box p { color: #ccc; margin-bottom: 15px; line-height: 1.5; }
 
-.modal-box h2 {
-  color: #f5d742;
-  margin-bottom: 15px;
-}
-
-.modal-box p {
-  color: #ccc;
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
-
-.welcome {
-  text-align: center;
-  padding: 15px 0;
-}
-
-.welcome-icon {
-  font-size: 50px;
-  margin-bottom: 10px;
-}
-
-.divider {
-  height: 1px;
-  background: #222;
-  margin: 15px 0;
-}
-
+.welcome { text-align: center; padding: 15px 0; }
+.welcome-icon { font-size: 50px; margin-bottom: 10px; }
+.divider { height: 1px; background: #222; margin: 15px 0; }
 .badge {
-  display: inline-block;
-  background: #f5d742;
-  color: #000;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  margin-left: 8px;
+  display: inline-block; background: #f5d742; color: #000;
+  padding: 3px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; margin-left: 8px;
 }
 
-/* ДОРОГА И МАШИНА */
-.road-scene {
+/* ===== СЦЕНА С ДОРОГОЙ ===== */
+.scene {
   position: relative;
-  height: 140px;
-  margin-top: 25px;
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
   overflow: hidden;
   border-radius: 8px;
-  background: #1a1a1a;
+  background: #0d0d0d;
 }
 
-.road {
+/* Дорога SVG */
+.road-svg {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 80px;
-  background: #2a2a2a;
-  border-top: 3px solid #444;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
 }
 
-.road-lines {
+/* Машина едет по дороге */
+.car-moving {
   position: absolute;
-  top: 50%;
-  width: 100%;
-  height: 4px;
-  background: repeating-linear-gradient(90deg, #f5d742 0px, #f5d742 30px, transparent 30px, transparent 60px);
-  transform: translateY(-50%);
+  width: 80px;
+  height: 40px;
+  offset-path: path('M 480 20 Q 380 100 280 180 Q 180 260 100 260 Q 60 260 60 220 Q 60 180 100 180 Q 180 180 260 180 L 380 180');
+  offset-rotate: auto;
+  animation: driveCar 7s ease-in-out forwards;
+  opacity: 0;
 }
 
-.car-container {
-  position: absolute;
-  bottom: 20px;
-  left: 110%;
-  width: 100px;
-  height: 50px;
-  animation: carDrive 5s ease-out forwards;
+@keyframes driveCar {
+  0% { offset-distance: 0%; opacity: 0; }
+  3% { opacity: 1; }
+  75% { offset-distance: 80%; }
+  85% { offset-distance: 80%; }
+  95% { offset-distance: 85%; }
+  100% { offset-distance: 85%; opacity: 1; }
 }
 
-@keyframes carDrive {
-  0% {
-    left: 110%;
-    transform: scaleX(1);
-  }
-  45% {
-    left: 50%;
-    transform: scaleX(1) translateX(-50px);
-  }
-  55% {
-    left: 50%;
-    transform: scaleX(-1) translateX(-50px);
-  }
-  70% {
-    left: 50%;
-    transform: scaleX(-1) translateX(0px);
-  }
-  100% {
-    left: 50%;
-    transform: scaleX(-1) translateX(0px);
-  }
-}
-
-.car-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-}
-
+/* Фары */
 .headlight {
-  animation: headlightGlow 1s ease-in-out infinite alternate;
+  animation: headlightPulse 0.6s ease-in-out infinite alternate;
 }
-
-@keyframes headlightGlow {
+@keyframes headlightPulse {
   from { opacity: 0.7; }
   to { opacity: 1; }
 }
 
-.headlight-beam {
-  animation: beamPulse 1s ease-in-out infinite alternate;
+/* Парковка */
+.parking-area {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 70px;
+  opacity: 0;
+  animation: showParking 0.5s ease forwards;
+  animation-delay: 5.5s;
 }
 
-@keyframes beamPulse {
-  from { opacity: 0.3; }
-  to { opacity: 0.6; }
+@keyframes showParking {
+  to { opacity: 1; }
+}
+
+/* Машина паркуется задним ходом */
+.car-parking {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 40px;
+  opacity: 0;
+  animation: reversePark 2.5s ease-in-out forwards;
+  animation-delay: 5.5s;
+}
+
+@keyframes reversePark {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(40px) rotate(20deg);
+  }
+  30% {
+    transform: translateX(-50%) translateY(20px) rotate(-10deg);
+  }
+  60% {
+    transform: translateX(-50%) translateY(10px) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+}
+
+/* Стоп-сигналы при парковке */
+.brake-light {
+  animation: brakeFlash 0.4s ease-in-out 4;
+  animation-delay: 5.5s;
+}
+@keyframes brakeFlash {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 </style>
 </head>
@@ -338,15 +216,17 @@ input::placeholder {
 
   <!-- ЛОГОТИП -->
   <div class="logo-wrap">
-    <svg class="logo" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg">
       <!-- Жёлтый ромб -->
-      <rect x="10" y="15" width="70" height="70" rx="8" fill="#f5d742" transform="rotate(45 45 50)"/>
-      <!-- Чёрная стрелка-галочка V -->
-      <path d="M25 65 L40 40 L50 55 L65 25" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="10" y="15" width="75" height="75" rx="8" fill="#f5d742" transform="rotate(45 47 52)"/>
+      <!-- Буква V как стрелка-дорога -->
+      <path d="M 25 70 L 40 45 L 47 55 L 62 20" stroke="#000" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Пунктир на стрелке -->
+      <line x1="33" y1="60" x2="55" y2="28" stroke="#fff" stroke-width="2" stroke-dasharray="4,3"/>
       <!-- Текст Vектор -->
-      <text x="95" y="55" font-size="38" font-weight="900" fill="#000" font-family="Arial">Vектор</text>
+      <text x="95" y="60" font-size="42" font-weight="900" fill="#000" font-family="Arial">Vектор</text>
       <!-- Текст СЕТЬ АВТОШКОЛ -->
-      <text x="95" y="75" font-size="13" fill="#666" letter-spacing="3" font-family="Arial">СЕТЬ АВТОШКОЛ</text>
+      <text x="130" y="82" font-size="14" fill="#666" letter-spacing="2" font-family="Arial">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
@@ -360,59 +240,136 @@ input::placeholder {
     <h2 class="yellow">Добавить ученика</h2>
     <input id="fio" placeholder="ФИО ученика">
     <button class="btn-yellow" onclick="addStudent()">Добавить</button>
-
     <div class="divider"></div>
-
     <h2>Список допущенных <span class="badge" id="stCount">0</span></h2>
     <div id="list"></div>
-
     <div class="divider"></div>
-
     <h2>Записи на экзамен <span class="badge" id="bkCount">0</span></h2>
     <div id="book"></div>
-
     <div class="divider"></div>
-
     <button class="btn-black" onclick="logout()">Выйти из админки</button>
   </div>
 
-  <!-- УЧЕНИК: ШАГ 1 -->
+  <!-- УЧЕНИК -->
   <div id="stu">
     <div id="s1">
       <div class="welcome">
-        <div class="welcome-icon">🎓</div>
+        <div class="welcome-icon"></div>
         <h2 class="yellow">Запись на экзамен по теории</h2>
         <p style="color:#888; margin-top:8px;">Введите ФИО для проверки допуска</p>
       </div>
       <input id="sfio" placeholder="Иванов Иван Иванович">
       <button class="btn-yellow" onclick="checkStudent()">Проверить допуск</button>
       
-      <!-- ДОРОГА С МАШИНОЙ -->
-      <div class="road-scene">
-        <div class="road">
-          <div class="road-lines"></div>
-        </div>
-        <div class="car-container">
-          <svg class="car-svg" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-            <!-- Кузов машины -->
-            <rect x="15" y="20" width="70" height="20" rx="4" fill="#fff"/>
-            <rect x="25" y="10" width="50" height="15" rx="3" fill="#fff"/>
-            <!-- Окна -->
-            <rect x="30" y="12" width="18" height="11" rx="2" fill="#87CEEB"/>
-            <rect x="52" y="12" width="18" height="11" rx="2" fill="#87CEEB"/>
+      <!-- СЦЕНА С ДОРОГОЙ И МАШИНОЙ -->
+      <div class="scene" id="scene">
+        
+        <!-- Дорога -->
+        <svg class="road-svg" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <!-- Асфальт дороги -->
+          <path d="M 500 20 Q 380 100 280 180 Q 180 260 100 260 Q 60 260 60 220 Q 60 180 100 180 Q 180 180 260 180 L 400 180" 
+                stroke="#3a3a3a" stroke-width="55" fill="none" stroke-linecap="round"/>
+          <!-- Обочина -->
+          <path d="M 500 20 Q 380 100 280 180 Q 180 260 100 260 Q 60 260 60 220 Q 60 180 100 180 Q 180 180 260 180 L 400 180" 
+                stroke="#2a2a2a" stroke-width="62" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <!-- Жёлтая пунктирная разметка -->
+          <path d="M 500 20 Q 380 100 280 180 Q 180 260 100 260 Q 60 260 60 220 Q 60 180 100 180 Q 180 180 260 180 L 400 180" 
+                stroke="#f5d742" stroke-width="2" fill="none" 
+                stroke-dasharray="18,12" stroke-linecap="round"/>
+          <!-- Белая сплошная по краю -->
+          <path d="M 500 20 Q 380 100 280 180 Q 180 260 100 260 Q 60 260 60 220 Q 60 180 100 180 Q 180 180 260 180 L 400 180" 
+                stroke="#fff" stroke-width="1" fill="none" opacity="0.3"
+                transform="translate(0, -24)"/>
+        </svg>
+
+        <!-- Машина едет -->
+        <div class="car-moving" id="carMoving">
+          <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+            <!-- Тень -->
+            <ellipse cx="50" cy="47" rx="42" ry="3" fill="#000" opacity="0.5"/>
+            <!-- Кузов Лада Гранта -->
+            <path d="M 8 30 Q 8 25 14 25 L 24 25 L 32 14 Q 35 10 42 10 L 70 10 Q 76 10 79 14 L 86 25 L 94 25 Q 97 25 97 30 L 97 36 Q 97 39 94 39 L 8 39 Q 5 39 5 36 L 5 33 Q 5 30 8 30 Z" 
+                  fill="#f5f5f5" stroke="#ccc" stroke-width="0.5"/>
+            <!-- Крыша -->
+            <path d="M 32 14 Q 35 10 42 10 L 70 10 Q 76 10 79 14 L 82 20 L 30 20 Z" fill="#e8e8e8"/>
+            <!-- Лобовое стекло -->
+            <path d="M 36 12 L 42 11 L 68 11 L 76 12 L 78 19 L 34 19 Z" fill="#4a6fa5" opacity="0.85"/>
+            <!-- Боковые стёкла -->
+            <rect x="38" y="13" width="14" height="6" rx="1" fill="#4a6fa5" opacity="0.8"/>
+            <rect x="56" y="13" width="16" height="6" rx="1" fill="#4a6fa5" opacity="0.8"/>
+            <!-- Решётка радиатора -->
+            <rect x="90" y="27" width="6" height="9" rx="1.5" fill="#222"/>
+            <line x1="92" y1="29" x2="95" y2="29" stroke="#444" stroke-width="0.5"/>
+            <line x1="92" y1="32" x2="95" y2="32" stroke="#444" stroke-width="0.5"/>
+            <!-- Фары ближнего света -->
+            <ellipse cx="95" cy="30" rx="3" ry="2.5" fill="#fffacd" class="headlight"/>
+            <ellipse cx="95" cy="30" rx="5" ry="4" fill="#fffacd" opacity="0.4" class="headlight"/>
+            <!-- Луч фары -->
+            <polygon points="98,28 110,24 110,36 98,32" fill="#fffacd" opacity="0.3" class="headlight"/>
+            <!-- Задние фонари -->
+            <rect x="6" y="28" width="3" height="5" rx="0.5" fill="#cc0000" class="brake-light"/>
             <!-- Колёса -->
-            <circle cx="28" cy="42" r="7" fill="#222"/>
-            <circle cx="28" cy="42" r="3" fill="#666"/>
-            <circle cx="72" cy="42" r="7" fill="#222"/>
-            <circle cx="72" cy="42" r="3" fill="#666"/>
-            <!-- Фары (яркие) -->
-            <circle cx="85" cy="28" r="4" fill="#ffeb3b" class="headlight"/>
-            <circle cx="85" cy="28" r="6" fill="#ffeb3b" opacity="0.5" class="headlight-beam"/>
-            <circle cx="15" cy="28" r="3" fill="#ff4444"/>
-            <!-- Лучи фар -->
-            <polygon points="89,26 100,20 100,36 89,30" fill="#ffeb3b" opacity="0.4" class="headlight-beam"/>
+            <circle cx="22" cy="40" r="6" fill="#1a1a1a"/>
+            <circle cx="22" cy="40" r="3.5" fill="#333"/>
+            <circle cx="22" cy="40" r="1.5" fill="#666"/>
+            <circle cx="78" cy="40" r="6" fill="#1a1a1a"/>
+            <circle cx="78" cy="40" r="3.5" fill="#333"/>
+            <circle cx="78" cy="40" r="1.5" fill="#666"/>
+            <!-- Бамперы -->
+            <rect x="92" y="34" width="6" height="3" rx="1" fill="#ddd"/>
+            <rect x="4" y="34" width="5" height="3" rx="1" fill="#ddd"/>
+            <!-- Дверные ручки -->
+            <rect x="44" y="23" width="4" height="1" rx="0.3" fill="#bbb"/>
+            <rect x="60" y="23" width="4" height="1" rx="0.3" fill="#bbb"/>
           </svg>
         </div>
+
+        <!-- Парковка -->
+        <div class="parking-area" id="parkingArea">
+          <svg viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg">
+            <!-- Асфальт парковки -->
+            <rect x="0" y="0" width="140" height="70" fill="#2a2a2a" rx="3"/>
+            <!-- Разметка ёлочка -->
+            <line x1="15" y1="70" x2="35" y2="25" stroke="#f5d742" stroke-width="2.5"/>
+            <line x1="35" y1="70" x2="55" y2="25" stroke="#f5d742" stroke-width="2.5"/>
+            <line x1="55" y1="70" x2="75" y2="25" stroke="#f5d742" stroke-width="2.5"/>
+            <line x1="75" y1="70" x2="95" y2="25" stroke="#f5d742" stroke-width="2.5"/>
+            <line x1="95" y1="70" x2="115" y2="25" stroke="#f5d742" stroke-width="2.5"/>
+            <!-- Рамка парковочного места -->
+            <rect x="30" y="10" width="80" height="55" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>
+          </svg>
+        </div>
+
+        <!-- Машина паркуется задним ходом -->
+        <div class="car-parking" id="carParking">
+          <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="47" rx="42" ry="3" fill="#000" opacity="0.5"/>
+            <path d="M 8 30 Q 8 25 14 25 L 24 25 L 32 14 Q 35 10 42 10 L 70 10 Q 76 10 79 14 L 86 25 L 94 25 Q 97 25 97 30 L 97 36 Q 97 39 94 39 L 8 39 Q 5 39 5 36 L 5 33 Q 5 30 8 30 Z" 
+                  fill="#f5f5f5" stroke="#ccc" stroke-width="0.5"/>
+            <path d="M 32 14 Q 35 10 42 10 L 70 10 Q 76 10 79 14 L 82 20 L 30 20 Z" fill="#e8e8e8"/>
+            <path d="M 36 12 L 42 11 L 68 11 L 76 12 L 78 19 L 34 19 Z" fill="#4a6fa5" opacity="0.85"/>
+            <rect x="38" y="13" width="14" height="6" rx="1" fill="#4a6fa5" opacity="0.8"/>
+            <rect x="56" y="13" width="16" height="6" rx="1" fill="#4a6fa5" opacity="0.8"/>
+            <rect x="90" y="27" width="6" height="9" rx="1.5" fill="#222"/>
+            <line x1="92" y1="29" x2="95" y2="29" stroke="#444" stroke-width="0.5"/>
+            <line x1="92" y1="32" x2="95" y2="32" stroke="#444" stroke-width="0.5"/>
+            <ellipse cx="95" cy="30" rx="3" ry="2.5" fill="#fffacd" class="headlight"/>
+            <ellipse cx="95" cy="30" rx="5" ry="4" fill="#fffacd" opacity="0.4" class="headlight"/>
+            <polygon points="98,28 110,24 110,36 98,32" fill="#fffacd" opacity="0.3" class="headlight"/>
+            <rect x="6" y="28" width="3" height="5" rx="0.5" fill="#cc0000" class="brake-light"/>
+            <circle cx="22" cy="40" r="6" fill="#1a1a1a"/>
+            <circle cx="22" cy="40" r="3.5" fill="#333"/>
+            <circle cx="22" cy="40" r="1.5" fill="#666"/>
+            <circle cx="78" cy="40" r="6" fill="#1a1a1a"/>
+            <circle cx="78" cy="40" r="3.5" fill="#333"/>
+            <circle cx="78" cy="40" r="1.5" fill="#666"/>
+            <rect x="92" y="34" width="6" height="3" rx="1" fill="#ddd"/>
+            <rect x="4" y="34" width="5" height="3" rx="1" fill="#ddd"/>
+            <rect x="44" y="23" width="4" height="1" rx="0.3" fill="#bbb"/>
+            <rect x="60" y="23" width="4" height="1" rx="0.3" fill="#bbb"/>
+          </svg>
+        </div>
+
       </div>
     </div>
 
@@ -430,7 +387,7 @@ input::placeholder {
     <!-- НЕ ДОПУЩЕН -->
     <div id="s3" class="hidden">
       <div class="welcome">
-        <div class="welcome-icon">⚠️</div>
+        <div class="welcome-icon">️</div>
         <h2 class="yellow">Вы не допущены к экзамену</h2>
         <p style="color:#888; margin-top:8px;">Обратитесь к менеджеру автошколы «Вектор»</p>
       </div>
@@ -492,6 +449,24 @@ function showStudent() {
   document.getElementById('s2').classList.add('hidden');
   document.getElementById('s3').classList.add('hidden');
   document.getElementById('sfio').value = '';
+  // Перезапуск анимации
+  restartAnimation();
+}
+
+function restartAnimation() {
+  var carMoving = document.getElementById('carMoving');
+  var carParking = document.getElementById('carParking');
+  var parkingArea = document.getElementById('parkingArea');
+  
+  carMoving.style.animation = 'none';
+  carParking.style.animation = 'none';
+  parkingArea.style.animation = 'none';
+  
+  setTimeout(function() {
+    carMoving.style.animation = '';
+    carParking.style.animation = '';
+    parkingArea.style.animation = '';
+  }, 100);
 }
 
 function openAdmin() {
@@ -590,6 +565,7 @@ function checkStudent() {
 function backToStart() {
   document.getElementById('s3').classList.add('hidden');
   document.getElementById('s1').classList.remove('hidden');
+  restartAnimation();
 }
 
 function renderSlots() {
@@ -623,7 +599,7 @@ function bookExam() {
   if (!selTime) { alert('Выберите время'); return; }
   var d = document.getElementById('sdate').value;
   var dd = new Date(d).toLocaleDateString('ru-RU');
-  document.getElementById('cinfo').innerHTML = '<b style="color:#f5d742;">' + curStudent.fio + '</b><br>📅 ' + dd + '<br>⏰ ' + selTime;
+  document.getElementById('cinfo').innerHTML = '<b style="color:#f5d742;">' + curStudent.fio + '</b><br> ' + dd + '<br>⏰ ' + selTime;
   document.getElementById('conf').classList.remove('hidden');
 }
 
