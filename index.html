@@ -15,6 +15,7 @@
   --border: #E5E7EB;
   --white: #FFFFFF;
   --danger: #EF4444;
+  --graphite: #4B5563;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,15 +119,16 @@ input::placeholder { color: #9CA3AF; }
 .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--light-gray); padding: 4px; border-radius: 12px; }
 .tab {
   flex: 1; padding: 12px;
-  background: transparent; color: var(--gray);
+  background: var(--graphite);
+  color: #D1D5DB;
   border: none; border-radius: 10px;
   font-weight: 600; cursor: pointer; font-size: 14px;
   text-transform: uppercase; box-shadow: none;
 }
 .tab.active {
-  background: var(--white);
-  color: var(--dark);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  background: var(--dark);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .item {
@@ -223,16 +225,16 @@ input::placeholder { color: #9CA3AF; }
       <!-- Левая ветвь V — широкая, чёткая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V — плавно сужается от основания к стрелке (эффект дороги в перспективе) -->
-      <path d="M 72 95 Q 100 70 118 47 L 122 43 Q 100 66 78 89 Z" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — сужается от широкого основания к узкому кончику (дорога в перспективе) -->
+      <polygon points="72,95 78,89 122,43 118,47" fill="#1A1A1A"/>
       
       <!-- Белая пунктирная разметка СТРОГО ПО ЦЕНТРУ сужающейся ветви -->
       <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round"/>
       
-      <!-- Стрелка на конце — острая, симметричная, с двумя "ушками" -->
-      <path d="M 120 45 L 135 28 L 130 38 L 140 38 L 125 50 Z" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
+      <!-- Стрелка на конце — острая, симметричная -->
+      <polygon points="120,45 135,28 130,38 140,38 125,50" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
       
-      <!-- Текст "ектор" — узкий вытянутый шрифт Oswald, буква "е" не перекрывает ромб -->
+      <!-- Текст "ектор" — узкий вытянутый шрифт Oswald -->
       <text x="125" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       
       <!-- Текст "СЕТЬ АВТОШКОЛ" -->
