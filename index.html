@@ -38,7 +38,7 @@ body {
 }
 
 .logo-wrap { text-align: center; margin-bottom: 24px; }
-.logo { width: 320px; height: auto; display: block; margin: 0 auto; }
+.logo { width: 340px; height: auto; display: block; margin: 0 auto; }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
 h2 { font-size: 20px; margin: 24px 0 12px; color: var(--dark); font-weight: 700; }
@@ -213,31 +213,31 @@ input::placeholder { color: #9CA3AF; }
 
 <div class="box">
   <div class="logo-wrap">
-    <svg class="logo" viewBox="0 0 380 140" xmlns="http://www.w3.org/2000/svg">
-      <!-- ЖЁЛТЫЙ РОМБ (не обрезан) -->
-      <rect x="25" y="25" width="80" height="80" fill="#FFC800" transform="rotate(45 65 65)"/>
+    <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- ЖЁЛТЫЙ РОМБ с закруглёнными углами -->
+      <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFD700" transform="rotate(45 75 75)"/>
       
       <!-- ТОНКАЯ ЧЁРНАЯ РАМКА внутри ромба -->
-      <rect x="29" y="29" width="72" height="72" fill="none" stroke="#1A1A1A" stroke-width="2" transform="rotate(45 65 65)"/>
+      <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       
       <!-- V-СТРЕЛКА: вершина внутри ромба -->
-      <!-- Левая ветвь (короткая, в 2 раза меньше правой) -->
-      <line x1="65" y1="78" x2="48" y2="61" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round"/>
+      <!-- Левая ветвь (короткая, внутри ромба) -->
+      <line x1="75" y1="90" x2="55" y2="70" stroke="#1A1A1A" stroke-width="7" stroke-linecap="round"/>
       
-      <!-- Правая ветвь (длинная, выходит за ромб) -->
-      <line x1="65" y1="78" x2="108" y2="35" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round"/>
+      <!-- Правая ветвь (длинная, выходит за ромб вверх-вправо) -->
+      <line x1="75" y1="90" x2="125" y2="40" stroke="#1A1A1A" stroke-width="7" stroke-linecap="round"/>
       
       <!-- БЕЛАЯ ПУНКТИРНАЯ РАЗМЕТКА на правой ветви -->
-      <line x1="62" y1="82" x2="105" y2="39" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+      <line x1="72" y1="94" x2="122" y2="44" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
       
-      <!-- СТРЕЛКА на конце правой ветви (треугольник, виден полностью) -->
-      <polygon points="108,35 100,41 112,43" fill="#1A1A1A"/>
+      <!-- СТРЕЛКА на конце правой ветви (треугольник) -->
+      <polygon points="125,40 117,46 128,48" fill="#1A1A1A"/>
       
-      <!-- ТЕКСТ "ектор" (V уже нарисована как стрелка) -->
-      <text x="118" y="82" font-size="52" font-weight="800" fill="#1A1A1A" font-family="Montserrat, Arial, sans-serif" letter-spacing="-2">ектор</text>
+      <!-- ТЕКСТ "ектор" (буквы е и к заходят на ромб) -->
+      <text x="105" y="95" font-size="58" font-weight="900" fill="#1A1A1A" font-family="Arial Black, Arial, sans-serif" letter-spacing="-3">ектор</text>
       
       <!-- ТЕКСТ "СЕТЬ АВТОШКОЛ" -->
-      <text x="120" y="105" font-size="14" fill="#1A1A1A" letter-spacing="3" font-family="Inter, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
+      <text x="115" y="120" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
