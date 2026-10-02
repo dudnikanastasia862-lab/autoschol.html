@@ -214,29 +214,29 @@ input::placeholder { color: #9CA3AF; }
 <div class="box">
   <div class="logo-wrap">
     <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- ЧИСТЫЙ ЯРКИЙ ЖЁЛТЫЙ РОМБ с закруглёнными углами -->
+      <!-- Чистый яркий жёлтый ромб с закруглёнными углами -->
       <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
       
-      <!-- ТОНКАЯ ЧЁРНАЯ РАМКА внутри ромба -->
+      <!-- Тонкая чёрная рамка внутри ромба -->
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       
-      <!-- V-СТРЕЛКА: левая ветвь широкая и чёткая -->
+      <!-- Левая ветвь V — широкая, чёткая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- V-СТРЕЛКА: правая ветвь сужается от широкого основания к узкому кончику (как дорога с перспективой) -->
-      <polygon points="75,92 82,92 132,38 128,38" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — плавно сужается от основания к стрелке (эффект дороги в перспективе) -->
+      <path d="M 72 95 Q 100 70 118 47 L 122 43 Q 100 66 78 89 Z" fill="#1A1A1A"/>
       
-      <!-- БЕЛАЯ ПУНКТИРНАЯ РАЗМЕТКА СТРОГО ПО ЦЕНТРУ правой ветви -->
-      <line x1="78" y1="92" x2="130" y2="38" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round"/>
+      <!-- Белая пунктирная разметка СТРОГО ПО ЦЕНТРУ сужающейся ветви -->
+      <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round"/>
       
-      <!-- СТРЕЛКА на конце правой ветви (острый треугольник) -->
-      <polygon points="130,35 122,44 135,42" fill="#1A1A1A"/>
+      <!-- Стрелка на конце — острая, симметричная, с двумя "ушками" -->
+      <path d="M 120 45 L 135 28 L 130 38 L 140 38 L 125 50 Z" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
       
-      <!-- ТЕКСТ "ектор" — узкий вытянутый шрифт Oswald, буквы е и к заходят на ромб -->
-      <text x="108" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-2">ектор</text>
+      <!-- Текст "ектор" — узкий вытянутый шрифт Oswald, буква "е" не перекрывает ромб -->
+      <text x="125" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       
-      <!-- ТЕКСТ "СЕТЬ АВТОШКОЛ" -->
-      <text x="118" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
+      <!-- Текст "СЕТЬ АВТОШКОЛ" -->
+      <text x="130" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
@@ -283,7 +283,7 @@ input::placeholder { color: #9CA3AF; }
 
     <div id="s3" class="hidden">
       <div class="welcome">
-        <div class="welcome-icon">️</div>
+        <div class="welcome-icon">⚠️</div>
         <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
         <p style="color: var(--gray); margin-top: 8px;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
       </div>
