@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #FFC800;
+  --primary: #FFE600;
   --primary-hover: #E6B400;
   --dark: #1A1A1A;
   --gray: #6B7280;
@@ -42,7 +42,7 @@ body {
 .logo { width: 340px; height: auto; display: block; margin: 0 auto; }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-h2 { font-size: 20px; margin: 24px 0 12px; color: var(--dark); font-weight: 700; }
+h2 { font-size: 20px; margin: 24px 0 12px; color: var(--white); font-weight: 700; }
 
 button {
   padding: 14px 20px;
@@ -62,12 +62,12 @@ button {
 .btn-primary {
   background: var(--primary);
   color: var(--dark);
-  box-shadow: 0 4px 12px rgba(255, 200, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 230, 0, 0.3);
 }
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 200, 0, 0.4);
+  box-shadow: 0 6px 16px rgba(255, 230, 0, 0.4);
 }
 
 .btn-secondary {
@@ -101,10 +101,10 @@ input {
   padding: 14px 16px;
   width: 100%;
   margin: 8px 0 16px;
-  background: var(--white);
-  border: 2px solid var(--border);
+  background: var(--dark);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  color: var(--dark);
+  color: var(--white);
   font-size: 15px;
   font-family: 'Inter', sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -112,7 +112,7 @@ input {
 input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 200, 0, 0.15);
+  box-shadow: 0 0 0 2px rgba(255, 230, 0, 0.2);
 }
 input::placeholder { color: #9CA3AF; }
 
@@ -209,6 +209,20 @@ input::placeholder { color: #9CA3AF; }
   margin-left: 8px;
   vertical-align: middle;
 }
+
+/* ГРАФИТОВЫЙ БЛОК */
+.graphite-block {
+  background: var(--graphite);
+  padding: 32px 24px;
+  border-radius: 16px;
+  margin-top: -8px;
+}
+.graphite-block h2 {
+  color: var(--white);
+}
+.graphite-block p {
+  color: #D1D5DB;
+}
 </style>
 </head>
 <body>
@@ -225,11 +239,11 @@ input::placeholder { color: #9CA3AF; }
       <!-- Левая ветвь V — широкая, чёткая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V — сужается от широкого основания к узкому кончику (дорога в перспективе) -->
-      <polygon points="72,95 78,89 122,43 118,47" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — ТОЛЩЕ, соединяет ромб со стрелкой -->
+      <polygon points="70,95 80,89 125,43 115,47" fill="#1A1A1A"/>
       
-      <!-- Белая пунктирная разметка СТРОГО ПО ЦЕНТРУ сужающейся ветви -->
-      <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round"/>
+      <!-- Белая пунктирная разметка СТРОГО ПО ЦЕНТРУ -->
+      <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
       
       <!-- Стрелка на конце — острая, симметричная -->
       <polygon points="120,45 135,28 130,38 140,38 125,50" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
@@ -242,54 +256,57 @@ input::placeholder { color: #9CA3AF; }
     </svg>
   </div>
 
-  <div class="tabs">
-    <button class="tab" onclick="openAdmin()">АДМИН</button>
-    <button class="tab active" onclick="showStudent()">УЧЕНИК</button>
-  </div>
-
-  <div id="admin" class="hidden">
-    <h2>Добавить ученика</h2>
-    <input id="fio" placeholder="ФИО ученика">
-    <button class="btn-primary" onclick="addStudent()">Добавить в список</button>
-    <div class="divider"></div>
-    <h2>Допущенные <span class="badge" id="stCount">0</span></h2>
-    <div id="list"></div>
-    <div class="divider"></div>
-    <h2>Записи на экзамен <span class="badge" id="bkCount">0</span></h2>
-    <div id="book"></div>
-    <div class="divider"></div>
-    <button class="btn-secondary" onclick="logout()">Выйти из админки</button>
-  </div>
-
-  <div id="stu">
-    <div id="s1">
-      <div class="welcome">
-        <div class="welcome-icon"></div>
-        <h2>Запись на внутренний экзамен</h2>
-        <p style="color: var(--gray); margin-top: 8px;">Введите ФИО для проверки допуска к теории</p>
-      </div>
-      <input id="sfio" placeholder="Иванов Иван Иванович">
-      <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
+  <!-- ГРАФИТОВЫЙ БЛОК -->
+  <div class="graphite-block">
+    <div class="tabs">
+      <button class="tab" onclick="openAdmin()">АДМИН</button>
+      <button class="tab active" onclick="showStudent()">УЧЕНИК</button>
     </div>
 
-    <div id="s2" class="hidden">
-      <button class="btn-back" onclick="backToStart()" style="margin-bottom: 8px;">← Назад</button>
-      <h2>Выберите дату экзамена</h2>
-      <input type="date" id="sdate" onchange="renderSlots()">
-      <div id="sbox" class="hidden">
-        <h2>Доступное время</h2>
-        <div id="slots" class="slots"></div>
-        <button class="btn-primary" onclick="bookExam()" style="margin-top: 16px;">Записаться на экзамен</button>
-      </div>
+    <div id="admin" class="hidden">
+      <h2>Добавить ученика</h2>
+      <input id="fio" placeholder="ФИО ученика">
+      <button class="btn-primary" onclick="addStudent()">Добавить в список</button>
+      <div class="divider"></div>
+      <h2>Допущенные <span class="badge" id="stCount">0</span></h2>
+      <div id="list"></div>
+      <div class="divider"></div>
+      <h2>Записи на экзамен <span class="badge" id="bkCount">0</span></h2>
+      <div id="book"></div>
+      <div class="divider"></div>
+      <button class="btn-secondary" onclick="logout()">Выйти из админки</button>
     </div>
 
-    <div id="s3" class="hidden">
-      <div class="welcome">
-        <div class="welcome-icon">⚠️</div>
-        <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
-        <p style="color: var(--gray); margin-top: 8px;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
+    <div id="stu">
+      <div id="s1">
+        <div class="welcome">
+          <div class="welcome-icon"></div>
+          <h2>Запись на внутренний экзамен</h2>
+          <p style="margin-top: 8px;">Введите ФИО для проверки допуска к теории</p>
+        </div>
+        <input id="sfio" placeholder="Иванов Иван Иванович">
+        <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
       </div>
-      <button class="btn-back" onclick="backToStart()">Вернуться назад</button>
+
+      <div id="s2" class="hidden">
+        <button class="btn-back" onclick="backToStart()" style="margin-bottom: 8px;">← Назад</button>
+        <h2>Выберите дату экзамена</h2>
+        <input type="date" id="sdate" onchange="renderSlots()">
+        <div id="sbox" class="hidden">
+          <h2>Доступное время</h2>
+          <div id="slots" class="slots"></div>
+          <button class="btn-primary" onclick="bookExam()" style="margin-top: 16px;">Записаться на экзамен</button>
+        </div>
+      </div>
+
+      <div id="s3" class="hidden">
+        <div class="welcome">
+          <div class="welcome-icon">⚠️</div>
+          <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
+          <p style="margin-top: 8px;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
+        </div>
+        <button class="btn-back" onclick="backToStart()">Вернуться назад</button>
+      </div>
     </div>
   </div>
 </div>
