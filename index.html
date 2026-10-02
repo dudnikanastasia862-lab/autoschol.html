@@ -214,24 +214,23 @@ input::placeholder { color: #9CA3AF; }
 <div class="box">
   <div class="logo-wrap">
     <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- ЖЁЛТЫЙ РОМБ с закруглёнными углами -->
-      <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFD700" transform="rotate(45 75 75)"/>
+      <!-- ЧИСТЫЙ ЯРКИЙ ЖЁЛТЫЙ РОМБ с закруглёнными углами -->
+      <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
       
       <!-- ТОНКАЯ ЧЁРНАЯ РАМКА внутри ромба -->
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       
-      <!-- V-СТРЕЛКА: жирная, как дорожное полотно -->
-      <!-- Левая ветвь V (короткая, внутри ромба) -->
-      <line x1="75" y1="92" x2="52" y2="68" stroke="#1A1A1A" stroke-width="10" stroke-linecap="round"/>
+      <!-- V-СТРЕЛКА: левая ветвь широкая и чёткая -->
+      <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V (длинная, выходит за ромб — вектор со стрелкой) -->
-      <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="10" stroke-linecap="round"/>
+      <!-- V-СТРЕЛКА: правая ветвь сужается от широкого основания к узкому кончику (как дорога с перспективой) -->
+      <polygon points="75,92 82,92 132,38 128,38" fill="#1A1A1A"/>
       
       <!-- БЕЛАЯ ПУНКТИРНАЯ РАЗМЕТКА СТРОГО ПО ЦЕНТРУ правой ветви -->
-      <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="7,5" stroke-linecap="round"/>
+      <line x1="78" y1="92" x2="130" y2="38" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round"/>
       
-      <!-- СТРЕЛКА на конце правой ветви (треугольник) -->
-      <polygon points="130,35 120,43 133,46" fill="#1A1A1A"/>
+      <!-- СТРЕЛКА на конце правой ветви (острый треугольник) -->
+      <polygon points="130,35 122,44 135,42" fill="#1A1A1A"/>
       
       <!-- ТЕКСТ "ектор" — узкий вытянутый шрифт Oswald, буквы е и к заходят на ромб -->
       <text x="108" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-2">ектор</text>
@@ -284,7 +283,7 @@ input::placeholder { color: #9CA3AF; }
 
     <div id="s3" class="hidden">
       <div class="welcome">
-        <div class="welcome-icon">⚠️</div>
+        <div class="welcome-icon">️</div>
         <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
         <p style="color: var(--gray); margin-top: 8px;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
       </div>
