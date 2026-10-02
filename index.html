@@ -38,11 +38,10 @@ body {
 }
 
 .logo-wrap { text-align: center; margin-bottom: 24px; }
-.logo { width: 240px; height: auto; }
+.logo { width: 260px; height: auto; }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
 h2 { font-size: 20px; margin: 24px 0 12px; color: var(--dark); font-weight: 700; }
-h2.yellow { color: #D4A000; }
 
 button {
   padding: 14px 20px;
@@ -214,61 +213,37 @@ input::placeholder { color: #9CA3AF; }
   margin-left: 8px;
   vertical-align: middle;
 }
-
-/* ===== МАШИНА С МИГАЮЩИМИ ФАРАМИ ===== */
-.car-display {
-  margin-top: 24px;
-  text-align: center;
-  padding: 20px;
-  background: var(--light-gray);
-  border-radius: 16px;
-  border: 1px solid var(--border);
-}
-
-.car-svg {
-  width: 100%;
-  max-width: 320px;
-  height: auto;
-}
-
-.headlight-blink {
-  animation: blinkHeadlights 1s ease-in-out infinite;
-}
-
-@keyframes blinkHeadlights {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
 </style>
 </head>
 <body>
 
 <div class="box">
   <div class="logo-wrap">
-    <svg class="logo" viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
-      <!-- Желтый ромб с ровными краями -->
-      <rect x="10" y="15" width="75" height="75" rx="8" fill="#FFC800" transform="rotate(45 47 52)"/>
+    <svg class="logo" viewBox="0 0 300 130" xmlns="http://www.w3.org/2000/svg">
+      <!-- Желтый ромб -->
+      <rect x="10" y="15" width="80" height="80" rx="8" fill="#FFC800" transform="rotate(45 50 55)"/>
+      
       <!-- Тонкая черная рамка внутри ромба -->
-      <rect x="14" y="19" width="67" height="67" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2" transform="rotate(45 47.5 52.5)"/>
+      <rect x="15" y="20" width="70" height="70" rx="6" fill="none" stroke="#1A1A1A" stroke-width="1.5" transform="rotate(45 50 55)"/>
       
       <!-- Буква V -->
-      <!-- Левая ветвь V (простая) -->
-      <path d="M 28 68 L 45 42" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Левая ветка V (короткая, внутри ромба) -->
+      <path d="M 35 75 L 50 50" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       
-      <!-- Правая ветвь V с дорожной разметкой и стрелкой -->
-      <path d="M 45 42 L 62 18" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Правая ветка V (длинная, выходит за ромб, заканчивается стрелкой) -->
+      <path d="M 50 50 L 85 10" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       
-      <!-- Пунктирная разметка на правой ветви -->
-      <line x1="38" y1="58" x2="58" y2="28" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4,3"/>
+      <!-- Белая пунктирная разметка на правой ветке -->
+      <line x1="45" y1="58" x2="78" y2="20" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5,4"/>
       
-      <!-- Стрелка на конце правой ветви (выходит за ромб) -->
-      <path d="M 58 22 L 62 18 L 56 20 Z" fill="#1A1A1A"/>
+      <!-- Стрелка на конце правой ветки -->
+      <path d="M 78 15 L 85 10 L 80 20 Z" fill="#1A1A1A"/>
       
       <!-- Текст Vектор -->
-      <text x="95" y="65" font-size="42" font-weight="800" fill="#1A1A1A" font-family="Montserrat, sans-serif">Vектор</text>
+      <text x="105" y="70" font-size="44" font-weight="800" fill="#1A1A1A" font-family="Montserrat, sans-serif">Vектор</text>
       
       <!-- Текст СЕТЬ АВТОШКОЛ -->
-      <text x="130" y="85" font-size="14" fill="#6B7280" letter-spacing="2" font-family="Inter, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
+      <text x="140" y="92" font-size="14" fill="#6B7280" letter-spacing="2" font-family="Inter, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
@@ -300,84 +275,6 @@ input::placeholder { color: #9CA3AF; }
       </div>
       <input id="sfio" placeholder="Иванов Иван Иванович">
       <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
-      
-      <!-- МАШИНА С МИГАЮЩИМИ ФАРАМИ -->
-      <div class="car-display">
-        <svg class="car-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-          <!-- Тень -->
-          <ellipse cx="200" cy="185" rx="170" ry="12" fill="#000" opacity="0.2"/>
-          
-          <!-- Кузов Chery Tiggo (белый кроссовер) -->
-          <path d="M 40 120 Q 40 100 60 100 L 100 100 L 130 65 Q 145 50 170 50 L 290 50 Q 315 50 330 65 L 360 100 L 380 100 Q 390 100 390 120 L 390 140 Q 390 150 380 150 L 40 150 Q 30 150 30 140 L 30 125 Q 30 120 40 120 Z" 
-                fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1"/>
-          
-          <!-- Крыша -->
-          <path d="M 130 65 Q 145 50 170 50 L 290 50 Q 315 50 330 65 L 340 80 L 120 80 Z" fill="#F3F4F6"/>
-          
-          <!-- Лобовое стекло -->
-          <path d="M 145 55 L 170 52 L 285 52 L 310 55 L 320 78 L 140 78 Z" fill="#3B82F6" opacity="0.7"/>
-          
-          <!-- Боковые окна -->
-          <rect x="150" y="58" width="55" height="20" rx="3" fill="#3B82F6" opacity="0.6"/>
-          <rect x="215" y="58" width="65" height="20" rx="3" fill="#3B82F6" opacity="0.6"/>
-          
-          <!-- Заднее окно -->
-          <path d="M 130 68 L 145 60 L 140 78 L 128 78 Z" fill="#3B82F6" opacity="0.5"/>
-          
-          <!-- Передние фары (мигающие) -->
-          <ellipse cx="375" cy="115" rx="8" ry="10" fill="#FEF08A" class="headlight-blink"/>
-          <ellipse cx="375" cy="115" rx="14" ry="16" fill="#FEF08A" opacity="0.4" class="headlight-blink"/>
-          
-          <!-- Лучи фар -->
-          <polygon points="383,108 420,95 420,135 383,122" fill="#FEF08A" opacity="0.3" class="headlight-blink"/>
-          
-          <!-- Задние фонари -->
-          <rect x="32" y="110" width="8" height="15" rx="2" fill="#EF4444" class="headlight-blink"/>
-          
-          <!-- Колеса -->
-          <circle cx="90" cy="155" r="28" fill="#1F2937"/>
-          <circle cx="90" cy="155" r="18" fill="#4B5563"/>
-          <circle cx="90" cy="155" r="8" fill="#9CA3AF"/>
-          <!-- Спицы колеса -->
-          <line x1="90" y1="137" x2="90" y2="173" stroke="#D1D5DB" stroke-width="3"/>
-          <line x1="72" y1="155" x2="108" y2="155" stroke="#D1D5DB" stroke-width="3"/>
-          <line x1="77" y1="142" x2="103" y2="168" stroke="#D1D5DB" stroke-width="2.5"/>
-          <line x1="77" y1="168" x2="103" y2="142" stroke="#D1D5DB" stroke-width="2.5"/>
-          
-          <circle cx="310" cy="155" r="28" fill="#1F2937"/>
-          <circle cx="310" cy="155" r="18" fill="#4B5563"/>
-          <circle cx="310" cy="155" r="8" fill="#9CA3AF"/>
-          <!-- Спицы колеса -->
-          <line x1="310" y1="137" x2="310" y2="173" stroke="#D1D5DB" stroke-width="3"/>
-          <line x1="292" y1="155" x2="328" y2="155" stroke="#D1D5DB" stroke-width="3"/>
-          <line x1="297" y1="142" x2="323" y2="168" stroke="#D1D5DB" stroke-width="2.5"/>
-          <line x1="297" y1="168" x2="323" y2="142" stroke="#D1D5DB" stroke-width="2.5"/>
-          
-          <!-- Бампер передний -->
-          <rect x="375" y="130" width="15" height="12" rx="3" fill="#E5E7EB"/>
-          
-          <!-- Бампер задний -->
-          <rect x="30" y="130" width="12" height="12" rx="3" fill="#E5E7EB"/>
-          
-          <!-- Зеркала -->
-          <ellipse cx="125" cy="92" rx="8" ry="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="0.5"/>
-          <ellipse cx="335" cy="92" rx="8" ry="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="0.5"/>
-          
-          <!-- Дверные ручки -->
-          <rect x="185" y="92" width="18" height="4" rx="2" fill="#D1D5DB"/>
-          <rect x="255" y="92" width="18" height="4" rx="2" fill="#D1D5DB"/>
-          
-          <!-- Логотип на капоте (ромб) -->
-          <rect x="245" y="72" width="18" height="18" rx="3" fill="#FFC800" transform="rotate(45 254 81)"/>
-          <path d="M 248 86 L 254 78 L 257 82 L 263 72" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          
-          <!-- Решетка радиатора -->
-          <rect x="365" y="115" width="12" height="20" rx="2" fill="#1F2937"/>
-          <line x1="368" y1="118" x2="374" y2="118" stroke="#4B5563" stroke-width="1.5"/>
-          <line x1="368" y1="123" x2="374" y2="123" stroke="#4B5563" stroke-width="1.5"/>
-          <line x1="368" y1="128" x2="374" y2="128" stroke="#4B5563" stroke-width="1.5"/>
-        </svg>
-      </div>
     </div>
 
     <div id="s2" class="hidden">
