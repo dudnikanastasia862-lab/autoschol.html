@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Вектор — Запись на экзамен</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary: #FFE600;
@@ -26,7 +26,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: var(--light-gray);
   color: var(--dark);
-  padding: 20px;
+  padding: 0;
   min-height: 100vh;
   line-height: 1.5;
 }
@@ -35,21 +35,24 @@ body {
   max-width: 500px;
   margin: 0 auto;
   background: var(--white);
-  padding: 32px 24px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .logo-wrap { 
-  text-align: left; 
+  text-align: center; 
   margin-bottom: 16px;
-  padding-left: 0;
+  padding: 20px 0 10px;
 }
 
 .logo { 
-  width: 200px;
+  width: 140px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
@@ -152,23 +155,27 @@ select option {
   padding: 20px;
   background: var(--graphite);
   color: var(--white);
-  border: none;
+  border: 2px solid var(--dark);
   border-radius: 12px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
 }
-.role-btn:hover {
-  background: var(--dark);
+.role-btn:hover, .role-btn:active {
+  background: var(--primary);
+  color: var(--dark);
   transform: translateY(-2px);
 }
 
 .car-image {
-  margin-top: 24px;
+  margin-top: 0;
   text-align: center;
   padding: 0 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .car-image img {
@@ -176,7 +183,6 @@ select option {
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  /* Плавное размытие по краям — маска с градиентом */
   -webkit-mask-image: 
     linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
@@ -242,6 +248,7 @@ select option {
   background: var(--graphite);
   padding: 32px 24px;
   border-radius: 16px;
+  margin: 0 16px;
 }
 .graphite-block h2 {
   color: var(--white);
@@ -261,6 +268,64 @@ select option {
 
 .page { display: none; }
 .page.active { display: block; }
+
+/* Главная страница — желтый фон сверху */
+#page-main {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#page-main.active {
+  display: flex;
+}
+
+.main-yellow-top {
+  background: var(--primary);
+  padding: 30px 20px 60px;
+  text-align: center;
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+
+.main-yellow-top .logo {
+  width: 130px;
+}
+
+.main-center-block {
+  background: var(--graphite);
+  margin: -30px 20px 20px;
+  padding: 32px 24px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.main-center-block .welcome h2 {
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.main-center-block .welcome p {
+  color: #D1D5DB;
+  font-size: 15px;
+}
+
+.main-car-section {
+  padding: 0 8px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.main-car-section img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
 
 .calendar-container {
   background: var(--dark);
@@ -523,13 +588,13 @@ select option {
 <body>
 
 <div class="box">
-  <div class="logo-wrap">
-    <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
-  </div>
 
-  <div class="graphite-block">
-    <!-- Главная страница -->
-    <div id="page-main" class="page active">
+  <!-- Главная страница -->
+  <div id="page-main" class="page active">
+    <div class="main-yellow-top">
+      <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+    </div>
+    <div class="main-center-block">
       <div class="welcome">
         <h2>Добро пожаловать!</h2>
         <p>Выберите вашу роль</p>
@@ -539,9 +604,14 @@ select option {
         <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
       </div>
     </div>
+    <div class="main-car-section">
+      <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
+    </div>
+  </div>
 
-    <!-- Страница админа -->
-    <div id="page-admin" class="page">
+  <!-- Страница админа -->
+  <div id="page-admin" class="page">
+    <div class="graphite-block">
       <h2>Панель администратора</h2>
       
       <div class="admin-section">
@@ -573,9 +643,11 @@ select option {
 
       <button class="btn-secondary" onclick="saveAndExit()">💾 Сохранить и выйти</button>
     </div>
+  </div>
 
-    <!-- Страница ученика: ввод ФИО -->
-    <div id="page-student-input" class="page">
+  <!-- Страница ученика: ввод ФИО -->
+  <div id="page-student-input" class="page">
+    <div class="graphite-block">
       <button class="btn-back" onclick="showMain()" style="margin-bottom: 16px;">← Назад</button>
       <div class="welcome">
         <h2>Запись на внутренний экзамен</h2>
@@ -584,9 +656,11 @@ select option {
       <input id="sfio" placeholder="Иванов Иван Иванович">
       <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
     </div>
+  </div>
 
-    <!-- Страница ученика: календарь -->
-    <div id="page-student-calendar" class="page">
+  <!-- Страница ученика: календарь -->
+  <div id="page-student-calendar" class="page">
+    <div class="graphite-block">
       <button class="btn-back" onclick="backToStudentInput()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Выберите дату экзамена</h2>
       
@@ -610,9 +684,11 @@ select option {
         <button class="btn-primary" onclick="showConfirmation()" style="margin-top:24px;">Сохранить</button>
       </div>
     </div>
+  </div>
 
-    <!-- Страница ученика: подтверждение -->
-    <div id="page-student-confirm" class="page">
+  <!-- Страница ученика: подтверждение -->
+  <div id="page-student-confirm" class="page">
+    <div class="graphite-block">
       <button class="btn-back" onclick="backToCalendar()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Подтвердите запись</h2>
       
@@ -637,11 +713,13 @@ select option {
 
       <button class="btn-primary" onclick="confirmBooking()">Подтвердить</button>
     </div>
+  </div>
 
-    <!-- Отказ в допуске -->
-    <div id="page-denied" class="page">
+  <!-- Отказ в допуске -->
+  <div id="page-denied" class="page">
+    <div class="graphite-block">
       <div class="welcome">
-        <div class="welcome-icon">️</div>
+        <div class="welcome-icon">⚠️</div>
         <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
         <p>Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
       </div>
@@ -649,10 +727,6 @@ select option {
     </div>
   </div>
 
-  <!-- Фото машины ПОД серой формой с размытием по краям -->
-  <div class="car-image">
-    <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
-  </div>
 </div>
 
 <!-- Модальное окно пароля -->
