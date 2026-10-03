@@ -230,7 +230,6 @@ input::placeholder { color: #9CA3AF; }
 .page { display: none; }
 .page.active { display: block; }
 
-/* Calendar styles */
 .calendar-container {
   background: var(--dark);
   border: 2px solid var(--primary);
@@ -317,7 +316,6 @@ input::placeholder { color: #9CA3AF; }
   font-weight: 700;
 }
 
-/* Time slots */
 .time-slots-container {
   background: var(--dark);
   border-radius: 12px;
@@ -464,7 +462,7 @@ input::placeholder { color: #9CA3AF; }
 
 <div class="box">
   <div class="logo-wrap">
-    <img class="logo" src="https://files.catbox.moe/5s76jk.png" alt="Вектор логотип">
+    <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
   </div>
 
   <div class="graphite-block">
@@ -480,7 +478,7 @@ input::placeholder { color: #9CA3AF; }
       </div>
       
       <div class="car-image">
-        <img src="https://files.catbox.moe/x19mkv.png" alt="Автомобиль автошколы Вектор">
+        <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
       </div>
     </div>
 
@@ -497,14 +495,14 @@ input::placeholder { color: #9CA3AF; }
       <div class="divider"></div>
 
       <div class="admin-section">
-        <h3> Допущенные ученики <span class="badge" id="stCount">0</span></h3>
+        <h3>Допущенные ученики <span class="badge" id="stCount">0</span></h3>
         <div id="studentList"><div class="loading">Загрузка...</div></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="admin-section">
-        <h3> Записи на экзамен <span class="badge" id="bkCount">0</span></h3>
+        <h3>Записи на экзамен <span class="badge" id="bkCount">0</span></h3>
         <div id="bookingList"><div class="loading">Загрузка...</div></div>
       </div>
 
@@ -614,7 +612,7 @@ input::placeholder { color: #9CA3AF; }
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Firebase config
 const firebaseConfig = {
@@ -724,11 +722,9 @@ window.delBooking = async function(id) {
 
 window.renderAdmin = async function() {
   try {
-    // Get students
     const studentsSnapshot = await getDocs(studentsRef);
     const students = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    // Get bookings
     const bookingsSnapshot = await getDocs(bookingsRef);
     const bookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
@@ -785,7 +781,6 @@ window.checkStudent = async function() {
     const studentDoc = querySnapshot.docs[0];
     curStudent = { id: studentDoc.id, ...studentDoc.data() };
     
-    // Check if already booked
     const q2 = query(bookingsRef, where('fio', '==', curStudent.fio));
     const bookingsSnapshot = await getDocs(q2);
     
@@ -980,14 +975,12 @@ window.confirmBooking = async function() {
   var dateStr = selectedDate.toISOString().split('T')[0];
   
   try {
-    // Delete old booking if exists
     const q = query(bookingsRef, where('fio', '==', curStudent.fio));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
       await deleteDoc(doc.ref);
     });
     
-    // Add new booking
     await addDoc(bookingsRef, {
       fio: curStudent.fio,
       date: dateStr,
