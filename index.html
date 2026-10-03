@@ -227,6 +227,14 @@ input::placeholder { color: #9CA3AF; }
   margin-top: 8px;
   font-size: 15px;
 }
+.date-hint {
+  color: #9CA3AF;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 16px;
+  display: block;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -234,28 +242,13 @@ input::placeholder { color: #9CA3AF; }
 <div class="box">
   <div class="logo-wrap">
     <svg class="logo" viewBox="0 0 420 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- Жёлтый ромб с закруглёнными углами -->
       <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
-      
-      <!-- Тонкая чёрная рамка внутри ромба -->
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
-      
-      <!-- Жирная буква V: левая ветвь -->
       <line x1="50" y1="66" x2="75" y2="92" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
-      
-      <!-- Жирная буква V: правая ветвь (выходит за ромб) -->
       <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
-      
-      <!-- Белая пунктирная разметка посередине правой ветви -->
       <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
-      
-      <!-- Наконечник стрелки на конце правой ветви -->
       <polygon points="130,35 145,20 137,33 145,42" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
-      
-      <!-- Текст "ектор" -->
       <text x="148" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
-      
-      <!-- Текст "СЕТЬ АВТОШКОЛ" -->
       <text x="153" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
@@ -295,6 +288,7 @@ input::placeholder { color: #9CA3AF; }
         <button class="btn-back" onclick="backToStart()" style="margin-bottom: 8px;">← Назад</button>
         <h2>Выберите дату экзамена</h2>
         <input type="date" id="sdate" onchange="renderSlots()">
+        <span class="date-hint">Доступные дни: Вторник, Четверг, Пятница</span>
         <div id="sbox" class="hidden">
           <h2>Доступное время</h2>
           <div id="slots" class="slots"></div>
@@ -457,11 +451,30 @@ function backToStart() {
 
 function renderSlots() {
   var d = document.getElementById('sdate').value;
+  if (!d) return;
+  
+  // Проверка дня недели: 0=Вс, 1=Пн, 2=Вт, 3=Ср, 4=Чт, 5=Пт, 6=Сб
+  var parts = d.split('-');
+  var dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+  var day = dateObj.getDay();
+  
+  if (day !== 2 && day !== 4 && day !== 5) {
+    alert("Запись на теорию возможна только во Вторник, Четверг и Пятницу!");
+    document.getElementById('sdate').value = '';
+    document.getElementById('sbox').classList.add('hidden');
+    return;
+  }
+
   var busy = {};
-  for (var i = 0; i < bookings.length; i++) { if (bookings[i].date === d) busy[bookings[i].time] = true; }
+  for (var i = 0; i < bookings.length; i++) { 
+    if (bookings[i].date === d) busy[bookings[i].time] = true; 
+  }
+  
   var h = '';
-  for (var hr = 9; hr < 18; hr++) {
-    for (var mn = 0; mn < 60; mn += 15) {
+  // Строго с 9:00 до 12:00 с интервалом 15 минут
+  for (var hr = 9; hr <= 12; hr++) {
+    var maxMin = (hr === 12) ? 0 : 45; // В 12:00 только один слот
+    for (var mn = 0; mn <= maxMin; mn += 15) {
       var t = (hr < 10 ? '0' : '') + hr + ':' + (mn < 10 ? '0' : '') + mn;
       var c = busy[t] ? 'slot busy' : 'slot';
       h += '<div class="' + c + '" onclick="pickSlot(this,\'' + t + '\')">' + t + '</div>';
@@ -473,6 +486,7 @@ function renderSlots() {
 }
 
 function pickSlot(el, t) {
+  if (el.classList.contains('busy')) return;
   var all = document.querySelectorAll('.slot');
   for (var i = 0; i < all.length; i++) all[i].classList.remove('sel');
   el.classList.add('sel');
@@ -489,10 +503,26 @@ function bookExam() {
 
 function confirmBook() {
   var d = document.getElementById('sdate').value;
+  var dd = new Date(d).toLocaleDateString('ru-RU');
+  
+  // 1. Сохраняем запись
   bookings.push({id: Date.now(), fio: curStudent.fio, date: d, time: selTime});
   save();
+  
+  // 2. Формируем текст для мессенджера
+  var msg = "🚗 Новая запись на экзамен (теория)\n👤 Ученик: " + curStudent.fio + "\n📅 Дата: " + dd + "\n⏰ Время: " + selTime;
+  
+  // 3. Копируем в буфер обмена и открываем чат
+  navigator.clipboard.writeText(msg).then(function() {
+    window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
+    alert("✅ Вы успешно записаны!\n\nТекст уведомления скопирован в буфер обмена.\nСейчас откроется чат в Мессенджере Макс. Просто вставьте текст (Ctrl+V или долгое нажатие) и отправьте.");
+  }).catch(function() {
+    // Запасной вариант, если браузер блокирует копирование
+    window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
+    alert("✅ Вы успешно записаны!\n\nОткройте чат в Мессенджере Макс и отправьте следующие данные:\n\n" + msg);
+  });
+
   document.getElementById('conf').classList.add('hidden');
-  alert('✅ Вы успешно записаны на экзамен!\n\nУведомление отправлено менеджеру.');
   showStudent();
 }
 
