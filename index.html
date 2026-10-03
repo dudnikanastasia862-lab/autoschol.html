@@ -92,6 +92,7 @@ body {
 .stripe-container-top { top: 0; }
 .stripe-container-bottom { bottom: 0; }
 
+/* Чёрная полоса — идёт первой */
 .stripe-black {
   position: absolute;
   height: 5px;
@@ -100,19 +101,20 @@ body {
 }
 
 .stripe-container-top .stripe-black {
-  top: 54%;
+  top: 57%;
   left: 100%;
   transform: rotate(-7.5deg);
-  animation: stripeMove 6s ease-in-out infinite;
+  animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
 .stripe-container-bottom .stripe-black {
-  bottom: 54%;
+  bottom: 57%;
   left: 100%;
   transform: rotate(7.5deg);
-  animation: stripeMove 6s ease-in-out infinite;
+  animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
+/* Жёлтая полоса — догоняет чёрную */
 .stripe-yellow {
   position: absolute;
   height: 6px;
@@ -122,26 +124,34 @@ body {
 }
 
 .stripe-container-top .stripe-yellow {
-  top: 61%;
+  top: 60%;
   left: 100%;
   transform: rotate(-7.5deg);
-  animation: stripeMove 6s ease-in-out infinite;
-  animation-delay: 0.3s;
+  animation: stripeMoveYellow 5s ease-in-out infinite;
+  animation-delay: 0.4s;
 }
 
 .stripe-container-bottom .stripe-yellow {
-  bottom: 61%;
+  bottom: 60%;
   left: 100%;
   transform: rotate(7.5deg);
-  animation: stripeMove 6s ease-in-out infinite;
-  animation-delay: 0.3s;
+  animation: stripeMoveYellow 5s ease-in-out infinite;
+  animation-delay: 0.4s;
 }
 
-@keyframes stripeMove {
+@keyframes stripeMoveBlack {
   0% { left: 100%; }
-  35% { left: -150%; }
-  55% { left: -150%; }
-  90% { left: 100%; }
+  30% { left: -150%; }
+  50% { left: -150%; }
+  85% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes stripeMoveYellow {
+  0% { left: 100%; }
+  30% { left: -150%; }
+  50% { left: -150%; }
+  85% { left: 100%; }
   100% { left: 100%; }
 }
 
@@ -317,13 +327,6 @@ select option {
   height: 35px;
   bottom: 42%;
   left: 55%;
-}
-
-.car-headlight.right {
-  width: 35px;
-  height: 22px;
-  bottom: 40%;
-  right: 15%;
 }
 
 @keyframes headlightBlink {
@@ -709,7 +712,6 @@ select option {
         <div class="car-image">
           <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Авто">
           <div class="car-headlight left"></div>
-          <div class="car-headlight right"></div>
         </div>
       </div>
     </div>
@@ -845,7 +847,7 @@ select option {
         <div class="detail"><strong>Дата</strong><span id="confirmDate"></span></div>
         <div class="detail"><strong>Время</strong><span id="confirmTime"></span></div>
       </div>
-      <div class="screenshot-hint"> Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
+      <div class="screenshot-hint">📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
       <button class="btn-primary" onclick="confirmBooking()">Подтвердить</button>
     </div>
   </div>
@@ -1248,13 +1250,13 @@ window.toggleTodayBookings = async function() {
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     if (bookings.length === 0) {
-      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
+      container.innerHTML = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
       return;
     }
     
     bookings.sort((a, b) => a.time.localeCompare(b.time));
     
-    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
+    var html = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
     for (var i = 0; i < bookings.length; i++) {
       var b = bookings[i];
       var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
