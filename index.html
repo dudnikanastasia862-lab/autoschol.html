@@ -92,7 +92,6 @@ body {
 .stripe-container-top { top: 0; }
 .stripe-container-bottom { bottom: 0; }
 
-/* Чёрная полоса — идёт первой */
 .stripe-black {
   position: absolute;
   height: 5px;
@@ -101,20 +100,19 @@ body {
 }
 
 .stripe-container-top .stripe-black {
-  top: 57%;
+  top: 55%;
   left: 100%;
-  transform: rotate(-7.5deg);
+  transform: rotate(-22deg);
   animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
 .stripe-container-bottom .stripe-black {
-  bottom: 57%;
+  bottom: 55%;
   left: 100%;
-  transform: rotate(7.5deg);
+  transform: rotate(22deg);
   animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
-/* Жёлтая полоса — догоняет чёрную */
 .stripe-yellow {
   position: absolute;
   height: 6px;
@@ -124,17 +122,17 @@ body {
 }
 
 .stripe-container-top .stripe-yellow {
-  top: 60%;
+  top: 62%;
   left: 100%;
-  transform: rotate(-7.5deg);
+  transform: rotate(-22deg);
   animation: stripeMoveYellow 5s ease-in-out infinite;
   animation-delay: 0.4s;
 }
 
 .stripe-container-bottom .stripe-yellow {
-  bottom: 60%;
+  bottom: 62%;
   left: 100%;
-  transform: rotate(7.5deg);
+  transform: rotate(22deg);
   animation: stripeMoveYellow 5s ease-in-out infinite;
   animation-delay: 0.4s;
 }
@@ -692,7 +690,6 @@ select option {
     <div class="stripe-yellow"></div>
   </div>
 
-  <!-- Главная -->
   <div id="page-main" class="page active">
     <div class="main-content">
       <div class="main-logo-section">
@@ -717,7 +714,6 @@ select option {
     </div>
   </div>
 
-  <!-- Админ -->
   <div id="page-admin" class="page">
     <div class="page-logo">
       <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор">
@@ -791,7 +787,6 @@ select option {
     </div>
   </div>
 
-  <!-- Ученик: ввод ФИО -->
   <div id="page-student-input" class="page">
     <div class="page-logo">
       <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор">
@@ -805,7 +800,6 @@ select option {
     </div>
   </div>
 
-  <!-- Ученик: календарь -->
   <div id="page-student-calendar" class="page">
     <div class="page-logo">
       <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор">
@@ -834,7 +828,6 @@ select option {
     </div>
   </div>
 
-  <!-- Ученик: подтверждение -->
   <div id="page-student-confirm" class="page">
     <div class="page-logo">
       <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор">
@@ -852,7 +845,6 @@ select option {
     </div>
   </div>
 
-  <!-- Отказ -->
   <div id="page-denied" class="page">
     <div class="page-logo">
       <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор">
@@ -868,7 +860,6 @@ select option {
   </div>
 </div>
 
-<!-- Модальное окно пароля -->
 <div id="pwd-modal" class="modal hidden">
   <div class="modal-box">
     <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор" style="margin-bottom: 16px;">
@@ -881,7 +872,6 @@ select option {
   </div>
 </div>
 
-<!-- Модальное окно существующей записи -->
 <div id="existing-modal" class="modal hidden">
   <div class="modal-box">
     <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор" style="margin-bottom: 16px;">
@@ -1256,7 +1246,7 @@ window.toggleTodayBookings = async function() {
     
     bookings.sort((a, b) => a.time.localeCompare(b.time));
     
-    var html = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
+    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
     for (var i = 0; i < bookings.length; i++) {
       var b = bookings[i];
       var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
