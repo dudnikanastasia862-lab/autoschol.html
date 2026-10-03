@@ -396,8 +396,8 @@ input::placeholder { color: #9CA3AF; }
       <line x1="50" y1="66" x2="75" y2="92" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
       <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
       <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
-      <!-- Острый треугольный наконечник стрелы, направленный вверх -->
-      <polygon points="130,35 140,15 145,38" fill="#1A1A1A"/>
+      <!-- Черный треугольный наконечник стрелы, направленный вверх -->
+      <polygon points="130,35 122,45 130,42 138,42" fill="#1A1A1A"/>
       <text x="148" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       <text x="153" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
@@ -648,7 +648,6 @@ function backToStart() {
 function backToTimeSelection() {
   showPage('page2');
   if (tempBooking) {
-    // Удаляем временную запись если была
     bookings = bookings.filter(b => b.id !== tempBooking.id);
     save();
     tempBooking = null;
@@ -684,7 +683,7 @@ function renderCalendar() {
   
   var firstDay = new Date(year, month, 1);
   var lastDay = new Date(year, month + 1, 0);
-  var startDayOfWeek = firstDay.getDay() || 7; // 1-7 (Mon-Sun)
+  var startDayOfWeek = firstDay.getDay() || 7;
   
   var grid = '<div class="calendar-day-name">Пн</div>';
   grid += '<div class="calendar-day-name">Вт</div>';
@@ -694,16 +693,14 @@ function renderCalendar() {
   grid += '<div class="calendar-day-name">Сб</div>';
   grid += '<div class="calendar-day-name">Вс</div>';
   
-  // Empty cells before first day
   for (var i = 1; i < startDayOfWeek; i++) {
     grid += '<div></div>';
   }
   
-  // Days
   for (var day = 1; day <= lastDay.getDate(); day++) {
     var date = new Date(year, month, day);
-    var dayOfWeek = date.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    var isAllowed = (dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5); // Tue, Thu, Fri
+    var dayOfWeek = date.getDay();
+    var isAllowed = (dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5);
     var isToday = new Date().toDateString() === date.toDateString();
     var isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
     
@@ -735,7 +732,6 @@ function renderTimeSlots() {
   var dateStr = selectedDate.toISOString().split('T')[0];
   var html = '';
   
-  // Generate slots from 9:15 to 12:00 with 15 min intervals
   for (var hour = 9; hour <= 12; hour++) {
     for (var min = (hour === 9 ? 15 : 0); min < 60 && !(hour === 12 && min > 0); min += 15) {
       var timeStr = String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
@@ -760,7 +756,6 @@ function renderTimeSlots() {
 }
 
 function selectTime(time) {
-  // Remove previous selection
   if (selectedTime) {
     document.querySelectorAll('.time-slot').forEach(slot => {
       if (slot.querySelector('.time').textContent === selectedTime) {
@@ -771,7 +766,6 @@ function selectTime(time) {
   
   selectedTime = time;
   
-  // Add selection
   document.querySelectorAll('.time-slot').forEach(slot => {
     if (slot.querySelector('.time').textContent === time) {
       slot.classList.add('selected');
@@ -785,14 +779,12 @@ function showConfirmation() {
     return;
   }
   
-  // Remove previous temp booking if exists
   if (tempBooking) {
     bookings = bookings.filter(b => b.id !== tempBooking.id);
   }
   
   var dateStr = selectedDate.toISOString().split('T')[0];
   
-  // Create temp booking
   tempBooking = {
     id: Date.now(),
     fio: curStudent.fio,
@@ -800,7 +792,6 @@ function showConfirmation() {
     time: selectedTime
   };
   
-  // Show confirmation page
   document.getElementById('confirmFio').textContent = curStudent.fio;
   document.getElementById('confirmDate').textContent = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('confirmTime').textContent = selectedTime;
@@ -811,25 +802,24 @@ function showConfirmation() {
 function confirmBooking() {
   if (!tempBooking) return;
   
-  // Save booking
   bookings.push(tempBooking);
   save();
   
-  // Prepare message for messenger
-  var msg = "🚗 Новая запись на экзамен (теория)\n👤 Ученик: " + tempBooking.fio + "\n📅 Дата: " + new Date(tempBooking.date).toLocaleDateString('ru-RU') + "\n⏰ Время: " + tempBooking.time;
+  // Формируем сообщение для Мессенджера Макс
+  var msg = "🚗 Новая запись на экзамен (теория)\n\n👤 Ученик: " + tempBooking.fio + "\n📅 Дата: " + new Date(tempBooking.date).toLocaleDateString('ru-RU') + "\n⏰ Время: " + tempBooking.time;
   
-  // Copy to clipboard and open messenger
+  // Копируем в буфер обмена и открываем Мессенджер Макс
   if (navigator.clipboard) {
     navigator.clipboard.writeText(msg).then(function() {
       window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-      alert("✅ Запись сохранена!\n\nТекст скопирован в буфер обмена. Откройте Мессенджер Макс и вставьте сообщение (Ctrl+V).");
+      alert("✅ Запись подтверждена!\n\nСообщение скопировано в буфер обмена.\nОткройте Мессенджер Макс и вставьте текст (Ctrl+V или долгое нажатие).");
     }).catch(function() {
       window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-      alert("✅ Запись сохранена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
+      alert("✅ Запись подтверждена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
     });
   } else {
     window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-    alert("✅ Запись сохранена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
+    alert("✅ Запись подтверждена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
   }
   
   tempBooking = null;
