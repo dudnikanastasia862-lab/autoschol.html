@@ -16,6 +16,8 @@
   --white: #FFFFFF;
   --danger: #EF4444;
   --graphite: #4B5563;
+  --vip-gold: #FFD700;
+  --standard-silver: #C0C0C0;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -120,6 +122,23 @@ input:focus {
 }
 input::placeholder { color: #9CA3AF; }
 
+select {
+  padding: 14px 16px;
+  width: 100%;
+  margin: 8px 0 16px;
+  background: var(--dark);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: var(--white);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+select option {
+  background: var(--dark);
+  color: var(--white);
+}
+
 .role-buttons {
   display: flex;
   gap: 16px;
@@ -144,7 +163,7 @@ input::placeholder { color: #9CA3AF; }
 }
 
 .car-image {
-  margin-top: 32px;
+  margin-top: 24px;
   text-align: center;
 }
 
@@ -204,6 +223,16 @@ input::placeholder { color: #9CA3AF; }
   font-weight: 700;
   margin-left: 8px;
   vertical-align: middle;
+}
+
+.badge-vip {
+  background: var(--vip-gold);
+  color: var(--dark);
+}
+
+.badge-standard {
+  background: var(--standard-silver);
+  color: var(--dark);
 }
 
 .graphite-block {
@@ -437,11 +466,14 @@ input::placeholder { color: #9CA3AF; }
   justify-content: space-between;
   align-items: center;
   color: var(--white);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .admin-item .name {
   flex: 1;
   font-weight: 500;
+  min-width: 150px;
 }
 
 .admin-item .info {
@@ -450,11 +482,38 @@ input::placeholder { color: #9CA3AF; }
   margin-right: 12px;
 }
 
+.admin-item .type-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
+.type-vip {
+  background: var(--vip-gold);
+  color: var(--dark);
+}
+
+.type-standard {
+  background: var(--standard-silver);
+  color: var(--dark);
+}
+
 .loading {
   text-align: center;
   color: var(--primary);
   padding: 20px;
   font-size: 14px;
+}
+
+.form-label {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
 }
 </style>
 </head>
@@ -476,10 +535,6 @@ input::placeholder { color: #9CA3AF; }
         <button class="role-btn" onclick="openAdmin()">АДМИН</button>
         <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
       </div>
-      
-      <div class="car-image">
-        <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
-      </div>
     </div>
 
     <!-- Страница админа -->
@@ -489,6 +544,11 @@ input::placeholder { color: #9CA3AF; }
       <div class="admin-section">
         <h3>➕ Добавить ученика</h3>
         <input id="fio" placeholder="ФИО ученика">
+        <label class="form-label">Тип обучения:</label>
+        <select id="studentType">
+          <option value="standard">Standard</option>
+          <option value="vip">VIP</option>
+        </select>
         <button class="btn-primary" onclick="addStudent()">Добавить</button>
       </div>
 
@@ -585,6 +645,11 @@ input::placeholder { color: #9CA3AF; }
       <button class="btn-back" onclick="showMain()">Вернуться на главную</button>
     </div>
   </div>
+
+  <!-- Фото машины ПОД серой формой -->
+  <div class="car-image">
+    <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
+  </div>
 </div>
 
 <!-- Модальное окно пароля -->
@@ -614,7 +679,6 @@ input::placeholder { color: #9CA3AF; }
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD34YA1pjOHwseGYvVGX733vlL3-yz2JCA",
   authDomain: "autoscool-vektor.firebaseapp.com",
@@ -625,15 +689,12 @@ const firebaseConfig = {
   measurementId: "G-41R6E85YH8"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Collections
 const studentsRef = collection(db, 'students');
 const bookingsRef = collection(db, 'bookings');
 
-// Global variables
 let curStudent = null;
 let selectedDate = null;
 let selectedTime = null;
@@ -642,7 +703,6 @@ let calendarOpen = false;
 
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-// Page navigation
 window.showPage = function(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
@@ -652,7 +712,6 @@ window.showMain = function() {
   showPage('page-main');
 };
 
-// Admin functions
 window.openAdmin = function() {
   document.getElementById('pwd-modal').classList.remove('hidden');
   document.getElementById('pw').value = '';
@@ -675,6 +734,7 @@ window.closePwd = function() {
 
 window.addStudent = async function() {
   var f = document.getElementById('fio').value.trim();
+  var type = document.getElementById('studentType').value;
   if (!f) { alert('Введите ФИО'); return; }
   
   try {
@@ -686,10 +746,11 @@ window.addStudent = async function() {
       return;
     }
     
-    await addDoc(studentsRef, { fio: f, createdAt: new Date() });
+    await addDoc(studentsRef, { fio: f, type: type, createdAt: new Date() });
     document.getElementById('fio').value = '';
+    document.getElementById('studentType').value = 'standard';
     await renderAdmin();
-    alert('Ученик успешно добавлен');
+    alert('Ученик успешно добавлен (' + type.toUpperCase() + ')');
   } catch (error) {
     console.error('Error adding student:', error);
     alert('Ошибка при добавлении ученика');
@@ -733,14 +794,20 @@ window.renderAdmin = async function() {
     
     var h = '';
     for (var i = 0; i < students.length; i++) {
-      h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><button class="btn-danger" onclick="delStudent(\'' + students[i].id + '\')">Удалить</button></div>';
+      var type = students[i].type || 'standard';
+      var typeLabel = type === 'vip' ? 'VIP' : 'Standard';
+      var typeClass = type === 'vip' ? 'type-vip' : 'type-standard';
+      h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><span class="type-badge ' + typeClass + '">' + typeLabel + '</span><button class="btn-danger" onclick="delStudent(\'' + students[i].id + '\')">Удалить</button></div>';
     }
     document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
     
     var h2 = '';
     for (var j = 0; j < bookings.length; j++) {
       var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
-      h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(\'' + bookings[j].id + '\')">Удалить</button></div>';
+      var bType = bookings[j].type || 'standard';
+      var bTypeLabel = bType === 'vip' ? 'VIP' : 'Standard';
+      var bTypeClass = bType === 'vip' ? 'type-vip' : 'type-standard';
+      h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="type-badge ' + bTypeClass + '">' + bTypeLabel + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(\'' + bookings[j].id + '\')">Удалить</button></div>';
     }
     document.getElementById('bookingList').innerHTML = h2 || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
   } catch (error) {
@@ -755,7 +822,6 @@ window.saveAndExit = function() {
   showMain();
 };
 
-// Student functions
 window.showStudentInput = function() {
   showPage('page-student-input');
   document.getElementById('sfio').value = '';
@@ -823,7 +889,6 @@ window.changeBooking = async function() {
   }
 };
 
-// Calendar functions
 window.initCalendar = function() {
   currentMonth = new Date();
   selectedDate = null;
@@ -983,6 +1048,7 @@ window.confirmBooking = async function() {
     
     await addDoc(bookingsRef, {
       fio: curStudent.fio,
+      type: curStudent.type || 'standard',
       date: dateStr,
       time: selectedTime,
       createdAt: new Date()
@@ -999,7 +1065,6 @@ window.confirmBooking = async function() {
   }
 };
 
-// Initialize
 showMain();
 </script>
 </body>
