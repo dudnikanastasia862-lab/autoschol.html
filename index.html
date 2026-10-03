@@ -40,13 +40,16 @@ body {
   box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 }
 
-.logo-wrap { text-align: center; margin-bottom: 24px; }
+.logo-wrap { 
+  text-align: left; 
+  margin-bottom: 16px;
+  padding-left: 0;
+}
+
 .logo { 
-  width: 100%;
-  max-width: 340px;
+  width: 200px;
   height: auto;
   display: block;
-  margin: 0 auto;
 }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
@@ -165,6 +168,7 @@ select option {
 .car-image {
   margin-top: 24px;
   text-align: center;
+  padding: 0 8px;
 }
 
 .car-image img {
@@ -172,6 +176,15 @@ select option {
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  /* Плавное размытие по краям — маска с градиентом */
+  -webkit-mask-image: 
+    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: 
+    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-composite: intersect;
 }
 
 .item {
@@ -223,16 +236,6 @@ select option {
   font-weight: 700;
   margin-left: 8px;
   vertical-align: middle;
-}
-
-.badge-vip {
-  background: var(--vip-gold);
-  color: var(--dark);
-}
-
-.badge-standard {
-  background: var(--standard-silver);
-  color: var(--dark);
 }
 
 .graphite-block {
@@ -646,7 +649,7 @@ select option {
     </div>
   </div>
 
-  <!-- Фото машины ПОД серой формой -->
+  <!-- Фото машины ПОД серой формой с размытием по краям -->
   <div class="car-image">
     <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
   </div>
