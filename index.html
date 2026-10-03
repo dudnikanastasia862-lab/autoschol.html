@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Вектор — Запись на экзамен</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -22,9 +22,14 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--light-gray);
+  background: #d1d5db;
   color: var(--dark);
   padding: 0;
   min-height: 100vh;
@@ -37,10 +42,43 @@ body {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background: var(--light-gray);
+}
+
+/* Жёлтая полоса сверху по косой */
+.box::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  height: 160px;
+  background: var(--primary);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Жёлтая полоса снизу по косой (зеркально) */
+.box::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  height: 160px;
+  background: var(--primary);
+  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .logo { 
-  width: 140px;
+  width: 130px;
   height: auto;
   display: block;
   margin: 0 auto;
@@ -61,6 +99,7 @@ button {
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-primary {
@@ -224,6 +263,8 @@ select option {
   padding: 32px 24px;
   border-radius: 16px;
   margin: 16px;
+  position: relative;
+  z-index: 2;
 }
 .graphite-block h2 {
   color: var(--white);
@@ -244,44 +285,14 @@ select option {
 .page { 
   display: none;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 .page.active { 
   display: block;
 }
 
-/* === ГЛАВНАЯ СТРАНИЦА === */
-#page-main {
-  position: relative;
-  background: var(--light-gray);
-  min-height: 100vh;
-}
-
-/* Жёлтая полоса сверху по косой */
-#page-main::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: var(--primary);
-  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
-  z-index: 1;
-}
-
-/* Жёлтая полоса снизу по косой (зеркально) */
-#page-main::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: var(--primary);
-  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%);
-  z-index: 1;
-}
-
+/* Главная страница */
 .main-content {
   position: relative;
   z-index: 2;
@@ -334,7 +345,7 @@ select option {
   border: 2px solid var(--primary);
   border-radius: 12px;
   padding: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   position: relative;
 }
 
@@ -415,24 +426,34 @@ select option {
   font-weight: 700;
 }
 
+/* Контейнер временных слотов */
 .time-slots-container {
   background: var(--dark);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   margin-top: 16px;
 }
 
+.time-slots-container h3 {
+  color: var(--white);
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* Суженные полосы времени */
 .time-slot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 10px 14px;
   background: var(--white);
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   cursor: pointer;
   transition: all 0.2s;
   border: 2px solid transparent;
+  min-height: 44px;
 }
 
 .time-slot:hover:not(.booked) {
@@ -453,8 +474,9 @@ select option {
 
 .time-slot .time {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--dark);
+  min-width: 50px;
 }
 
 .time-slot.selected .time {
@@ -467,10 +489,13 @@ select option {
 }
 
 .time-slot .fio {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--gray);
   text-align: right;
-  max-width: 60%;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .time-slot.selected .fio {
@@ -683,7 +708,7 @@ select option {
       </div>
 
       <div id="timeSlotsContainer" class="time-slots-container hidden">
-        <h3 style="color:var(--white);margin-bottom:16px;text-align:center;">Выберите время</h3>
+        <h3>Выберите время</h3>
         <div id="timeSlots"></div>
         <button class="btn-primary" onclick="showConfirmation()" style="margin-top:24px;">Сохранить</button>
       </div>
@@ -784,9 +809,11 @@ let calendarOpen = false;
 
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
+// Прокрутка вверх при смене страницы
 window.showPage = function(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.showMain = function() {
@@ -1036,6 +1063,10 @@ window.selectDate = function(year, month, day) {
   
   renderTimeSlots();
   document.getElementById('timeSlotsContainer').classList.remove('hidden');
+  // Прокрутка к блоку времени
+  setTimeout(() => {
+    document.getElementById('timeSlotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 };
 
 window.renderTimeSlots = async function() {
@@ -1064,7 +1095,13 @@ window.renderTimeSlots = async function() {
         if (isBooked) className += ' booked';
         if (isSelected) className += ' selected';
         
-        var fioText = isBooked ? bookedSlots[timeStr] : '';
+        // Показываем ФИО ученика справа при выборе
+        var fioText = '';
+        if (isBooked) {
+          fioText = bookedSlots[timeStr];
+        } else if (isSelected) {
+          fioText = curStudent.fio;
+        }
         
         html += '<div class="' + className + '" onclick="' + (isBooked ? '' : 'selectTime(\'' + timeStr + '\')') + '">';
         html += '<span class="time">' + timeStr + '</span>';
@@ -1085,6 +1122,7 @@ window.selectTime = function(time) {
     document.querySelectorAll('.time-slot').forEach(slot => {
       if (slot.querySelector('.time').textContent === selectedTime) {
         slot.classList.remove('selected');
+        slot.querySelector('.fio').textContent = '';
       }
     });
   }
@@ -1094,6 +1132,8 @@ window.selectTime = function(time) {
   document.querySelectorAll('.time-slot').forEach(slot => {
     if (slot.querySelector('.time').textContent === time) {
       slot.classList.add('selected');
+      // Сразу показываем ФИО ученика справа
+      slot.querySelector('.fio').textContent = curStudent.fio;
     }
   });
 };
