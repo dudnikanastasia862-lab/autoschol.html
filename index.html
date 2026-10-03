@@ -201,7 +201,6 @@ input::placeholder { color: #9CA3AF; }
   font-size: 15px;
 }
 
-/* Calendar styles */
 .calendar-container {
   background: var(--dark);
   border: 2px solid var(--primary);
@@ -288,7 +287,6 @@ input::placeholder { color: #9CA3AF; }
   font-weight: 700;
 }
 
-/* Time slots */
 .time-slots-container {
   background: var(--dark);
   border-radius: 12px;
@@ -396,8 +394,8 @@ input::placeholder { color: #9CA3AF; }
       <line x1="50" y1="66" x2="75" y2="92" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
       <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
       <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
-      <!-- Черный треугольный наконечник стрелы, направленный вверх -->
-      <polygon points="130,35 122,45 130,42 138,42" fill="#1A1A1A"/>
+      <!-- Большой треугольный наконечник стрелы как на рисунке -->
+      <polygon points="130,35 115,50 145,50" fill="#1A1A1A"/>
       <text x="148" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       <text x="153" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
@@ -409,7 +407,6 @@ input::placeholder { color: #9CA3AF; }
       <button class="tab active" onclick="showStudent()">УЧЕНИК</button>
     </div>
 
-    <!-- Страница 1: Проверка допуска -->
     <div id="page1" class="page active">
       <div class="welcome">
         <div class="welcome-icon"></div>
@@ -420,7 +417,6 @@ input::placeholder { color: #9CA3AF; }
       <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
     </div>
 
-    <!-- Страница 2: Выбор даты и времени -->
     <div id="page2" class="page">
       <button class="btn-back" onclick="backToStart()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Выберите дату экзамена</h2>
@@ -446,7 +442,6 @@ input::placeholder { color: #9CA3AF; }
       </div>
     </div>
 
-    <!-- Страница 3: Подтверждение -->
     <div id="page3" class="page">
       <button class="btn-back" onclick="backToTimeSelection()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Подтвердите запись</h2>
@@ -470,7 +465,6 @@ input::placeholder { color: #9CA3AF; }
       <button class="btn-back" onclick="backToTimeSelection()">Изменить время</button>
     </div>
 
-    <!-- Админка -->
     <div id="admin" class="page">
       <h2>Добавить ученика</h2>
       <input id="fio" placeholder="ФИО ученика">
@@ -485,7 +479,6 @@ input::placeholder { color: #9CA3AF; }
       <button class="btn-secondary" onclick="logout()">Выйти из админки</button>
     </div>
 
-    <!-- Отказ в допуске -->
     <div id="pageDenied" class="page">
       <div class="welcome">
         <div class="welcome-icon">⚠️</div>
@@ -655,7 +648,6 @@ function backToTimeSelection() {
   renderTimeSlots();
 }
 
-// Calendar functions
 function initCalendar() {
   currentMonth = new Date();
   selectedDate = null;
@@ -805,21 +797,23 @@ function confirmBooking() {
   bookings.push(tempBooking);
   save();
   
-  // Формируем сообщение для Мессенджера Макс
-  var msg = "🚗 Новая запись на экзамен (теория)\n\n👤 Ученик: " + tempBooking.fio + "\n📅 Дата: " + new Date(tempBooking.date).toLocaleDateString('ru-RU') + "\n⏰ Время: " + tempBooking.time;
+  var msg = "🚗 Новая запись на экзамен (теория)\n\n👤 Ученик: " + tempBooking.fio + "\n Дата: " + new Date(tempBooking.date).toLocaleDateString('ru-RU') + "\n⏰ Время: " + tempBooking.time;
   
-  // Копируем в буфер обмена и открываем Мессенджер Макс
+  // Пытаемся добавить текст в URL для автоматической вставки
+  var messengerUrl = "https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA?text=" + encodeURIComponent(msg);
+  
+  // Копируем в буфер обмена
   if (navigator.clipboard) {
     navigator.clipboard.writeText(msg).then(function() {
-      window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-      alert("✅ Запись подтверждена!\n\nСообщение скопировано в буфер обмена.\nОткройте Мессенджер Макс и вставьте текст (Ctrl+V или долгое нажатие).");
+      window.open(messengerUrl, "_blank");
+      alert("✅ Запись подтверждена!\n\nСообщение скопировано. Если оно не появилось в чате автоматически, вставьте его вручную (Ctrl+V или долгое нажатие).");
     }).catch(function() {
-      window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-      alert("✅ Запись подтверждена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
+      window.open(messengerUrl, "_blank");
+      alert("✅ Запись подтверждена!\n\nСкопируйте текст вручную:\n\n" + msg);
     });
   } else {
-    window.open("https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA", "_blank");
-    alert("✅ Запись подтверждена!\n\nОткройте Мессенджер Макс и отправьте:\n\n" + msg);
+    window.open(messengerUrl, "_blank");
+    alert("✅ Запись подтверждена!\n\nСкопируйте текст:\n\n" + msg);
   }
   
   tempBooking = null;
