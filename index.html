@@ -8,7 +8,7 @@
 <style>
 :root {
   --primary: #FFE600;
-  --primary-hover: #E6B400;
+  --primary-hover: #E6D000;
   --dark: #1A1A1A;
   --gray: #6B7280;
   --light-gray: #F3F4F6;
@@ -42,7 +42,6 @@ body {
 .logo { width: 340px; height: auto; display: block; margin: 0 auto; }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-h2 { font-size: 20px; margin: 24px 0 12px; color: var(--white); font-weight: 700; }
 
 button {
   padding: 14px 20px;
@@ -67,7 +66,6 @@ button {
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 230, 0, 0.4);
 }
 
 .btn-secondary {
@@ -102,7 +100,7 @@ input {
   width: 100%;
   margin: 8px 0 16px;
   background: var(--dark);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 12px;
   color: var(--white);
   font-size: 15px;
@@ -116,7 +114,7 @@ input:focus {
 }
 input::placeholder { color: #9CA3AF; }
 
-.tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--light-gray); padding: 4px; border-radius: 12px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 24px; padding: 4px; border-radius: 12px; }
 .tab {
   flex: 1; padding: 12px;
   background: var(--graphite);
@@ -163,7 +161,6 @@ input::placeholder { color: #9CA3AF; }
   background: var(--primary);
   color: var(--dark);
   border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(255, 200, 0, 0.3);
 }
 .slot.busy {
   background: var(--light-gray);
@@ -197,7 +194,7 @@ input::placeholder { color: #9CA3AF; }
 
 .welcome { text-align: center; padding: 10px 0 20px; }
 .welcome-icon { font-size: 48px; margin-bottom: 12px; }
-.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.divider { height: 1px; background: rgba(255,255,255,0.15); margin: 24px 0; }
 .badge {
   display: inline-block;
   background: var(--primary);
@@ -215,13 +212,21 @@ input::placeholder { color: #9CA3AF; }
   background: var(--graphite);
   padding: 32px 24px;
   border-radius: 16px;
-  margin-top: -8px;
 }
 .graphite-block h2 {
   color: var(--white);
+  font-size: 20px;
+  margin: 24px 0 12px;
+  font-weight: 700;
+  text-align: center;
 }
-.graphite-block p {
+.graphite-block h2:first-child {
+  margin-top: 0;
+}
+.graphite-block .welcome p {
   color: #D1D5DB;
+  margin-top: 8px;
+  font-size: 15px;
 }
 </style>
 </head>
@@ -230,25 +235,25 @@ input::placeholder { color: #9CA3AF; }
 <div class="box">
   <div class="logo-wrap">
     <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- Чистый яркий жёлтый ромб с закруглёнными углами -->
+      <!-- Жёлтый ромб с закруглёнными углами -->
       <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
       
       <!-- Тонкая чёрная рамка внутри ромба -->
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       
-      <!-- Левая ветвь V — широкая, чёткая, внутри ромба -->
+      <!-- Левая ветвь V — широкая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V — ТОЛЩЕ, соединяет ромб со стрелкой -->
-      <polygon points="70,95 80,89 125,43 115,47" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — ШИРОКАЯ у основания (16px), СУЖАЕТСЯ к стрелке (6px) -->
+      <polygon points="69,87 81,97 122,47 118,43" fill="#1A1A1A"/>
       
-      <!-- Белая пунктирная разметка СТРОГО ПО ЦЕНТРУ -->
+      <!-- Белая пунктирная разметка по центру ветви -->
       <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
       
       <!-- Стрелка на конце — острая, симметричная -->
       <polygon points="120,45 135,28 130,38 140,38 125,50" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
       
-      <!-- Текст "ектор" — узкий вытянутый шрифт Oswald -->
+      <!-- Текст "ектор" -->
       <text x="125" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       
       <!-- Текст "СЕТЬ АВТОШКОЛ" -->
@@ -282,7 +287,7 @@ input::placeholder { color: #9CA3AF; }
         <div class="welcome">
           <div class="welcome-icon"></div>
           <h2>Запись на внутренний экзамен</h2>
-          <p style="margin-top: 8px;">Введите ФИО для проверки допуска к теории</p>
+          <p>Введите ФИО для проверки допуска к теории</p>
         </div>
         <input id="sfio" placeholder="Иванов Иван Иванович">
         <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
@@ -303,7 +308,7 @@ input::placeholder { color: #9CA3AF; }
         <div class="welcome">
           <div class="welcome-icon">⚠️</div>
           <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
-          <p style="margin-top: 8px;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
+          <p>Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
         </div>
         <button class="btn-back" onclick="backToStart()">Вернуться назад</button>
       </div>
