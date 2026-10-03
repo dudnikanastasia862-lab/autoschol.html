@@ -11,7 +11,7 @@
   --primary-hover: #E6D000;
   --dark: #1A1A1A;
   --gray: #6B7280;
-  --bg-gray: #D1D5DB;
+  --bg-gray: #C9CDD4;
   --border: #E5E7EB;
   --white: #FFFFFF;
   --danger: #EF4444;
@@ -77,10 +77,10 @@ body {
   pointer-events: none;
 }
 
-/* Анимированные декоративные полосы на верхней границе */
-.anim-stripe-black {
+/* === АНИМАЦИЯ ПОЛОС (только главная) === */
+.stripe-container-top,
+.stripe-container-bottom {
   position: fixed;
-  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -89,61 +89,86 @@ body {
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
+  display: none;
 }
 
-.anim-stripe-black::before {
-  content: '';
+/* Показываем только на главной */
+#page-main.active ~ .stripe-container-top,
+#page-main.active ~ .stripe-container-bottom,
+body.main-page .stripe-container-top,
+body.main-page .stripe-container-bottom {
+  display: block;
+}
+
+.stripe-container-top {
+  top: 0;
+}
+
+.stripe-container-bottom {
+  bottom: 0;
+}
+
+/* Чёрная полоса — идёт по жёлтому фону (чуть выше линии стыка) */
+.stripe-black {
   position: absolute;
-  top: 55%;
-  left: 100%;
+  height: 4px;
   width: 200%;
-  height: 8px;
   background: var(--dark);
-  transform: rotate(-12deg);
   transform-origin: left center;
-  animation: stripeMoveBlack 4s ease-in-out infinite;
 }
 
-@keyframes stripeMoveBlack {
+.stripe-container-top .stripe-black {
+  top: 56%;
+  left: 100%;
+  transform: rotate(-7.5deg);
+  animation: stripeMoveTop 4s ease-in-out infinite;
+}
+
+.stripe-container-bottom .stripe-black {
+  bottom: 56%;
+  left: 100%;
+  transform: rotate(7.5deg);
+  animation: stripeMoveBottom 4s ease-in-out infinite;
+}
+
+/* Жёлтая полоса — идёт по серому фону (чуть ниже линии стыка) */
+.stripe-yellow {
+  position: absolute;
+  height: 4px;
+  width: 40%;
+  background: var(--primary);
+  transform-origin: left center;
+}
+
+.stripe-container-top .stripe-yellow {
+  top: 62%;
+  left: 100%;
+  transform: rotate(-7.5deg);
+  animation: stripeMoveTop 4s ease-in-out infinite;
+  animation-delay: 0.25s;
+}
+
+.stripe-container-bottom .stripe-yellow {
+  bottom: 62%;
+  left: 100%;
+  transform: rotate(7.5deg);
+  animation: stripeMoveBottom 4s ease-in-out infinite;
+  animation-delay: 0.25s;
+}
+
+@keyframes stripeMoveTop {
   0% { left: 100%; }
-  30% { left: -50%; }
-  50% { left: -50%; }
-  80% { left: 100%; }
+  35% { left: -150%; }
+  55% { left: -150%; }
+  90% { left: 100%; }
   100% { left: 100%; }
 }
 
-.anim-stripe-yellow {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 500px;
-  height: 160px;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.anim-stripe-yellow::before {
-  content: '';
-  position: absolute;
-  top: 58%;
-  left: 100%;
-  width: 40%;
-  height: 6px;
-  background: var(--primary);
-  transform: rotate(-12deg);
-  transform-origin: left center;
-  animation: stripeMoveYellow 4s ease-in-out infinite;
-  animation-delay: 0.3s;
-}
-
-@keyframes stripeMoveYellow {
+@keyframes stripeMoveBottom {
   0% { left: 100%; }
-  30% { left: -20%; }
-  50% { left: -20%; }
-  80% { left: 100%; }
+  35% { left: -150%; }
+  55% { left: -150%; }
+  90% { left: 100%; }
   100% { left: 100%; }
 }
 
@@ -152,12 +177,15 @@ body {
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+.logo.glow {
   animation: logoGlow 2.5s ease-in-out infinite;
 }
 
 @keyframes logoGlow {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(255, 230, 0, 0.3)); }
-  50% { filter: drop-shadow(0 0 16px rgba(255, 230, 0, 0.9)) drop-shadow(0 0 30px rgba(255, 230, 0, 0.5)); }
+  50% { filter: drop-shadow(0 0 16px rgba(255, 230, 0, 0.95)) drop-shadow(0 0 32px rgba(255, 230, 0, 0.6)); }
 }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
@@ -218,6 +246,17 @@ button {
   box-shadow: none;
 }
 .btn-danger:hover { background: #FECACA; }
+
+.btn-today {
+  background: var(--graphite);
+  color: var(--white);
+  border: 2px solid var(--primary);
+  margin-top: 8px;
+}
+.btn-today:hover {
+  background: var(--primary);
+  color: var(--dark);
+}
 
 input {
   padding: 14px 16px;
@@ -292,37 +331,42 @@ select option {
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
-  mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
 }
 
-/* Фары машины */
+/* Фары машины — яркие, мигающие */
 .car-headlight {
   position: absolute;
-  width: 30px;
-  height: 20px;
-  background: radial-gradient(ellipse, rgba(255,255,200,0.9) 0%, rgba(255,255,200,0) 70%);
   border-radius: 50%;
-  animation: headlightBlink 3s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(255,255,220,1) 0%, rgba(255,255,180,0.8) 30%, rgba(255,255,100,0.3) 60%, transparent 100%);
+  animation: headlightBlink 2.5s ease-in-out infinite;
   pointer-events: none;
   z-index: 5;
+  box-shadow: 0 0 20px 8px rgba(255,255,200,0.6);
 }
 
 .car-headlight.left {
-  bottom: 38%;
-  left: 52%;
+  width: 50px;
+  height: 30px;
+  bottom: 37%;
+  left: 57%;
 }
 
 .car-headlight.right {
-  bottom: 36%;
-  right: 22%;
+  width: 28px;
+  height: 18px;
+  bottom: 38%;
+  right: 18%;
 }
 
 @keyframes headlightBlink {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  10%, 30% { opacity: 1; transform: scale(1.5); }
-  20% { opacity: 0.2; transform: scale(0.8); }
-  40%, 90% { opacity: 0.3; transform: scale(1); }
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  8% { opacity: 1; transform: scale(1.3); }
+  12% { opacity: 0.1; transform: scale(0.7); }
+  16% { opacity: 1; transform: scale(1.4); }
+  22% { opacity: 0.2; transform: scale(0.9); }
+  30%, 90% { opacity: 0.15; transform: scale(0.8); }
 }
 
 .item {
@@ -462,13 +506,13 @@ select option {
   padding: 10px 8px 20px;
 }
 
-.main-car-section img {
+.main-car-section .car-image img {
   width: 100%;
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
-  mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
 }
 
 /* Страницы ученика — центрированные формы */
@@ -496,6 +540,15 @@ select option {
   text-align: center;
   font-size: 15px;
   margin-bottom: 20px;
+}
+
+/* Логотип на страницах */
+.page-logo {
+  text-align: center;
+  padding: 10px 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
 
 /* Календарь */
@@ -585,7 +638,6 @@ select option {
   font-weight: 700;
 }
 
-/* Контейнер временных слотов */
 .time-slots-container {
   background: var(--dark);
   border-radius: 12px;
@@ -665,7 +717,6 @@ select option {
   color: #6B7280;
 }
 
-/* Блок подтверждения */
 .confirmation-box {
   background: var(--dark);
   border-radius: 12px;
@@ -772,21 +823,63 @@ select option {
   display: block;
 }
 
-/* Логотип на страницах */
-.page-logo {
+.today-list {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.today-list h4 {
+  color: var(--primary);
+  font-size: 14px;
+  margin-bottom: 12px;
   text-align: center;
-  padding: 10px 0;
-  position: relative;
-  z-index: 2;
+}
+
+.today-item {
+  background: rgba(255,255,255,0.08);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+  font-size: 14px;
+}
+
+.today-item .t-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.today-item .t-time {
+  color: var(--primary);
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.today-empty {
+  color: #D1D5DB;
+  text-align: center;
+  padding: 16px;
+  font-size: 14px;
 }
 </style>
 </head>
 <body>
 
 <div class="box">
-  <!-- Анимированные декоративные полосы -->
-  <div class="anim-stripe-black"></div>
-  <div class="anim-stripe-yellow"></div>
+  <!-- Анимированные полосы (только главная) -->
+  <div class="stripe-container-top" id="stripesTop">
+    <div class="stripe-black"></div>
+    <div class="stripe-yellow"></div>
+  </div>
+  <div class="stripe-container-bottom" id="stripesBottom">
+    <div class="stripe-black"></div>
+    <div class="stripe-yellow"></div>
+  </div>
 
   <!-- Главная страница -->
   <div id="page-main" class="page active">
@@ -817,7 +910,7 @@ select option {
   <!-- Страница админа -->
   <div id="page-admin" class="page">
     <div class="page-logo">
-      <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+      <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
     </div>
     <div class="graphite-block">
       <h2>Панель администратора</h2>
@@ -831,6 +924,8 @@ select option {
           <option value="vip">VIP</option>
         </select>
         <button class="btn-primary" onclick="addStudent()">Добавить</button>
+        <button class="btn-today" onclick="toggleTodayBookings()">📋 Записаны на сегодня</button>
+        <div id="todayListContainer" class="hidden"></div>
       </div>
 
       <div class="divider"></div>
@@ -855,6 +950,9 @@ select option {
 
   <!-- Страница ученика: ввод ФИО -->
   <div id="page-student-input" class="page">
+    <div class="page-logo">
+      <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+    </div>
     <div class="student-page-content">
       <button class="btn-back" onclick="showMain()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Запись на внутренний экзамен</h2>
@@ -866,6 +964,9 @@ select option {
 
   <!-- Страница ученика: календарь -->
   <div id="page-student-calendar" class="page">
+    <div class="page-logo">
+      <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+    </div>
     <div class="student-page-content">
       <button class="btn-back" onclick="backToStudentInput()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Выберите дату экзамена</h2>
@@ -894,6 +995,9 @@ select option {
 
   <!-- Страница ученика: подтверждение -->
   <div id="page-student-confirm" class="page">
+    <div class="page-logo">
+      <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+    </div>
     <div class="student-page-content">
       <button class="btn-back" onclick="backToCalendar()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Подтвердите запись</h2>
@@ -923,6 +1027,9 @@ select option {
 
   <!-- Отказ в допуске -->
   <div id="page-denied" class="page">
+    <div class="page-logo">
+      <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
+    </div>
     <div class="student-page-content">
       <div class="welcome">
         <div class="welcome-icon">⚠️</div>
@@ -938,6 +1045,7 @@ select option {
 <!-- Модальное окно пароля -->
 <div id="pwd-modal" class="modal hidden">
   <div class="modal-box">
+    <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип" style="margin-bottom: 16px;">
     <h2>Вход в админ-панель</h2>
     <p>Введите пароль для доступа</p>
     <input type="password" id="pw" placeholder="Пароль">
@@ -950,6 +1058,7 @@ select option {
 <!-- Модальное окно существующей записи -->
 <div id="existing-modal" class="modal hidden">
   <div class="modal-box">
+    <img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип" style="margin-bottom: 16px;">
     <h2>Вы уже записаны на экзамен</h2>
     <div id="existingInfo" style="background: var(--light-gray); padding: 16px; border-radius: 8px; margin: 16px 0; text-align: left;"></div>
     <button class="btn-primary" onclick="changeBooking()">Изменить дату и время</button>
@@ -986,9 +1095,18 @@ let calendarOpen = false;
 
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
+// Управление полосами — показывать только на главной
+function updateStripes() {
+  const mainPage = document.getElementById('page-main');
+  const isActive = mainPage.classList.contains('active');
+  document.getElementById('stripesTop').style.display = isActive ? 'block' : 'none';
+  document.getElementById('stripesBottom').style.display = isActive ? 'block' : 'none';
+}
+
 window.showPage = function(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  updateStripes();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -1098,6 +1216,52 @@ window.renderAdmin = async function() {
     console.error('Error rendering admin:', error);
     document.getElementById('studentList').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка загрузки</p>';
     document.getElementById('bookingList').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка загрузки</p>';
+  }
+};
+
+// Показать/скрыть список записанных на сегодня
+window.toggleTodayBookings = async function() {
+  const container = document.getElementById('todayListContainer');
+  
+  if (!container.classList.contains('hidden')) {
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    return;
+  }
+  
+  container.classList.remove('hidden');
+  container.innerHTML = '<div class="loading">Загрузка...</div>';
+  
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const q = query(bookingsRef, where('date', '==', today));
+    const snapshot = await getDocs(q);
+    const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    if (bookings.length === 0) {
+      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
+      return;
+    }
+    
+    // Сортировка по времени
+    bookings.sort((a, b) => a.time.localeCompare(b.time));
+    
+    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
+    for (var i = 0; i < bookings.length; i++) {
+      var b = bookings[i];
+      var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
+      var typeClass = b.type === 'vip' ? 'type-vip' : 'type-standard';
+      html += '<div class="today-item">';
+      html += '<span class="t-time">' + b.time + '</span>';
+      html += '<span class="t-name">' + b.fio + '</span>';
+      html += '<span class="type-badge ' + typeClass + '">' + typeLabel + '</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading today bookings:', error);
+    container.innerHTML = '<div class="today-list"><div class="today-empty" style="color:var(--danger);">Ошибка загрузки</div></div>';
   }
 };
 
@@ -1359,7 +1523,9 @@ window.confirmBooking = async function() {
   }
 };
 
+// Инициализация
 showMain();
+updateStripes();
 </script>
 </body>
 </html>
