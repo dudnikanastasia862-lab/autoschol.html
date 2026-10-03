@@ -207,7 +207,6 @@ input::placeholder { color: #9CA3AF; }
   vertical-align: middle;
 }
 
-/* ГРАФИТОВЫЙ БЛОК */
 .graphite-block {
   background: var(--graphite);
   padding: 32px 24px;
@@ -241,17 +240,17 @@ input::placeholder { color: #9CA3AF; }
       <!-- Тонкая чёрная рамка внутри ромба -->
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       
-      <!-- Левая ветвь V — широкая, внутри ромба -->
+      <!-- Левая ветвь V — короткая, толстая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V — ШИРОКАЯ у основания (16px), СУЖАЕТСЯ к стрелке (6px) -->
-      <polygon points="69,87 81,97 122,47 118,43" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — широкая у основания, сужается к стрелке -->
+      <path d="M 65 95 Q 75 80 95 60 Q 110 45 120 35 L 125 40 Q 115 50 100 65 Q 80 85 70 100 Z" fill="#1A1A1A"/>
       
-      <!-- Белая пунктирная разметка по центру ветви -->
-      <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+      <!-- Белая пунктирная разметка по центру -->
+      <path d="M 72 92 Q 85 75 100 58 Q 112 45 122 37" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" fill="none" stroke-linecap="round"/>
       
-      <!-- Стрелка на конце — острая, симметричная -->
-      <polygon points="120,45 135,28 130,38 140,38 125,50" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
+      <!-- Стрелка — острая, симметричная -->
+      <path d="M 120 35 L 135 20 L 128 35 L 135 35 L 125 45 Z" fill="#1A1A1A"/>
       
       <!-- Текст "ектор" -->
       <text x="125" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
@@ -261,7 +260,6 @@ input::placeholder { color: #9CA3AF; }
     </svg>
   </div>
 
-  <!-- ГРАФИТОВЫЙ БЛОК -->
   <div class="graphite-block">
     <div class="tabs">
       <button class="tab" onclick="openAdmin()">АДМИН</button>
