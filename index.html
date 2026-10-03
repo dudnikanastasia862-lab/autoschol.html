@@ -94,45 +94,61 @@ body {
 
 .stripe-black {
   position: absolute;
-  height: 5px;
+  height: 22px;
   width: 200%;
-  background: var(--dark);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(26, 26, 26, 0.3) 20%,
+    rgba(26, 26, 26, 0.8) 50%,
+    rgba(26, 26, 26, 0.3) 80%,
+    transparent 100%
+  );
+  filter: blur(2px);
 }
 
 .stripe-container-top .stripe-black {
-  top: 55%;
+  top: 75%;
   left: 100%;
-  transform: rotate(-22deg);
+  transform: rotate(-7deg);
   animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
 .stripe-container-bottom .stripe-black {
-  bottom: 55%;
+  bottom: 81%;
   left: 100%;
-  transform: rotate(22deg);
+  transform: rotate(-7deg);
   animation: stripeMoveBlack 5s ease-in-out infinite;
 }
 
 .stripe-yellow {
   position: absolute;
-  height: 6px;
+  height: 28px;
   width: 40%;
-  background: #FFEE00;
-  box-shadow: 0 0 8px rgba(255, 238, 0, 0.8);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 238, 0, 0.4) 20%,
+    rgba(255, 238, 0, 0.95) 50%,
+    rgba(255, 238, 0, 0.4) 80%,
+    transparent 100%
+  );
+  filter: blur(3px);
+  box-shadow: 0 0 20px rgba(255, 238, 0, 0.6);
 }
 
 .stripe-container-top .stripe-yellow {
-  top: 62%;
+  top: 82%;
   left: 100%;
-  transform: rotate(-22deg);
+  transform: rotate(-7deg);
   animation: stripeMoveYellow 5s ease-in-out infinite;
   animation-delay: 0.4s;
 }
 
 .stripe-container-bottom .stripe-yellow {
-  bottom: 62%;
+  bottom: 75%;
   left: 100%;
-  transform: rotate(22deg);
+  transform: rotate(-7deg);
   animation: stripeMoveYellow 5s ease-in-out infinite;
   animation-delay: 0.4s;
 }
@@ -783,7 +799,7 @@ select option {
 
       <div class="divider"></div>
 
-      <button class="btn-secondary" onclick="saveAndExit()">💾 Сохранить и выйти</button>
+      <button class="btn-secondary" onclick="saveAndExit()"> Сохранить и выйти</button>
     </div>
   </div>
 
@@ -1240,7 +1256,7 @@ window.toggleTodayBookings = async function() {
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     if (bookings.length === 0) {
-      container.innerHTML = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
+      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
       return;
     }
     
