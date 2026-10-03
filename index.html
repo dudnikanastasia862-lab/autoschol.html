@@ -433,6 +433,13 @@ input::placeholder { color: #9CA3AF; }
   color: #D1D5DB;
   margin-right: 12px;
 }
+
+.loading {
+  text-align: center;
+  color: var(--primary);
+  padding: 20px;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -475,15 +482,15 @@ input::placeholder { color: #9CA3AF; }
       <div class="divider"></div>
 
       <div class="admin-section">
-        <h3>📋 Допущенные ученики <span class="badge" id="stCount">0</span></h3>
-        <div id="studentList"></div>
+        <h3> Допущенные ученики <span class="badge" id="stCount">0</span></h3>
+        <div id="studentList"><div class="loading">Загрузка...</div></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="admin-section">
-        <h3>📝 Записи на экзамен <span class="badge" id="bkCount">0</span></h3>
-        <div id="bookingList"></div>
+        <h3> Записи на экзамен <span class="badge" id="bkCount">0</span></h3>
+        <div id="bookingList"><div class="loading">Загрузка...</div></div>
       </div>
 
       <div class="divider"></div>
@@ -589,44 +596,57 @@ input::placeholder { color: #9CA3AF; }
   </div>
 </div>
 
-<script>
-var students = [];
-var bookings = [];
-var curStudent = null;
-var selectedDate = null;
-var selectedTime = null;
-var currentMonth = new Date();
-var calendarOpen = false;
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-var monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyD34YA1pjOHwseGYvVGX733vlL3-yz2JCA",
+  authDomain: "autoscool-vektor.firebaseapp.com",
+  projectId: "autoscool-vektor",
+  storageBucket: "autoscool-vektor.firebasestorage.app",
+  messagingSenderId: "787222367012",
+  appId: "1:787222367012:web:faabfdf10f7676b2cd01b1",
+  measurementId: "G-41R6E85YH8"
+};
 
-function load() {
-  students = JSON.parse(localStorage.getItem('st') || '[]');
-  bookings = JSON.parse(localStorage.getItem('bk') || '[]');
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-function save() {
-  localStorage.setItem('st', JSON.stringify(students));
-  localStorage.setItem('bk', JSON.stringify(bookings));
-}
+// Collections
+const studentsRef = collection(db, 'students');
+const bookingsRef = collection(db, 'bookings');
 
-function showPage(pageId) {
+// Global variables
+let curStudent = null;
+let selectedDate = null;
+let selectedTime = null;
+let currentMonth = new Date();
+let calendarOpen = false;
+
+const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+// Page navigation
+window.showPage = function(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
-}
+};
 
-function showMain() {
+window.showMain = function() {
   showPage('page-main');
-}
+};
 
-// Админка
-function openAdmin() {
+// Admin functions
+window.openAdmin = function() {
   document.getElementById('pwd-modal').classList.remove('hidden');
   document.getElementById('pw').value = '';
   document.getElementById('err').textContent = '';
-}
+};
 
-function checkPwd() {
+window.checkPwd = function() {
   if (document.getElementById('pw').value === '0000') {
     document.getElementById('pwd-modal').classList.add('hidden');
     showPage('page-admin');
@@ -634,156 +654,187 @@ function checkPwd() {
   } else {
     document.getElementById('err').textContent = 'Неверный пароль';
   }
-}
+};
 
-function closePwd() {
+window.closePwd = function() {
   document.getElementById('pwd-modal').classList.add('hidden');
-}
+};
 
-function addStudent() {
+window.addStudent = async function() {
   var f = document.getElementById('fio').value.trim();
   if (!f) { alert('Введите ФИО'); return; }
   
-  // Проверяем, нет ли уже такого ученика
-  var exists = students.some(s => s.fio.toLowerCase() === f.toLowerCase());
-  if (exists) {
-    alert('Такой ученик уже есть в списке');
-    return;
+  try {
+    const q = query(studentsRef, where('fio', '==', f));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      alert('Такой ученик уже есть в списке');
+      return;
+    }
+    
+    await addDoc(studentsRef, { fio: f, createdAt: new Date() });
+    document.getElementById('fio').value = '';
+    await renderAdmin();
+    alert('Ученик успешно добавлен');
+  } catch (error) {
+    console.error('Error adding student:', error);
+    alert('Ошибка при добавлении ученика');
   }
-  
-  students.push({id: Date.now(), fio: f});
-  save();
-  document.getElementById('fio').value = '';
-  renderAdmin();
-  alert('Ученик успешно добавлен');
-}
+};
 
-function delStudent(id) {
+window.delStudent = async function(id) {
   if (confirm('Удалить ученика из списка допущенных?')) {
-    students = students.filter(s => s.id !== id);
-    save();
-    renderAdmin();
+    try {
+      await deleteDoc(doc(db, 'students', id));
+      await renderAdmin();
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      alert('Ошибка при удалении');
+    }
   }
-}
+};
 
-function delBooking(id) {
+window.delBooking = async function(id) {
   if (confirm('Удалить запись на экзамен?')) {
-    bookings = bookings.filter(b => b.id !== id);
-    save();
-    renderAdmin();
+    try {
+      await deleteDoc(doc(db, 'bookings', id));
+      await renderAdmin();
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      alert('Ошибка при удалении');
+    }
   }
-}
+};
 
-function renderAdmin() {
-  document.getElementById('stCount').textContent = students.length;
-  document.getElementById('bkCount').textContent = bookings.length;
-  
-  var h = '';
-  for (var i = 0; i < students.length; i++) {
-    h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><button class="btn-danger" onclick="delStudent(' + students[i].id + ')">Удалить</button></div>';
+window.renderAdmin = async function() {
+  try {
+    // Get students
+    const studentsSnapshot = await getDocs(studentsRef);
+    const students = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Get bookings
+    const bookingsSnapshot = await getDocs(bookingsRef);
+    const bookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    document.getElementById('stCount').textContent = students.length;
+    document.getElementById('bkCount').textContent = bookings.length;
+    
+    var h = '';
+    for (var i = 0; i < students.length; i++) {
+      h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><button class="btn-danger" onclick="delStudent(\'' + students[i].id + '\')">Удалить</button></div>';
+    }
+    document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
+    
+    var h2 = '';
+    for (var j = 0; j < bookings.length; j++) {
+      var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
+      h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(\'' + bookings[j].id + '\')">Удалить</button></div>';
+    }
+    document.getElementById('bookingList').innerHTML = h2 || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
+  } catch (error) {
+    console.error('Error rendering admin:', error);
+    document.getElementById('studentList').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка загрузки</p>';
+    document.getElementById('bookingList').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка загрузки</p>';
   }
-  document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
-  
-  var h2 = '';
-  for (var j = 0; j < bookings.length; j++) {
-    var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
-    h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(' + bookings[j].id + ')">Удалить</button></div>';
-  }
-  document.getElementById('bookingList').innerHTML = h2 || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
-}
+};
 
-function saveAndExit() {
-  save();
-  alert('Данные сохранены');
+window.saveAndExit = function() {
+  alert('Данные сохранены в облаке');
   showMain();
-}
+};
 
-// Ученик
-function showStudentInput() {
+// Student functions
+window.showStudentInput = function() {
   showPage('page-student-input');
   document.getElementById('sfio').value = '';
-}
+};
 
-function backToStudentInput() {
+window.backToStudentInput = function() {
   showPage('page-student-input');
-}
+};
 
-function checkStudent() {
+window.checkStudent = async function() {
   var f = document.getElementById('sfio').value.trim().toLowerCase();
   if (!f) { alert('Введите ФИО'); return; }
   
-  var found = null;
-  for (var i = 0; i < students.length; i++) {
-    if (students[i].fio.toLowerCase() === f) { found = students[i]; break; }
-  }
-  
-  if (!found) {
-    showPage('page-denied');
-    return;
-  }
-  
-  curStudent = found;
-  
-  // Проверяем, есть ли уже запись
-  var existingBooking = null;
-  for (var j = 0; j < bookings.length; j++) {
-    if (bookings[j].fio.toLowerCase() === curStudent.fio.toLowerCase()) {
-      existingBooking = bookings[j];
-      break;
+  try {
+    const q = query(studentsRef, where('fio', '==', document.getElementById('sfio').value.trim()));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      showPage('page-denied');
+      return;
     }
+    
+    const studentDoc = querySnapshot.docs[0];
+    curStudent = { id: studentDoc.id, ...studentDoc.data() };
+    
+    // Check if already booked
+    const q2 = query(bookingsRef, where('fio', '==', curStudent.fio));
+    const bookingsSnapshot = await getDocs(q2);
+    
+    if (!bookingsSnapshot.empty) {
+      const booking = bookingsSnapshot.docs[0].data();
+      var d = new Date(booking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('existingInfo').innerHTML = '<p style="margin: 8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin: 8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
+      document.getElementById('existing-modal').classList.remove('hidden');
+    } else {
+      showPage('page-student-calendar');
+      initCalendar();
+    }
+  } catch (error) {
+    console.error('Error checking student:', error);
+    alert('Ошибка при проверке допуска');
   }
-  
-  if (existingBooking) {
-    // Показываем окно с информацией о существующей записи
-    var d = new Date(existingBooking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    document.getElementById('existingInfo').innerHTML = '<p style="margin: 8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin: 8px 0;"><strong>Время:</strong> ' + existingBooking.time + '</p>';
-    document.getElementById('existing-modal').classList.remove('hidden');
-  } else {
-    // Показываем календарь
-    showPage('page-student-calendar');
-    initCalendar();
-  }
-}
+};
 
-function closeExisting() {
+window.closeExisting = function() {
   document.getElementById('existing-modal').classList.add('hidden');
   showMain();
-}
+};
 
-function changeBooking() {
+window.changeBooking = async function() {
   document.getElementById('existing-modal').classList.add('hidden');
   
-  // Удаляем старую запись
-  bookings = bookings.filter(b => b.fio.toLowerCase() !== curStudent.fio.toLowerCase());
-  save();
-  
-  // Показываем календарь
-  showPage('page-student-calendar');
-  initCalendar();
-}
+  try {
+    const q = query(bookingsRef, where('fio', '==', curStudent.fio));
+    const querySnapshot = await getDocs(q);
+    
+    querySnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+    
+    showPage('page-student-calendar');
+    initCalendar();
+  } catch (error) {
+    console.error('Error changing booking:', error);
+    alert('Ошибка при изменении записи');
+  }
+};
 
-// Календарь
-function initCalendar() {
+// Calendar functions
+window.initCalendar = function() {
   currentMonth = new Date();
   selectedDate = null;
   selectedTime = null;
   document.getElementById('dateDisplay').textContent = 'Нажмите для выбора даты';
   document.getElementById('timeSlotsContainer').classList.add('hidden');
   renderCalendar();
-}
+};
 
-function toggleCalendar() {
+window.toggleCalendar = function() {
   calendarOpen = !calendarOpen;
   document.getElementById('calendarPopup').classList.toggle('show', calendarOpen);
   if (calendarOpen) renderCalendar();
-}
+};
 
-function changeMonth(delta) {
+window.changeMonth = function(delta) {
   currentMonth.setMonth(currentMonth.getMonth() + delta);
   renderCalendar();
-}
+};
 
-function renderCalendar() {
+window.renderCalendar = function() {
   var year = currentMonth.getFullYear();
   var month = currentMonth.getMonth();
   document.getElementById('monthYear').textContent = monthNames[month] + ' ' + year;
@@ -818,9 +869,9 @@ function renderCalendar() {
   }
   
   document.getElementById('calendarGrid').innerHTML = grid;
-}
+};
 
-function selectDate(year, month, day) {
+window.selectDate = function(year, month, day) {
   selectedDate = new Date(year, month-1, day);
   var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('dateDisplay').textContent = selectedDate.toLocaleDateString('ru-RU', options);
@@ -829,40 +880,51 @@ function selectDate(year, month, day) {
   
   renderTimeSlots();
   document.getElementById('timeSlotsContainer').classList.remove('hidden');
-}
+};
 
-function renderTimeSlots() {
+window.renderTimeSlots = async function() {
   if (!selectedDate || !curStudent) return;
   
   var dateStr = selectedDate.toISOString().split('T')[0];
   var html = '';
   
-  // Время с 9:15 до 11:45 с шагом 15 минут
-  for (var hour = 9; hour <= 11; hour++) {
-    var startMin = (hour === 9) ? 15 : 0;
-    for (var min = startMin; min < 60; min += 15) {
-      var timeStr = String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
-      var booking = bookings.find(b => b.date === dateStr && b.time === timeStr);
-      var isBooked = !!booking;
-      var isSelected = selectedTime === timeStr;
-      
-      var className = 'time-slot';
-      if (isBooked) className += ' booked';
-      if (isSelected) className += ' selected';
-      
-      var fioText = isBooked ? booking.fio : '';
-      
-      html += '<div class="' + className + '" onclick="' + (isBooked ? '' : 'selectTime(\'' + timeStr + '\')') + '">';
-      html += '<span class="time">' + timeStr + '</span>';
-      html += '<span class="fio">' + fioText + '</span>';
-      html += '</div>';
+  try {
+    const q = query(bookingsRef, where('date', '==', dateStr));
+    const bookingsSnapshot = await getDocs(q);
+    const bookedSlots = {};
+    bookingsSnapshot.forEach(doc => {
+      const booking = doc.data();
+      bookedSlots[booking.time] = booking.fio;
+    });
+    
+    for (var hour = 9; hour <= 11; hour++) {
+      var startMin = (hour === 9) ? 15 : 0;
+      for (var min = startMin; min < 60; min += 15) {
+        var timeStr = String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
+        var isBooked = bookedSlots[timeStr] !== undefined;
+        var isSelected = selectedTime === timeStr;
+        
+        var className = 'time-slot';
+        if (isBooked) className += ' booked';
+        if (isSelected) className += ' selected';
+        
+        var fioText = isBooked ? bookedSlots[timeStr] : '';
+        
+        html += '<div class="' + className + '" onclick="' + (isBooked ? '' : 'selectTime(\'' + timeStr + '\')') + '">';
+        html += '<span class="time">' + timeStr + '</span>';
+        html += '<span class="fio">' + fioText + '</span>';
+        html += '</div>';
+      }
     }
+    
+    document.getElementById('timeSlots').innerHTML = html;
+  } catch (error) {
+    console.error('Error rendering time slots:', error);
+    document.getElementById('timeSlots').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка загрузки</p>';
   }
-  
-  document.getElementById('timeSlots').innerHTML = html;
-}
+};
 
-function selectTime(time) {
+window.selectTime = function(time) {
   if (selectedTime) {
     document.querySelectorAll('.time-slot').forEach(slot => {
       if (slot.querySelector('.time').textContent === selectedTime) {
@@ -878,9 +940,9 @@ function selectTime(time) {
       slot.classList.add('selected');
     }
   });
-}
+};
 
-function showConfirmation() {
+window.showConfirmation = function() {
   if (!selectedTime) {
     alert('Пожалуйста, выберите время');
     return;
@@ -891,36 +953,45 @@ function showConfirmation() {
   document.getElementById('confirmTime').textContent = selectedTime;
   
   showPage('page-student-confirm');
-}
+};
 
-function backToCalendar() {
+window.backToCalendar = function() {
   showPage('page-student-calendar');
-}
+};
 
-function confirmBooking() {
+window.confirmBooking = async function() {
+  if (!selectedDate || !selectedTime || !curStudent) return;
+  
   var dateStr = selectedDate.toISOString().split('T')[0];
   
-  // Удаляем старую запись если есть
-  bookings = bookings.filter(b => b.fio.toLowerCase() !== curStudent.fio.toLowerCase());
-  
-  // Добавляем новую запись
-  bookings.push({
-    id: Date.now(),
-    fio: curStudent.fio,
-    date: dateStr,
-    time: selectedTime
-  });
-  
-  save();
-  
-  alert('✅ Вы успешно записаны на экзамен!\n\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
-  
-  selectedDate = null;
-  selectedTime = null;
-  showMain();
-}
+  try {
+    // Delete old booking if exists
+    const q = query(bookingsRef, where('fio', '==', curStudent.fio));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+    
+    // Add new booking
+    await addDoc(bookingsRef, {
+      fio: curStudent.fio,
+      date: dateStr,
+      time: selectedTime,
+      createdAt: new Date()
+    });
+    
+    alert('✅ Вы успешно записаны на экзамен!\n\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
+    
+    selectedDate = null;
+    selectedTime = null;
+    showMain();
+  } catch (error) {
+    console.error('Error confirming booking:', error);
+    alert('Ошибка при сохранении записи');
+  }
+};
 
-load();
+// Initialize
 showMain();
 </script>
 </body>
