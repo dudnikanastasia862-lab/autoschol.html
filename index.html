@@ -114,19 +114,27 @@ input:focus {
 }
 input::placeholder { color: #9CA3AF; }
 
-.tabs { display: flex; gap: 8px; margin-bottom: 24px; padding: 4px; border-radius: 12px; }
-.tab {
-  flex: 1; padding: 12px;
-  background: var(--graphite);
-  color: #D1D5DB;
-  border: none; border-radius: 10px;
-  font-weight: 600; cursor: pointer; font-size: 14px;
-  text-transform: uppercase; box-shadow: none;
+.role-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
 }
-.tab.active {
-  background: var(--dark);
+.role-btn {
+  flex: 1;
+  padding: 20px;
+  background: var(--graphite);
   color: var(--white);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.role-btn:hover {
+  background: var(--dark);
+  transform: translateY(-2px);
 }
 
 .item {
@@ -201,6 +209,10 @@ input::placeholder { color: #9CA3AF; }
   font-size: 15px;
 }
 
+.page { display: none; }
+.page.active { display: block; }
+
+/* Calendar styles */
 .calendar-container {
   background: var(--dark);
   border: 2px solid var(--primary);
@@ -287,6 +299,7 @@ input::placeholder { color: #9CA3AF; }
   font-weight: 700;
 }
 
+/* Time slots */
 .time-slots-container {
   background: var(--dark);
   border-radius: 12px;
@@ -354,14 +367,6 @@ input::placeholder { color: #9CA3AF; }
   color: #6B7280;
 }
 
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
-
 .confirmation-box {
   background: var(--dark);
   border-radius: 12px;
@@ -382,34 +387,114 @@ input::placeholder { color: #9CA3AF; }
   font-size: 14px;
   margin-bottom: 4px;
 }
+
+.screenshot-hint {
+  background: rgba(255, 230, 0, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 16px 0;
+  color: var(--primary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.admin-section {
+  margin-bottom: 24px;
+}
+
+.admin-section h3 {
+  color: var(--white);
+  font-size: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-item {
+  background: rgba(255,255,255,0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+}
+
+.admin-item .name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.admin-item .info {
+  font-size: 12px;
+  color: #D1D5DB;
+  margin-right: 12px;
+}
 </style>
 </head>
 <body>
 
 <div class="box">
   <div class="logo-wrap">
-    <svg class="logo" viewBox="0 0 420 160" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
       <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
       <rect x="34" y="34" width="82" height="82" rx="6" fill="none" stroke="#1A1A1A" stroke-width="2.5" transform="rotate(45 75 75)"/>
       <line x1="50" y1="66" x2="75" y2="92" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
-      <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
-      <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
-      <!-- Большой треугольный наконечник стрелы как на рисунке -->
-      <polygon points="130,35 115,50 145,50" fill="#1A1A1A"/>
-      <text x="148" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
-      <text x="153" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
+      <line x1="75" y1="92" x2="100" y2="66" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
+      <text x="110" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
+      <text x="115" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
   <div class="graphite-block">
-    <div class="tabs">
-      <button class="tab" onclick="openAdmin()">АДМИН</button>
-      <button class="tab active" onclick="showStudent()">УЧЕНИК</button>
+    <!-- Главная страница -->
+    <div id="page-main" class="page active">
+      <div class="welcome">
+        <h2>Добро пожаловать!</h2>
+        <p>Выберите вашу роль</p>
+      </div>
+      <div class="role-buttons">
+        <button class="role-btn" onclick="openAdmin()">АДМИН</button>
+        <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
+      </div>
     </div>
 
-    <div id="page1" class="page active">
+    <!-- Страница админа -->
+    <div id="page-admin" class="page">
+      <h2>Панель администратора</h2>
+      
+      <div class="admin-section">
+        <h3>➕ Добавить ученика</h3>
+        <input id="fio" placeholder="ФИО ученика">
+        <button class="btn-primary" onclick="addStudent()">Добавить</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="admin-section">
+        <h3>📋 Допущенные ученики <span class="badge" id="stCount">0</span></h3>
+        <div id="studentList"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="admin-section">
+        <h3>📝 Записи на экзамен <span class="badge" id="bkCount">0</span></h3>
+        <div id="bookingList"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="btn-secondary" onclick="saveAndExit()">💾 Сохранить и выйти</button>
+    </div>
+
+    <!-- Страница ученика: ввод ФИО -->
+    <div id="page-student-input" class="page">
+      <button class="btn-back" onclick="showMain()" style="margin-bottom: 16px;">← Назад</button>
       <div class="welcome">
-        <div class="welcome-icon"></div>
         <h2>Запись на внутренний экзамен</h2>
         <p>Введите ФИО для проверки допуска к теории</p>
       </div>
@@ -417,8 +502,9 @@ input::placeholder { color: #9CA3AF; }
       <button class="btn-primary" onclick="checkStudent()">Проверить допуск</button>
     </div>
 
-    <div id="page2" class="page">
-      <button class="btn-back" onclick="backToStart()" style="margin-bottom: 16px;">← Назад</button>
+    <!-- Страница ученика: календарь -->
+    <div id="page-student-calendar" class="page">
+      <button class="btn-back" onclick="backToStudentInput()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Выберите дату экзамена</h2>
       
       <div class="calendar-container">
@@ -442,8 +528,9 @@ input::placeholder { color: #9CA3AF; }
       </div>
     </div>
 
-    <div id="page3" class="page">
-      <button class="btn-back" onclick="backToTimeSelection()" style="margin-bottom: 16px;">← Назад</button>
+    <!-- Страница ученика: подтверждение -->
+    <div id="page-student-confirm" class="page">
+      <button class="btn-back" onclick="backToCalendar()" style="margin-bottom: 16px;">← Назад</button>
       <h2>Подтвердите запись</h2>
       
       <div class="confirmation-box">
@@ -461,64 +548,61 @@ input::placeholder { color: #9CA3AF; }
         </div>
       </div>
 
-      <button class="btn-primary" onclick="confirmBooking()" style="margin-top:24px;">Подтвердить</button>
-      <button class="btn-back" onclick="backToTimeSelection()">Изменить время</button>
+      <div class="screenshot-hint">
+        📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен
+      </div>
+
+      <button class="btn-primary" onclick="confirmBooking()">Подтвердить</button>
     </div>
 
-    <div id="admin" class="page">
-      <h2>Добавить ученика</h2>
-      <input id="fio" placeholder="ФИО ученика">
-      <button class="btn-primary" onclick="addStudent()">Добавить в список</button>
-      <div class="divider"></div>
-      <h2>Допущенные <span class="badge" id="stCount">0</span></h2>
-      <div id="list"></div>
-      <div class="divider"></div>
-      <h2>Записи на экзамен <span class="badge" id="bkCount">0</span></h2>
-      <div id="book"></div>
-      <div class="divider"></div>
-      <button class="btn-secondary" onclick="logout()">Выйти из админки</button>
-    </div>
-
-    <div id="pageDenied" class="page">
+    <!-- Отказ в допуске -->
+    <div id="page-denied" class="page">
       <div class="welcome">
-        <div class="welcome-icon">⚠️</div>
+        <div class="welcome-icon">️</div>
         <h2 style="color: var(--danger);">Вы не допущены к экзамену</h2>
         <p>Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p>
       </div>
-      <button class="btn-back" onclick="backToStart()">Вернуться назад</button>
+      <button class="btn-back" onclick="showMain()">Вернуться на главную</button>
     </div>
   </div>
 </div>
 
-<div id="pwd" class="modal hidden">
+<!-- Модальное окно пароля -->
+<div id="pwd-modal" class="modal hidden">
   <div class="modal-box">
     <h2>Вход в админ-панель</h2>
     <p>Введите пароль для доступа</p>
     <input type="password" id="pw" placeholder="Пароль">
     <div id="err" style="color: var(--danger); margin: 5px 0 15px; font-size: 14px; font-weight: 500;"></div>
     <button class="btn-primary" onclick="checkPwd()">Войти</button>
-    <button class="btn-secondary" onclick="closePwd()" style="margin-top: 8px; background: transparent; color: var(--gray); border: 1px solid var(--border);">Отмена</button>
+    <button class="btn-back" onclick="closePwd()" style="margin-top: 8px;">Отмена</button>
+  </div>
+</div>
+
+<!-- Модальное окно существующей записи -->
+<div id="existing-modal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Вы уже записаны на экзамен</h2>
+    <div id="existingInfo" style="background: var(--light-gray); padding: 16px; border-radius: 8px; margin: 16px 0; text-align: left;"></div>
+    <button class="btn-primary" onclick="changeBooking()">Изменить дату и время</button>
+    <button class="btn-back" onclick="closeExisting()" style="margin-top: 8px;">ОК</button>
   </div>
 </div>
 
 <script>
 var students = [];
 var bookings = [];
-var loggedIn = false;
 var curStudent = null;
 var selectedDate = null;
 var selectedTime = null;
-var tempBooking = null;
 var currentMonth = new Date();
 var calendarOpen = false;
 
-var dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 var monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 function load() {
   students = JSON.parse(localStorage.getItem('st') || '[]');
   bookings = JSON.parse(localStorage.getItem('bk') || '[]');
-  loggedIn = sessionStorage.getItem('adm') === '1';
 }
 
 function save() {
@@ -531,62 +615,42 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.add('active');
 }
 
-function showStudent() {
-  showPage('page1');
-  updateTabs();
-  document.getElementById('sfio').value = '';
+function showMain() {
+  showPage('page-main');
 }
 
-function updateTabs() {
-  var isAdmin = document.getElementById('admin').classList.contains('active');
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    if (i === 0) {
-      t.classList.toggle('active', isAdmin);
-      t.style.background = isAdmin ? 'var(--dark)' : 'var(--graphite)';
-      t.style.color = isAdmin ? 'var(--white)' : '#D1D5DB';
-    } else {
-      t.classList.toggle('active', !isAdmin);
-      t.style.background = !isAdmin ? 'var(--dark)' : 'var(--graphite)';
-      t.style.color = !isAdmin ? 'var(--white)' : '#D1D5DB';
-    }
-  });
-}
-
+// Админка
 function openAdmin() {
-  if (loggedIn) { 
-    showPage('admin');
-    updateTabs();
-    renderAdmin();
-  } else {
-    document.getElementById('pwd').classList.remove('hidden');
-    document.getElementById('pw').value = '';
-    document.getElementById('err').textContent = '';
-  }
+  document.getElementById('pwd-modal').classList.remove('hidden');
+  document.getElementById('pw').value = '';
+  document.getElementById('err').textContent = '';
 }
 
 function checkPwd() {
   if (document.getElementById('pw').value === '0000') {
-    loggedIn = true;
-    sessionStorage.setItem('adm', '1');
-    document.getElementById('pwd').classList.add('hidden');
-    showPage('admin');
-    updateTabs();
+    document.getElementById('pwd-modal').classList.add('hidden');
+    showPage('page-admin');
     renderAdmin();
   } else {
     document.getElementById('err').textContent = 'Неверный пароль';
   }
 }
 
-function closePwd() { document.getElementById('pwd').classList.add('hidden'); }
-function logout() {
-  loggedIn = false;
-  sessionStorage.setItem('adm', '0');
-  showStudent();
+function closePwd() {
+  document.getElementById('pwd-modal').classList.add('hidden');
 }
 
 function addStudent() {
   var f = document.getElementById('fio').value.trim();
   if (!f) { alert('Введите ФИО'); return; }
+  
+  // Проверяем, нет ли уже такого ученика
+  var exists = students.some(s => s.fio.toLowerCase() === f.toLowerCase());
+  if (exists) {
+    alert('Такой ученик уже есть в списке');
+    return;
+  }
+  
   students.push({id: Date.now(), fio: f});
   save();
   document.getElementById('fio').value = '';
@@ -594,60 +658,111 @@ function addStudent() {
   alert('Ученик успешно добавлен');
 }
 
-function renderAdmin() {
-  document.getElementById('stCount').textContent = students.length;
-  document.getElementById('bkCount').textContent = bookings.length;
-  var h = '';
-  for (var i = 0; i < students.length; i++) {
-    h += '<div class="item"><span>' + students[i].fio + '</span><button class="btn-danger" onclick="delSt(' + students[i].id + ')">Удалить</button></div>';
-  }
-  document.getElementById('list').innerHTML = h || '<p style="color:var(--gray); text-align:center; padding: 20px;">Список пуст</p>';
-  var h2 = '';
-  for (var j = 0; j < bookings.length; j++) {
-    var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
-    h2 += '<div class="item"><span>' + bookings[j].fio + '<small> ' + d + ' в ' + bookings[j].time + '</small></span></div>';
-  }
-  document.getElementById('book').innerHTML = h2 || '<p style="color:var(--gray); text-align:center; padding: 20px;">Записей пока нет</p>';
-}
-
-function delSt(id) {
-  if (confirm('Удалить ученика из списка?')) {
-    students = students.filter(function(s) { return s.id !== id; });
+function delStudent(id) {
+  if (confirm('Удалить ученика из списка допущенных?')) {
+    students = students.filter(s => s.id !== id);
     save();
     renderAdmin();
   }
 }
 
+function delBooking(id) {
+  if (confirm('Удалить запись на экзамен?')) {
+    bookings = bookings.filter(b => b.id !== id);
+    save();
+    renderAdmin();
+  }
+}
+
+function renderAdmin() {
+  document.getElementById('stCount').textContent = students.length;
+  document.getElementById('bkCount').textContent = bookings.length;
+  
+  var h = '';
+  for (var i = 0; i < students.length; i++) {
+    h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><button class="btn-danger" onclick="delStudent(' + students[i].id + ')">Удалить</button></div>';
+  }
+  document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
+  
+  var h2 = '';
+  for (var j = 0; j < bookings.length; j++) {
+    var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
+    h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(' + bookings[j].id + ')">Удалить</button></div>';
+  }
+  document.getElementById('bookingList').innerHTML = h2 || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
+}
+
+function saveAndExit() {
+  save();
+  alert('Данные сохранены');
+  showMain();
+}
+
+// Ученик
+function showStudentInput() {
+  showPage('page-student-input');
+  document.getElementById('sfio').value = '';
+}
+
+function backToStudentInput() {
+  showPage('page-student-input');
+}
+
 function checkStudent() {
   var f = document.getElementById('sfio').value.trim().toLowerCase();
   if (!f) { alert('Введите ФИО'); return; }
+  
   var found = null;
   for (var i = 0; i < students.length; i++) {
     if (students[i].fio.toLowerCase() === f) { found = students[i]; break; }
   }
-  if (found) {
-    curStudent = found;
-    showPage('page2');
-    initCalendar();
+  
+  if (!found) {
+    showPage('page-denied');
+    return;
+  }
+  
+  curStudent = found;
+  
+  // Проверяем, есть ли уже запись
+  var existingBooking = null;
+  for (var j = 0; j < bookings.length; j++) {
+    if (bookings[j].fio.toLowerCase() === curStudent.fio.toLowerCase()) {
+      existingBooking = bookings[j];
+      break;
+    }
+  }
+  
+  if (existingBooking) {
+    // Показываем окно с информацией о существующей записи
+    var d = new Date(existingBooking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('existingInfo').innerHTML = '<p style="margin: 8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin: 8px 0;"><strong>Время:</strong> ' + existingBooking.time + '</p>';
+    document.getElementById('existing-modal').classList.remove('hidden');
   } else {
-    showPage('pageDenied');
+    // Показываем календарь
+    showPage('page-student-calendar');
+    initCalendar();
   }
 }
 
-function backToStart() {
-  showPage('page1');
+function closeExisting() {
+  document.getElementById('existing-modal').classList.add('hidden');
+  showMain();
 }
 
-function backToTimeSelection() {
-  showPage('page2');
-  if (tempBooking) {
-    bookings = bookings.filter(b => b.id !== tempBooking.id);
-    save();
-    tempBooking = null;
-  }
-  renderTimeSlots();
+function changeBooking() {
+  document.getElementById('existing-modal').classList.add('hidden');
+  
+  // Удаляем старую запись
+  bookings = bookings.filter(b => b.fio.toLowerCase() !== curStudent.fio.toLowerCase());
+  save();
+  
+  // Показываем календарь
+  showPage('page-student-calendar');
+  initCalendar();
 }
 
+// Календарь
 function initCalendar() {
   currentMonth = new Date();
   selectedDate = null;
@@ -693,7 +808,6 @@ function renderCalendar() {
     var date = new Date(year, month, day);
     var dayOfWeek = date.getDay();
     var isAllowed = (dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5);
-    var isToday = new Date().toDateString() === date.toDateString();
     var isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
     
     var className = 'calendar-day';
@@ -708,7 +822,6 @@ function renderCalendar() {
 
 function selectDate(year, month, day) {
   selectedDate = new Date(year, month-1, day);
-  var dateStr = year + '-' + String(month).padStart(2,'0') + '-' + String(day).padStart(2,'0');
   var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('dateDisplay').textContent = selectedDate.toLocaleDateString('ru-RU', options);
   calendarOpen = false;
@@ -724,8 +837,10 @@ function renderTimeSlots() {
   var dateStr = selectedDate.toISOString().split('T')[0];
   var html = '';
   
-  for (var hour = 9; hour <= 12; hour++) {
-    for (var min = (hour === 9 ? 15 : 0); min < 60 && !(hour === 12 && min > 0); min += 15) {
+  // Время с 9:15 до 11:45 с шагом 15 минут
+  for (var hour = 9; hour <= 11; hour++) {
+    var startMin = (hour === 9) ? 15 : 0;
+    for (var min = startMin; min < 60; min += 15) {
       var timeStr = String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
       var booking = bookings.find(b => b.date === dateStr && b.time === timeStr);
       var isBooked = !!booking;
@@ -771,59 +886,42 @@ function showConfirmation() {
     return;
   }
   
-  if (tempBooking) {
-    bookings = bookings.filter(b => b.id !== tempBooking.id);
-  }
-  
-  var dateStr = selectedDate.toISOString().split('T')[0];
-  
-  tempBooking = {
-    id: Date.now(),
-    fio: curStudent.fio,
-    date: dateStr,
-    time: selectedTime
-  };
-  
   document.getElementById('confirmFio').textContent = curStudent.fio;
   document.getElementById('confirmDate').textContent = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('confirmTime').textContent = selectedTime;
   
-  showPage('page3');
+  showPage('page-student-confirm');
+}
+
+function backToCalendar() {
+  showPage('page-student-calendar');
 }
 
 function confirmBooking() {
-  if (!tempBooking) return;
+  var dateStr = selectedDate.toISOString().split('T')[0];
   
-  bookings.push(tempBooking);
+  // Удаляем старую запись если есть
+  bookings = bookings.filter(b => b.fio.toLowerCase() !== curStudent.fio.toLowerCase());
+  
+  // Добавляем новую запись
+  bookings.push({
+    id: Date.now(),
+    fio: curStudent.fio,
+    date: dateStr,
+    time: selectedTime
+  });
+  
   save();
   
-  var msg = "🚗 Новая запись на экзамен (теория)\n\n👤 Ученик: " + tempBooking.fio + "\n Дата: " + new Date(tempBooking.date).toLocaleDateString('ru-RU') + "\n⏰ Время: " + tempBooking.time;
+  alert('✅ Вы успешно записаны на экзамен!\n\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
   
-  // Пытаемся добавить текст в URL для автоматической вставки
-  var messengerUrl = "https://max.ru/u/f9LHodD0cOKcC7Ln4y8gaNPbfrIyJiPDhS_tBHFg0pbNjoBL45nAhqzt6hA?text=" + encodeURIComponent(msg);
-  
-  // Копируем в буфер обмена
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(msg).then(function() {
-      window.open(messengerUrl, "_blank");
-      alert("✅ Запись подтверждена!\n\nСообщение скопировано. Если оно не появилось в чате автоматически, вставьте его вручную (Ctrl+V или долгое нажатие).");
-    }).catch(function() {
-      window.open(messengerUrl, "_blank");
-      alert("✅ Запись подтверждена!\n\nСкопируйте текст вручную:\n\n" + msg);
-    });
-  } else {
-    window.open(messengerUrl, "_blank");
-    alert("✅ Запись подтверждена!\n\nСкопируйте текст:\n\n" + msg);
-  }
-  
-  tempBooking = null;
   selectedDate = null;
   selectedTime = null;
-  showStudent();
+  showMain();
 }
 
 load();
-showStudent();
+showMain();
 </script>
 </body>
 </html>
