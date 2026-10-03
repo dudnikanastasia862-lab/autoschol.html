@@ -243,14 +243,14 @@ input::placeholder { color: #9CA3AF; }
       <!-- Левая ветвь V — короткая, толстая, внутри ромба -->
       <line x1="75" y1="92" x2="50" y2="66" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
       
-      <!-- Правая ветвь V — широкая у основания, сужается к стрелке -->
-      <path d="M 65 95 Q 75 80 95 60 Q 110 45 120 35 L 125 40 Q 115 50 100 65 Q 80 85 70 100 Z" fill="#1A1A1A"/>
+      <!-- Правая ветвь V — ТОЛСТАЯ ЛИНИЯ, соединяет ромб со стрелкой -->
+      <line x1="75" y1="92" x2="120" y2="45" stroke="#1A1A1A" stroke-width="16" stroke-linecap="round"/>
       
       <!-- Белая пунктирная разметка по центру -->
-      <path d="M 72 92 Q 85 75 100 58 Q 112 45 122 37" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" fill="none" stroke-linecap="round"/>
+      <line x1="75" y1="92" x2="120" y2="45" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
       
       <!-- Стрелка — острая, симметричная -->
-      <path d="M 120 35 L 135 20 L 128 35 L 135 35 L 125 45 Z" fill="#1A1A1A"/>
+      <polygon points="120,45 135,28 128,42 138,42 125,52" fill="#1A1A1A"/>
       
       <!-- Текст "ектор" -->
       <text x="125" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
