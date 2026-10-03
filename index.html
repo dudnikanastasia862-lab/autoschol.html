@@ -233,7 +233,7 @@ input::placeholder { color: #9CA3AF; }
 
 <div class="box">
   <div class="logo-wrap">
-    <svg class="logo" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo" viewBox="0 0 420 160" xmlns="http://www.w3.org/2000/svg">
       <!-- Жёлтый ромб с закруглёнными углами -->
       <rect x="30" y="30" width="90" height="90" rx="8" fill="#FFE600" transform="rotate(45 75 75)"/>
       
@@ -246,11 +246,17 @@ input::placeholder { color: #9CA3AF; }
       <!-- Жирная буква V: правая ветвь (выходит за ромб) -->
       <line x1="75" y1="92" x2="130" y2="35" stroke="#1A1A1A" stroke-width="14" stroke-linecap="round"/>
       
+      <!-- Белая пунктирная разметка посередине правой ветви -->
+      <line x1="75" y1="92" x2="130" y2="35" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+      
+      <!-- Наконечник стрелки на конце правой ветви -->
+      <polygon points="130,35 145,20 137,33 145,42" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1" stroke-linejoin="round"/>
+      
       <!-- Текст "ектор" -->
-      <text x="135" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
+      <text x="148" y="98" font-size="60" font-weight="700" fill="#1A1A1A" font-family="Oswald, Arial Narrow, Arial, sans-serif" letter-spacing="-1">ектор</text>
       
       <!-- Текст "СЕТЬ АВТОШКОЛ" -->
-      <text x="140" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
+      <text x="153" y="122" font-size="15" fill="#1A1A1A" letter-spacing="2" font-family="Oswald, Arial, sans-serif" font-weight="600">СЕТЬ АВТОШКОЛ</text>
     </svg>
   </div>
 
