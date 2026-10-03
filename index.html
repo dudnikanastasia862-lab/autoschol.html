@@ -34,18 +34,9 @@ body {
 .box {
   max-width: 500px;
   margin: 0 auto;
-  background: var(--white);
-  border-radius: 0;
-  box-shadow: none;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-}
-
-.logo-wrap { 
-  text-align: center; 
-  margin-bottom: 16px;
-  padding: 20px 0 10px;
 }
 
 .logo { 
@@ -170,27 +161,11 @@ select option {
   transform: translateY(-2px);
 }
 
-.car-image {
-  margin-top: 0;
-  text-align: center;
-  padding: 0 8px;
-  position: relative;
-  z-index: 1;
-}
-
 .car-image img {
   width: 100%;
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  -webkit-mask-image: 
-    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image: 
-    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-  mask-composite: intersect;
 }
 
 .item {
@@ -248,7 +223,7 @@ select option {
   background: var(--graphite);
   padding: 32px 24px;
   border-radius: 16px;
-  margin: 0 16px;
+  margin: 16px;
 }
 .graphite-block h2 {
   color: var(--white);
@@ -266,39 +241,66 @@ select option {
   font-size: 15px;
 }
 
-.page { display: none; }
-.page.active { display: block; }
+.page { 
+  display: none;
+  min-height: 100vh;
+}
+.page.active { 
+  display: block;
+}
 
-/* Главная страница — желтый фон сверху */
+/* === ГЛАВНАЯ СТРАНИЦА === */
 #page-main {
   position: relative;
+  background: var(--light-gray);
+  min-height: 100vh;
+}
+
+/* Жёлтая полоса сверху по косой */
+#page-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: var(--primary);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+  z-index: 1;
+}
+
+/* Жёлтая полоса снизу по косой (зеркально) */
+#page-main::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: var(--primary);
+  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%);
+  z-index: 1;
+}
+
+.main-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px 16px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
-#page-main.active {
-  display: flex;
-}
 
-.main-yellow-top {
-  background: var(--primary);
-  padding: 30px 20px 60px;
+.main-logo-section {
   text-align: center;
-  position: relative;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-}
-
-.main-yellow-top .logo {
-  width: 130px;
+  padding: 10px 0 20px;
 }
 
 .main-center-block {
   background: var(--graphite);
-  margin: -30px 20px 20px;
+  margin: 20px 16px;
   padding: 32px 24px;
   border-radius: 16px;
-  position: relative;
-  z-index: 2;
   flex: 1;
 }
 
@@ -315,9 +317,8 @@ select option {
 }
 
 .main-car-section {
-  padding: 0 8px 20px;
-  position: relative;
-  z-index: 1;
+  text-align: center;
+  padding: 10px 8px 20px;
 }
 
 .main-car-section img {
@@ -327,6 +328,7 @@ select option {
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
+/* Календарь */
 .calendar-container {
   background: var(--dark);
   border: 2px solid var(--primary);
@@ -591,21 +593,23 @@ select option {
 
   <!-- Главная страница -->
   <div id="page-main" class="page active">
-    <div class="main-yellow-top">
-      <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
-    </div>
-    <div class="main-center-block">
-      <div class="welcome">
-        <h2>Добро пожаловать!</h2>
-        <p>Выберите вашу роль</p>
+    <div class="main-content">
+      <div class="main-logo-section">
+        <img class="logo" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор логотип">
       </div>
-      <div class="role-buttons">
-        <button class="role-btn" onclick="openAdmin()">АДМИН</button>
-        <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
+      <div class="main-center-block">
+        <div class="welcome">
+          <h2>Добро пожаловать!</h2>
+          <p>Выберите вашу роль</p>
+        </div>
+        <div class="role-buttons">
+          <button class="role-btn" onclick="openAdmin()">АДМИН</button>
+          <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
+        </div>
       </div>
-    </div>
-    <div class="main-car-section">
-      <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
+      <div class="main-car-section">
+        <img src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_5046.png" alt="Автомобиль автошколы Вектор">
+      </div>
     </div>
   </div>
 
