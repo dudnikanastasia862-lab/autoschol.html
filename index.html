@@ -703,7 +703,6 @@ select option {
   text-align: center;
 }
 
-/* Модальный календарь по центру экрана */
 .calendar-modal {
   position: fixed;
   top: 0;
@@ -768,7 +767,6 @@ select option {
   font-size: 14px;
 }
 
-/* Модальное окно инструкции — на весь экран */
 .instruction-modal {
   position: fixed;
   top: 0;
@@ -1030,7 +1028,7 @@ select option {
         <div class="detail"><strong>Дата</strong><span id="confirmDate"></span></div>
         <div class="detail"><strong>Время</strong><span id="confirmTime"></span></div>
       </div>
-      <div class="screenshot-hint"> Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
+      <div class="screenshot-hint">📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
       <button class="btn-primary" onclick="confirmBooking()">Подтвердить</button>
     </div>
   </div>
@@ -1072,7 +1070,6 @@ select option {
   </div>
 </div>
 
-<!-- Модальное окно инструкции -->
 <div class="instruction-modal" id="instructionModal">
   <div class="instruction-modal-content">
     <button class="instruction-close" onclick="closeInstruction()">✕</button>
@@ -1117,13 +1114,61 @@ let currentInstructionIndex = 0;
 
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-// Массив картинок инструкции — замени ссылки на свои после загрузки в GitHub
 const instructionImages = [
   'https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/4CAD503D-4C3A-4AB6-9DD2-834E5E17B20E.webp'
 ];
 
 function normalizeFio(str) {
   return str.trim().toLowerCase().replace(/ё/g, 'е');
+}
+
+// Универсальный поиск ученика — работает и со старыми, и с новыми записями
+async function findStudent(fio) {
+  const normalizedFio = normalizeFio(fio);
+  
+  // Сначала ищем по новому полю fioNormalized
+  const q1 = query(studentsRef, where('fioNormalized', '==', normalizedFio));
+  const snapshot1 = await getDocs(q1);
+  if (!snapshot1.empty) {
+    const doc = snapshot1.docs[0];
+    return { id: doc.id, ...doc.data() };
+  }
+  
+  // Если не нашли — ищем среди всех учеников (для старых записей без fioNormalized)
+  const allStudents = await getDocs(studentsRef);
+  for (const doc of allStudents.docs) {
+    const data = doc.data();
+    const storedFio = data.fio || '';
+    if (normalizeFio(storedFio) === normalizedFio) {
+      return { id: doc.id, ...data };
+    }
+  }
+  
+  return null;
+}
+
+// Универсальный поиск записей ученика
+async function findBooking(fio) {
+  const normalizedFio = normalizeFio(fio);
+  
+  // Сначала ищем по новому полю
+  const q1 = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
+  const snapshot1 = await getDocs(q1);
+  if (!snapshot1.empty) {
+    return snapshot1.docs[0].data();
+  }
+  
+  // Если не нашли — ищем среди всех записей
+  const allBookings = await getDocs(bookingsRef);
+  for (const doc of allBookings.docs) {
+    const data = doc.data();
+    const storedFio = data.fio || '';
+    if (normalizeFio(storedFio) === normalizedFio) {
+      return data;
+    }
+  }
+  
+  return null;
 }
 
 function updateStripes() {
@@ -1171,10 +1216,9 @@ window.addStudent = async function() {
   
   try {
     const normalizedFio = normalizeFio(f);
-    const q = query(studentsRef, where('fioNormalized', '==', normalizedFio));
-    const querySnapshot = await getDocs(q);
+    const existing = await findStudent(f);
     
-    if (!querySnapshot.empty) {
+    if (existing) {
       alert('Такой ученик уже есть в списке');
       return;
     }
@@ -1197,10 +1241,9 @@ window.addAndBook = async function() {
   
   try {
     const normalizedFio = normalizeFio(f);
-    const q = query(studentsRef, where('fioNormalized', '==', normalizedFio));
-    const querySnapshot = await getDocs(q);
+    const existing = await findStudent(f);
     
-    if (!querySnapshot.empty) {
+    if (existing) {
       alert('Такой ученик уже есть в списке');
       return;
     }
@@ -1453,13 +1496,13 @@ window.toggleTodayBookings = async function() {
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     if (bookings.length === 0) {
-      container.innerHTML = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
+      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
       return;
     }
     
     bookings.sort((a, b) => a.time.localeCompare(b.time));
     
-    var html = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
+    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
     for (var i = 0; i < bookings.length; i++) {
       var b = bookings[i];
       var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
@@ -1497,23 +1540,18 @@ window.checkStudent = async function() {
   if (!f) { alert('Введите ФИО'); return; }
   
   try {
-    const normalizedFio = normalizeFio(f);
-    const q = query(studentsRef, where('fioNormalized', '==', normalizedFio));
-    const querySnapshot = await getDocs(q);
+    const student = await findStudent(f);
     
-    if (querySnapshot.empty) {
+    if (!student) {
       showPage('page-denied');
       return;
     }
     
-    const studentDoc = querySnapshot.docs[0];
-    curStudent = { id: studentDoc.id, ...studentDoc.data() };
+    curStudent = student;
     
-    const q2 = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
-    const bookingsSnapshot = await getDocs(q2);
+    const booking = await findBooking(f);
     
-    if (!bookingsSnapshot.empty) {
-      const booking = bookingsSnapshot.docs[0].data();
+    if (booking) {
       var d = new Date(booking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('existingInfo').innerHTML = '<p style="margin: 8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin: 8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
       document.getElementById('existing-modal').classList.remove('hidden');
@@ -1523,7 +1561,7 @@ window.checkStudent = async function() {
     }
   } catch (error) {
     console.error('Error:', error);
-    alert('Ошибка');
+    alert('Ошибка при проверке допуска');
   }
 };
 
@@ -1537,11 +1575,17 @@ window.changeBooking = async function() {
   
   try {
     const normalizedFio = normalizeFio(curStudent.fio);
-    const q = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (doc) => {
-      await deleteDoc(doc.ref);
-    });
+    
+    // Удаляем старую запись (ищем среди всех)
+    const allBookings = await getDocs(bookingsRef);
+    for (const doc of allBookings.docs) {
+      const data = doc.data();
+      if (normalizeFio(data.fio || '') === normalizedFio) {
+        await deleteDoc(doc.ref);
+        break;
+      }
+    }
+    
     showPage('page-student-calendar');
     initCalendar();
   } catch (error) {
@@ -1709,14 +1753,18 @@ window.confirmBooking = async function() {
   if (!selectedDate || !selectedTime || !curStudent) return;
   
   var dateStr = selectedDate.toISOString().split('T')[0];
+  var normalizedFio = normalizeFio(curStudent.fio);
   
   try {
-    const normalizedFio = normalizeFio(curStudent.fio);
-    const q = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (doc) => {
-      await deleteDoc(doc.ref);
-    });
+    // Удаляем старую запись (ищем среди всех)
+    const allBookings = await getDocs(bookingsRef);
+    for (const doc of allBookings.docs) {
+      const data = doc.data();
+      if (normalizeFio(data.fio || '') === normalizedFio) {
+        await deleteDoc(doc.ref);
+        break;
+      }
+    }
     
     await addDoc(bookingsRef, {
       fio: curStudent.fio,
@@ -1738,7 +1786,6 @@ window.confirmBooking = async function() {
   }
 };
 
-// ===== ИНСТРУКЦИЯ =====
 window.openInstruction = function() {
   currentInstructionIndex = 0;
   updateInstructionView();
