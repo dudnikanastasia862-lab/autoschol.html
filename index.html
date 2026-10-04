@@ -246,6 +246,20 @@ button {
   border: 2px solid var(--dark);
 }
 
+.btn-instruction {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid var(--primary);
+  font-size: 14px;
+  padding: 12px 20px;
+  text-transform: none;
+  font-weight: 600;
+  margin-top: 16px;
+}
+.btn-instruction:hover {
+  background: rgba(255,230,0,0.1);
+}
+
 input {
   padding: 14px 16px;
   width: 100%;
@@ -753,6 +767,104 @@ select option {
   padding: 12px;
   font-size: 14px;
 }
+
+/* Модальное окно инструкции — на весь экран */
+.instruction-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 0;
+}
+
+.instruction-modal.show {
+  display: flex;
+}
+
+.instruction-modal-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instruction-modal-content img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.instruction-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  color: var(--white);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 301;
+  backdrop-filter: blur(4px);
+}
+
+.instruction-close:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.instruction-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  color: var(--white);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 301;
+  backdrop-filter: blur(4px);
+}
+
+.instruction-nav:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.instruction-prev { left: 20px; }
+.instruction-next { right: 20px; }
+
+.instruction-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--white);
+  font-size: 14px;
+  background: rgba(0,0,0,0.5);
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 301;
+}
 </style>
 </head>
 <body>
@@ -781,6 +893,7 @@ select option {
           <button class="role-btn" onclick="openAdmin()">АДМИН</button>
           <button class="role-btn" onclick="showStudentInput()">УЧЕНИК</button>
         </div>
+        <button class="btn-instruction" onclick="openInstruction()">📖 Инструкция</button>
       </div>
       <div class="main-car-section">
         <div class="car-image">
@@ -893,7 +1006,6 @@ select option {
     </div>
   </div>
 
-  <!-- Модальный календарь по центру экрана -->
   <div class="calendar-modal" id="calendarModal">
     <div class="calendar-modal-content">
       <div class="calendar-modal-header">
@@ -918,7 +1030,7 @@ select option {
         <div class="detail"><strong>Дата</strong><span id="confirmDate"></span></div>
         <div class="detail"><strong>Время</strong><span id="confirmTime"></span></div>
       </div>
-      <div class="screenshot-hint">📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
+      <div class="screenshot-hint"> Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
       <button class="btn-primary" onclick="confirmBooking()">Подтвердить</button>
     </div>
   </div>
@@ -960,6 +1072,17 @@ select option {
   </div>
 </div>
 
+<!-- Модальное окно инструкции -->
+<div class="instruction-modal" id="instructionModal">
+  <div class="instruction-modal-content">
+    <button class="instruction-close" onclick="closeInstruction()">✕</button>
+    <button class="instruction-nav instruction-prev" id="instrPrev" onclick="prevInstruction()">‹</button>
+    <button class="instruction-nav instruction-next" id="instrNext" onclick="nextInstruction()">›</button>
+    <img id="instructionImage" src="" alt="Инструкция">
+    <div class="instruction-counter" id="instructionCounter">1 / 1</div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -990,10 +1113,15 @@ let adminSelectedDate = null;
 let adminSelectedTime = null;
 let pendingStudentFio = null;
 let pendingStudentType = null;
+let currentInstructionIndex = 0;
 
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-// Функция нормализации ФИО: заменяет ё на е, приводит к нижнему регистру
+// Массив картинок инструкции — замени ссылки на свои после загрузки в GitHub
+const instructionImages = [
+  'https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/4CAD503D-4C3A-4AB6-9DD2-834E5E17B20E.webp'
+];
+
 function normalizeFio(str) {
   return str.trim().toLowerCase().replace(/ё/g, 'е');
 }
@@ -1325,13 +1453,13 @@ window.toggleTodayBookings = async function() {
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     if (bookings.length === 0) {
-      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
+      container.innerHTML = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
       return;
     }
     
     bookings.sort((a, b) => a.time.localeCompare(b.time));
     
-    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
+    var html = '<div class="today-list"><h4> Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
     for (var i = 0; i < bookings.length; i++) {
       var b = bookings[i];
       var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
@@ -1429,7 +1557,6 @@ window.initCalendar = function() {
   document.getElementById('timeSlotsContainer').classList.add('hidden');
 };
 
-// Модальный календарь
 window.openCalendarModal = function() {
   currentMonth = new Date();
   renderModalCalendar();
@@ -1610,6 +1737,38 @@ window.confirmBooking = async function() {
     alert('Ошибка');
   }
 };
+
+// ===== ИНСТРУКЦИЯ =====
+window.openInstruction = function() {
+  currentInstructionIndex = 0;
+  updateInstructionView();
+  document.getElementById('instructionModal').classList.add('show');
+};
+
+window.closeInstruction = function() {
+  document.getElementById('instructionModal').classList.remove('show');
+};
+
+window.nextInstruction = function() {
+  if (currentInstructionIndex < instructionImages.length - 1) {
+    currentInstructionIndex++;
+    updateInstructionView();
+  }
+};
+
+window.prevInstruction = function() {
+  if (currentInstructionIndex > 0) {
+    currentInstructionIndex--;
+    updateInstructionView();
+  }
+};
+
+function updateInstructionView() {
+  document.getElementById('instructionImage').src = instructionImages[currentInstructionIndex];
+  document.getElementById('instructionCounter').textContent = (currentInstructionIndex + 1) + ' / ' + instructionImages.length;
+  document.getElementById('instrPrev').style.display = currentInstructionIndex > 0 ? 'flex' : 'none';
+  document.getElementById('instrNext').style.display = currentInstructionIndex < instructionImages.length - 1 ? 'flex' : 'none';
+}
 
 showMain();
 updateStripes();
