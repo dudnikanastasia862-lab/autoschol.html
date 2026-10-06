@@ -402,6 +402,8 @@ select option {
   margin: 16px;
   position: relative;
   z-index: 2;
+  width: calc(100% - 32px);
+  max-width: 460px;
 }
 .graphite-block h2 {
   color: var(--white);
@@ -422,8 +424,9 @@ select option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 20px 0;
+  overflow-y: auto;
+  min-height: 100vh;
 }
 
 #page-main.active { display: block; }
@@ -526,7 +529,7 @@ select option {
 }
 
 .collapsible-content.expanded {
-  max-height: 2000px;
+  max-height: 5000px;
 }
 
 .admin-calendar-container {
@@ -1122,11 +1125,9 @@ function normalizeFio(str) {
   return str.trim().toLowerCase().replace(/ё/g, 'е');
 }
 
-// Универсальный поиск ученика — работает и со старыми, и с новыми записями
 async function findStudent(fio) {
   const normalizedFio = normalizeFio(fio);
   
-  // Сначала ищем по новому полю fioNormalized
   const q1 = query(studentsRef, where('fioNormalized', '==', normalizedFio));
   const snapshot1 = await getDocs(q1);
   if (!snapshot1.empty) {
@@ -1134,7 +1135,6 @@ async function findStudent(fio) {
     return { id: doc.id, ...doc.data() };
   }
   
-  // Если не нашли — ищем среди всех учеников (для старых записей без fioNormalized)
   const allStudents = await getDocs(studentsRef);
   for (const doc of allStudents.docs) {
     const data = doc.data();
@@ -1147,18 +1147,15 @@ async function findStudent(fio) {
   return null;
 }
 
-// Универсальный поиск записей ученика
 async function findBooking(fio) {
   const normalizedFio = normalizeFio(fio);
   
-  // Сначала ищем по новому полю
   const q1 = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
   const snapshot1 = await getDocs(q1);
   if (!snapshot1.empty) {
     return snapshot1.docs[0].data();
   }
   
-  // Если не нашли — ищем среди всех записей
   const allBookings = await getDocs(bookingsRef);
   for (const doc of allBookings.docs) {
     const data = doc.data();
@@ -1576,7 +1573,6 @@ window.changeBooking = async function() {
   try {
     const normalizedFio = normalizeFio(curStudent.fio);
     
-    // Удаляем старую запись (ищем среди всех)
     const allBookings = await getDocs(bookingsRef);
     for (const doc of allBookings.docs) {
       const data = doc.data();
@@ -1756,7 +1752,6 @@ window.confirmBooking = async function() {
   var normalizedFio = normalizeFio(curStudent.fio);
   
   try {
-    // Удаляем старую запись (ищем среди всех)
     const allBookings = await getDocs(bookingsRef);
     for (const doc of allBookings.docs) {
       const data = doc.data();
