@@ -234,6 +234,26 @@ button {
   box-shadow: none;
 }
 
+.btn-edit {
+  background: #DBEAFE;
+  color: #1D4ED8;
+  padding: 8px 12px;
+  width: auto;
+  font-size: 13px;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.btn-book {
+  background: #D1FAE5;
+  color: #065F46;
+  padding: 8px 12px;
+  width: auto;
+  font-size: 13px;
+  text-transform: none;
+  box-shadow: none;
+}
+
 .btn-today {
   background: var(--graphite);
   color: var(--white);
@@ -260,6 +280,30 @@ button {
   background: rgba(255,230,0,0.1);
 }
 
+.btn-nav {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0 4px;
+  background: var(--graphite);
+  color: var(--white);
+  border: 2px solid var(--primary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.btn-calendar-nav {
+  width: auto;
+  padding: 8px 12px;
+  margin: 0 4px;
+  background: var(--graphite);
+  color: var(--white);
+  border: 2px solid var(--primary);
+  font-size: 13px;
+  text-transform: none;
+  font-weight: 600;
+}
+
 input {
   padding: 14px 16px;
   width: 100%;
@@ -277,6 +321,14 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(255,230,0,0.2);
 }
 input::placeholder { color: #9CA3AF; }
+
+input.search-input {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  margin: 12px 0;
+  padding: 10px 14px;
+  font-size: 14px;
+}
 
 select {
   padding: 14px 16px;
@@ -529,7 +581,7 @@ select option {
 }
 
 .collapsible-content.expanded {
-  max-height: 5000px;
+  max-height: 10000px;
 }
 
 .admin-calendar-container {
@@ -628,29 +680,59 @@ select option {
 .admin-time-slot .time { font-weight: 700; font-size: 15px; color: var(--dark); }
 .admin-time-slot .fio { font-size: 13px; color: var(--gray); text-align: right; max-width: 55%; }
 
+/* НОВЫЙ СТИЛЬ: выравнивание списка */
 .admin-item {
   background: rgba(255,255,255,0.1);
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: var(--white);
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
-.admin-item .name { flex: 1; font-weight: 500; min-width: 150px; }
-.admin-item .info { font-size: 12px; color: #D1D5DB; margin-right: 12px; }
+.admin-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
 
-.admin-item .type-badge {
-  padding: 4px 10px;
+.admin-item-left .name {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.admin-item-left .info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-item-left .info {
+  font-size: 12px;
+  color: #D1D5DB;
+}
+
+.admin-item-left .type-badge {
+  padding: 3px 9px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  margin-right: 8px;
+}
+
+.admin-item-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .type-vip { background: var(--vip-gold); color: var(--dark); }
@@ -658,6 +740,23 @@ select option {
 
 .loading { text-align: center; color: var(--primary); padding: 20px; font-size: 14px; }
 .form-label { color: var(--white); font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; }
+
+.today-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.today-nav-label {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 140px;
+}
 
 .today-list {
   background: rgba(255,255,255,0.05);
@@ -944,7 +1043,7 @@ select option {
           </div>
         </div>
         
-        <button class="btn-today" onclick="toggleTodayBookings()">📋 Записаны на сегодня</button>
+        <button class="btn-today" onclick="toggleTodayBookings()">📋 Записи на выбранную дату</button>
         <div id="todayListContainer" class="hidden"></div>
       </div>
 
@@ -958,6 +1057,7 @@ select option {
           <span class="collapsible-arrow" id="studentsArrow">▶</span>
         </div>
         <div class="collapsible-content" id="studentsList">
+          <input type="text" class="search-input" id="studentSearch" placeholder=" Поиск по ФИО..." oninput="filterStudents()">
           <div id="studentList" style="margin-top:12px;"><div class="loading">Загрузка...</div></div>
         </div>
       </div>
@@ -970,6 +1070,7 @@ select option {
           <span class="collapsible-arrow" id="bookingsArrow">▶</span>
         </div>
         <div class="collapsible-content" id="bookingsList">
+          <input type="text" class="search-input" id="bookingSearch" placeholder="🔍 Поиск по ФИО..." oninput="filterBookings()">
           <div id="bookingList" style="margin-top:12px;"><div class="loading">Загрузка...</div></div>
         </div>
       </div>
@@ -1115,6 +1216,21 @@ let pendingStudentFio = null;
 let pendingStudentType = null;
 let currentInstructionIndex = 0;
 
+// Для навигации по дням
+let currentViewDate = new Date();
+let currentViewDateStr = null;
+
+// Для изменения записи админом
+let editBookingId = null;
+let editBookingFio = null;
+let editBookingType = null;
+let editBookingOldDate = null;
+let editBookingOldTime = null;
+
+// Кэш данных для поиска
+let allStudentsCache = [];
+let allBookingsCache = [];
+
 const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 const instructionImages = [
@@ -1123,6 +1239,14 @@ const instructionImages = [
 
 function normalizeFio(str) {
   return str.trim().toLowerCase().replace(/ё/g, 'е');
+}
+
+function formatDateForDisplay(date) {
+  return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function formatDateForDB(date) {
+  return date.toISOString().split('T')[0];
 }
 
 async function findStudent(fio) {
@@ -1153,7 +1277,7 @@ async function findBooking(fio) {
   const q1 = query(bookingsRef, where('fioNormalized', '==', normalizedFio));
   const snapshot1 = await getDocs(q1);
   if (!snapshot1.empty) {
-    return snapshot1.docs[0].data();
+    return { id: snapshot1.docs[0].id, ...snapshot1.docs[0].data() };
   }
   
   const allBookings = await getDocs(bookingsRef);
@@ -1161,7 +1285,7 @@ async function findBooking(fio) {
     const data = doc.data();
     const storedFio = data.fio || '';
     if (normalizeFio(storedFio) === normalizedFio) {
-      return data;
+      return { id: doc.id, ...data };
     }
   }
   
@@ -1411,6 +1535,67 @@ window.confirmAdminBooking = async function() {
   }
 };
 
+// ===== ИЗМЕНЕНИЕ ЗАПИСИ АДМИНОМ =====
+window.startEditBooking = function(studentFio, studentType, bookingId, bookingDate, bookingTime) {
+  editBookingId = bookingId;
+  editBookingFio = studentFio;
+  editBookingType = studentType;
+  editBookingOldDate = bookingDate;
+  editBookingOldTime = bookingTime;
+  
+  // Открываем модалку календаря для выбора новой даты
+  currentMonth = new Date(bookingDate + 'T00:00:00');
+  selectedDate = new Date(bookingDate + 'T00:00:00');
+  selectedTime = bookingTime;
+  
+  renderModalCalendar();
+  document.getElementById('calendarModal').classList.add('show');
+  
+  // После выбора даты — показать слоты
+  // Переопределяем поведение selectModalDate временно
+  window._editMode = true;
+};
+
+window.confirmEditBooking = async function() {
+  if (!selectedDate || !selectedTime) {
+    alert('Выберите дату и время');
+    return;
+  }
+  
+  var newDateStr = formatDateForDB(selectedDate);
+  
+  try {
+    // Удаляем старую запись
+    if (editBookingId) {
+      await deleteDoc(doc(db, 'bookings', editBookingId));
+    }
+    
+    // Создаём новую
+    await addDoc(bookingsRef, {
+      fio: editBookingFio,
+      fioNormalized: normalizeFio(editBookingFio),
+      type: editBookingType || 'standard',
+      date: newDateStr,
+      time: selectedTime,
+      createdAt: new Date()
+    });
+    
+    alert('✅ Запись изменена!\n\nНовая дата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nНовое время: ' + selectedTime);
+    
+    editBookingId = null;
+    editBookingFio = null;
+    editBookingType = null;
+    editBookingOldDate = null;
+    editBookingOldTime = null;
+    window._editMode = false;
+    
+    await renderAdmin();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Ошибка при изменении записи');
+  }
+};
+
 window.delStudent = async function(id) {
   if (confirm('Удалить ученика?')) {
     try {
@@ -1433,38 +1618,133 @@ window.delBooking = async function(id) {
   }
 };
 
+// ===== ЗАПИСЬ УЧЕНИКА ИЗ СПИСКА ДОПУЩЕННЫХ =====
+window.bookStudentFromList = function(studentFio, studentType) {
+  pendingStudentFio = studentFio;
+  pendingStudentType = studentType;
+  
+  adminCurrentMonth = new Date();
+  adminSelectedDate = null;
+  adminSelectedTime = null;
+  document.getElementById('adminDateDisplay').textContent = 'Нажмите для выбора даты';
+  document.getElementById('adminTimeSlotsContainer').classList.add('hidden');
+  document.getElementById('adminBookSection').classList.remove('hidden');
+  renderAdminCalendar();
+  
+  // Прокручиваем к секции записи
+  document.getElementById('adminBookSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
 window.renderAdmin = async function() {
   try {
     const studentsSnapshot = await getDocs(studentsRef);
-    const students = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    allStudentsCache = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     const bookingsSnapshot = await getDocs(bookingsRef);
-    const bookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    allBookingsCache = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    document.getElementById('stCount').textContent = students.length;
-    document.getElementById('bkCount').textContent = bookings.length;
+    document.getElementById('stCount').textContent = allStudentsCache.length;
+    document.getElementById('bkCount').textContent = allBookingsCache.length;
     
-    var h = '';
-    for (var i = 0; i < students.length; i++) {
-      var type = students[i].type || 'standard';
-      var typeLabel = type === 'vip' ? 'VIP' : 'Standard';
-      var typeClass = type === 'vip' ? 'type-vip' : 'type-standard';
-      h += '<div class="admin-item"><span class="name">' + students[i].fio + '</span><span class="type-badge ' + typeClass + '">' + typeLabel + '</span><button class="btn-danger" onclick="delStudent(\'' + students[i].id + '\')">Удалить</button></div>';
-    }
-    document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
-    
-    var h2 = '';
-    for (var j = 0; j < bookings.length; j++) {
-      var d = new Date(bookings[j].date).toLocaleDateString('ru-RU');
-      var bType = bookings[j].type || 'standard';
-      var bTypeLabel = bType === 'vip' ? 'VIP' : 'Standard';
-      var bTypeClass = bType === 'vip' ? 'type-vip' : 'type-standard';
-      h2 += '<div class="admin-item"><span class="name">' + bookings[j].fio + '</span><span class="type-badge ' + bTypeClass + '">' + bTypeLabel + '</span><span class="info">' + d + ' ' + bookings[j].time + '</span><button class="btn-danger" onclick="delBooking(\'' + bookings[j].id + '\')">Удалить</button></div>';
-    }
-    document.getElementById('bookingList').innerHTML = h2 || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
+    renderStudentList(allStudentsCache);
+    renderBookingList(allBookingsCache);
   } catch (error) {
     console.error('Error:', error);
   }
+};
+
+function renderStudentList(students) {
+  var h = '';
+  for (var i = 0; i < students.length; i++) {
+    var s = students[i];
+    var type = s.type || 'standard';
+    var typeLabel = type === 'vip' ? 'VIP' : 'Standard';
+    var typeClass = type === 'vip' ? 'type-vip' : 'type-standard';
+    
+    // Проверяем, есть ли запись
+    var booking = null;
+    for (var j = 0; j < allBookingsCache.length; j++) {
+      if (normalizeFio(allBookingsCache[j].fio || '') === normalizeFio(s.fio || '')) {
+        booking = allBookingsCache[j];
+        break;
+      }
+    }
+    
+    h += '<div class="admin-item" data-fio="' + normalizeFio(s.fio) + '">';
+    h += '<div class="admin-item-left">';
+    h += '<span class="name">' + s.fio + '</span>';
+    h += '<div class="info-row">';
+    h += '<span class="type-badge ' + typeClass + '">' + typeLabel + '</span>';
+    if (booking) {
+      var d = new Date(booking.date).toLocaleDateString('ru-RU');
+      h += '<span class="info">📅 ' + d + ' ' + booking.time + '</span>';
+    }
+    h += '</div>';
+    h += '</div>';
+    h += '<div class="admin-item-right">';
+    if (booking) {
+      h += '<button class="btn-edit" onclick="startEditBooking(\'' + s.fio.replace(/'/g, "\\'") + '\',\'' + type + '\',\'' + booking.id + '\',\'' + booking.date + '\',\'' + booking.time + '\')">Изменить</button>';
+    } else {
+      h += '<button class="btn-book" onclick="bookStudentFromList(\'' + s.fio.replace(/'/g, "\\'") + '\',\'' + type + '\')">Записать</button>';
+    }
+    h += '<button class="btn-danger" onclick="delStudent(\'' + s.id + '\')">Удалить</button>';
+    h += '</div>';
+    h += '</div>';
+  }
+  document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Список пуст</p>';
+}
+
+function renderBookingList(bookings) {
+  var h = '';
+  for (var j = 0; j < bookings.length; j++) {
+    var b = bookings[j];
+    var d = new Date(b.date).toLocaleDateString('ru-RU');
+    var bType = b.type || 'standard';
+    var bTypeLabel = bType === 'vip' ? 'VIP' : 'Standard';
+    var bTypeClass = bType === 'vip' ? 'type-vip' : 'type-standard';
+    
+    h += '<div class="admin-item" data-fio="' + normalizeFio(b.fio) + '">';
+    h += '<div class="admin-item-left">';
+    h += '<span class="name">' + b.fio + '</span>';
+    h += '<div class="info-row">';
+    h += '<span class="type-badge ' + bTypeClass + '">' + bTypeLabel + '</span>';
+    h += '<span class="info"> ' + d + ' ' + b.time + '</span>';
+    h += '</div>';
+    h += '</div>';
+    h += '<div class="admin-item-right">';
+    h += '<button class="btn-edit" onclick="startEditBooking(\'' + b.fio.replace(/'/g, "\\'") + '\',\'' + bType + '\',\'' + b.id + '\',\'' + b.date + '\',\'' + b.time + '\')">Изменить</button>';
+    h += '<button class="btn-danger" onclick="delBooking(\'' + b.id + '\')">Удалить</button>';
+    h += '</div>';
+    h += '</div>';
+  }
+  document.getElementById('bookingList').innerHTML = h || '<p style="color:#D1D5DB; text-align:center; padding: 20px;">Записей пока нет</p>';
+}
+
+// ===== ПОИСК В РЕАЛЬНОМ ВРЕМЕНИ =====
+window.filterStudents = function() {
+  var query = normalizeFio(document.getElementById('studentSearch').value);
+  var items = document.querySelectorAll('#studentList .admin-item');
+  items.forEach(function(item) {
+    var fio = item.getAttribute('data-fio') || '';
+    if (fio.includes(query)) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+};
+
+window.filterBookings = function() {
+  var query = normalizeFio(document.getElementById('bookingSearch').value);
+  var items = document.querySelectorAll('#bookingList .admin-item');
+  items.forEach(function(item) {
+    var fio = item.getAttribute('data-fio') || '';
+    if (fio.includes(query)) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
 };
 
 window.toggleCollapsible = function(id) {
@@ -1474,41 +1754,65 @@ window.toggleCollapsible = function(id) {
   arrow.classList.toggle('open');
 };
 
+// ===== НАВИГАЦИЯ ПО ДНЯМ =====
 window.toggleTodayBookings = async function() {
   const container = document.getElementById('todayListContainer');
   
   if (!container.classList.contains('hidden')) {
     container.classList.add('hidden');
-    container.innerHTML = '';
     return;
   }
   
   container.classList.remove('hidden');
   container.innerHTML = '<div class="loading">Загрузка...</div>';
   
+  await loadDayBookings(currentViewDate);
+};
+
+async function loadDayBookings(date) {
+  const container = document.getElementById('todayListContainer');
+  const dateStr = formatDateForDB(date);
+  currentViewDateStr = dateStr;
+  
+  container.innerHTML = '<div class="loading">Загрузка...</div>';
+  
   try {
-    const today = new Date().toISOString().split('T')[0];
-    const q = query(bookingsRef, where('date', '==', today));
+    const q = query(bookingsRef, where('date', '==', dateStr));
     const snapshot = await getDocs(q);
     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
+    var isToday = dateStr === new Date().toISOString().split('T')[0];
+    var isYesterday = dateStr === new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    var isTomorrow = dateStr === new Date(Date.now() + 86400000).toISOString().split('T')[0];
+    
+    var dateLabel = formatDateForDisplay(date);
+    if (isToday) dateLabel += ' (сегодня)';
+    else if (isYesterday) dateLabel += ' (вчера)';
+    else if (isTomorrow) dateLabel += ' (завтра)';
+    
+    var html = '<div class="today-list">';
+    html += '<div class="today-nav">';
+    html += '<button class="btn-nav" onclick="changeViewDate(-1)">‹</button>';
+    html += '<span class="today-nav-label">' + dateLabel + '</span>';
+    html += '<button class="btn-nav" onclick="changeViewDate(1)">›</button>';
+    html += '<button class="btn-calendar-nav" onclick="openDayNavCalendar()">📅</button>';
+    html += '</div>';
+    
     if (bookings.length === 0) {
-      container.innerHTML = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + '</h4><div class="today-empty">На сегодня никто не записан</div></div>';
-      return;
-    }
-    
-    bookings.sort((a, b) => a.time.localeCompare(b.time));
-    
-    var html = '<div class="today-list"><h4>📅 Записи на ' + new Date().toLocaleDateString('ru-RU') + ' (' + bookings.length + ')</h4>';
-    for (var i = 0; i < bookings.length; i++) {
-      var b = bookings[i];
-      var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
-      var typeClass = b.type === 'vip' ? 'type-vip' : 'type-standard';
-      html += '<div class="today-item">';
-      html += '<span class="t-time">' + b.time + '</span>';
-      html += '<span class="t-name">' + b.fio + '</span>';
-      html += '<span class="type-badge ' + typeClass + '">' + typeLabel + '</span>';
-      html += '</div>';
+      html += '<div class="today-empty">На эту дату никто не записан</div>';
+    } else {
+      html += '<h4>📋 Записи (' + bookings.length + ')</h4>';
+      bookings.sort((a, b) => a.time.localeCompare(b.time));
+      for (var i = 0; i < bookings.length; i++) {
+        var b = bookings[i];
+        var typeLabel = b.type === 'vip' ? 'VIP' : 'Std';
+        var typeClass = b.type === 'vip' ? 'type-vip' : 'type-standard';
+        html += '<div class="today-item">';
+        html += '<span class="t-time">' + b.time + '</span>';
+        html += '<span class="t-name">' + b.fio + '</span>';
+        html += '<span class="type-badge ' + typeClass + '">' + typeLabel + '</span>';
+        html += '</div>';
+      }
     }
     html += '</div>';
     container.innerHTML = html;
@@ -1516,6 +1820,18 @@ window.toggleTodayBookings = async function() {
     console.error('Error:', error);
     container.innerHTML = '<div class="today-list"><div class="today-empty" style="color:var(--danger);">Ошибка</div></div>';
   }
+}
+
+window.changeViewDate = function(delta) {
+  currentViewDate.setDate(currentViewDate.getDate() + delta);
+  loadDayBookings(currentViewDate);
+};
+
+window.openDayNavCalendar = function() {
+  currentMonth = new Date(currentViewDate);
+  renderModalCalendar();
+  document.getElementById('calendarModal').classList.add('show');
+  window._dayNavMode = true;
 };
 
 window.saveAndExit = function() {
@@ -1605,6 +1921,8 @@ window.openCalendarModal = function() {
 
 window.closeCalendarModal = function() {
   document.getElementById('calendarModal').classList.remove('show');
+  window._editMode = false;
+  window._dayNavMode = false;
 };
 
 window.changeMonth = function(delta) {
@@ -1651,15 +1969,112 @@ window.renderModalCalendar = function() {
 
 window.selectModalDate = function(year, month, day) {
   selectedDate = new Date(year, month-1, day);
+  closeCalendarModal();
+  
+  // Режим изменения записи админом
+  if (window._editMode) {
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    var dateLabel = selectedDate.toLocaleDateString('ru-RU', options);
+    
+    // Показываем модалку с выбором времени
+    showEditTimeModal(dateLabel);
+    return;
+  }
+  
+  // Режим навигации по дням
+  if (window._dayNavMode) {
+    currentViewDate = new Date(selectedDate);
+    loadDayBookings(currentViewDate);
+    return;
+  }
+  
+  // Обычный режим ученика
   var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('dateDisplay').textContent = selectedDate.toLocaleDateString('ru-RU', options);
-  closeCalendarModal();
   
   renderTimeSlots();
   document.getElementById('timeSlotsContainer').classList.remove('hidden');
   setTimeout(() => {
     document.getElementById('timeSlotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
+};
+
+function showEditTimeModal(dateLabel) {
+  // Создаём модалку для выбора времени
+  var modalHtml = '<div class="modal" id="editTimeModal" style="display:flex;">';
+  modalHtml += '<div class="modal-box" style="max-width:420px;">';
+  modalHtml += '<h2 style="margin-bottom:8px;">Выберите время</h2>';
+  modalHtml += '<p style="color:#6B7280;margin-bottom:16px;font-size:14px;">' + dateLabel + '</p>';
+  modalHtml += '<div id="editTimeSlots"></div>';
+  modalHtml += '<button class="btn-primary" onclick="confirmEditBooking()" style="margin-top:16px;">Подтвердить изменение</button>';
+  modalHtml += '<button class="btn-back" onclick="closeEditTimeModal()" style="margin-top:8px;color:#6B7280;border-color:#E5E7EB;">Отмена</button>';
+  modalHtml += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  loadEditTimeSlots();
+}
+
+async function loadEditTimeSlots() {
+  if (!selectedDate) return;
+  
+  var dateStr = formatDateForDB(selectedDate);
+  var html = '';
+  
+  try {
+    const q = query(bookingsRef, where('date', '==', dateStr));
+    const bookingsSnapshot = await getDocs(q);
+    const bookedSlots = {};
+    bookingsSnapshot.forEach(doc => {
+      const booking = doc.data();
+      // Не считаем текущую запись ученика как занятую
+      if (normalizeFio(booking.fio || '') !== normalizeFio(editBookingFio || '')) {
+        bookedSlots[booking.time] = booking.fio;
+      }
+    });
+    
+    for (var hour = 9; hour <= 11; hour++) {
+      var startMin = (hour === 9) ? 15 : 0;
+      for (var min = startMin; min < 60; min += 15) {
+        var timeStr = String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
+        var isBooked = bookedSlots[timeStr] !== undefined;
+        var isSelected = selectedTime === timeStr;
+        
+        var className = 'admin-time-slot';
+        if (isBooked) className += ' booked';
+        if (isSelected) className += ' selected';
+        
+        var fioText = isBooked ? bookedSlots[timeStr] : '';
+        
+        html += '<div class="' + className + '" onclick="' + (isBooked ? '' : 'selectEditTime(\'' + timeStr + '\')') + '">';
+        html += '<span class="time">' + timeStr + '</span>';
+        html += '<span class="fio">' + fioText + '</span>';
+        html += '</div>';
+      }
+    }
+    
+    document.getElementById('editTimeSlots').innerHTML = html;
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('editTimeSlots').innerHTML = '<p style="color:var(--danger); text-align:center;">Ошибка</p>';
+  }
+}
+
+window.selectEditTime = function(time) {
+  selectedTime = time;
+  document.querySelectorAll('#editTimeSlots .admin-time-slot').forEach(slot => {
+    slot.classList.remove('selected');
+  });
+  document.querySelectorAll('#editTimeSlots .admin-time-slot').forEach(slot => {
+    if (slot.querySelector('.time').textContent === time) {
+      slot.classList.add('selected');
+    }
+  });
+};
+
+window.closeEditTimeModal = function() {
+  var modal = document.getElementById('editTimeModal');
+  if (modal) modal.remove();
+  window._editMode = false;
 };
 
 window.renderTimeSlots = async function() {
@@ -1801,19 +2216,4 @@ window.nextInstruction = function() {
 window.prevInstruction = function() {
   if (currentInstructionIndex > 0) {
     currentInstructionIndex--;
-    updateInstructionView();
-  }
-};
-
-function updateInstructionView() {
-  document.getElementById('instructionImage').src = instructionImages[currentInstructionIndex];
-  document.getElementById('instructionCounter').textContent = (currentInstructionIndex + 1) + ' / ' + instructionImages.length;
-  document.getElementById('instrPrev').style.display = currentInstructionIndex > 0 ? 'flex' : 'none';
-  document.getElementById('instrNext').style.display = currentInstructionIndex < instructionImages.length - 1 ? 'flex' : 'none';
-}
-
-showMain();
-updateStripes();
-</script>
-</body>
-</html>
+    updateInstructi
