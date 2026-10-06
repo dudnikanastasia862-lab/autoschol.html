@@ -12,7 +12,12 @@
 <meta name="apple-mobile-web-app-title" content="Вектор">
 <meta name="theme-color" content="#FFE600">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Firebase compat (работает без модулей!) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <style>
 :root {
   --primary: #FFE600;
@@ -27,7 +32,6 @@
   --vip-gold: #FFD700;
   --standard-silver: #C0C0C0;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 body { font-family: 'Inter', sans-serif; background: #9CA3AF; color: var(--dark); padding: 0; min-height: 100vh; line-height: 1.5; }
@@ -53,10 +57,8 @@ body { font-family: 'Inter', sans-serif; background: #9CA3AF; color: var(--dark)
 @keyframes logoGlow { 0%, 100% { filter: drop-shadow(0 0 4px rgba(255,230,0,0.3)); } 50% { filter: drop-shadow(0 0 16px rgba(255,230,0,0.95)) drop-shadow(0 0 32px rgba(255,230,0,0.6)); } }
 
 h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-
 button { padding: 14px 20px; width: 100%; margin: 8px 0; border: none; border-radius: 12px; font-size: 16px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; -webkit-tap-highlight-color: transparent; }
 .btn-primary { background: var(--primary); color: var(--dark); box-shadow: 0 4px 20px rgba(255,230,0,0.5); padding: 18px 20px; font-size: 18px; }
-.btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
 .btn-secondary { background: var(--dark); color: var(--white); }
 .btn-back { background: transparent; color: var(--white); border: 2px solid var(--white); text-transform: none; font-size: 15px; font-weight: 500; border-radius: 12px; }
 .btn-danger { background: #FEE2E2; color: var(--danger); padding: 8px 12px; width: auto; font-size: 13px; text-transform: none; box-shadow: none; }
@@ -241,7 +243,7 @@ select option { background: var(--dark); color: var(--white); }
             <button id="btnConfirmAdminBooking" style="margin-top:16px;">Записать</button>
           </div>
         </div>
-        <button id="btnTodayBookings"> Записи на выбранную дату</button>
+        <button id="btnTodayBookings">📋 Записи на выбранную дату</button>
         <div id="todayListContainer" class="hidden"></div>
       </div>
       <button id="btnSaveExit">💾 Сохранить и выйти</button>
@@ -317,7 +319,7 @@ select option { background: var(--dark); color: var(--white); }
         <div class="detail"><strong>Дата</strong><span id="confirmDate"></span></div>
         <div class="detail"><strong>Время</strong><span id="confirmTime"></span></div>
       </div>
-      <div class="screenshot-hint">📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
+      <div class="screenshot-hint"> Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
       <button id="btnConfirmBooking">Подтвердить</button>
     </div>
   </div>
@@ -325,7 +327,7 @@ select option { background: var(--dark); color: var(--white); }
   <div id="page-denied" class="page">
     <div class="page-logo"><img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор"></div>
     <div class="student-page-content">
-      <div class="welcome"><div class="welcome-icon">⚠️</div><h2 style="color:var(--danger);">Вы не допущены к экзамену</h2><p style="color:#D1D5DB;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p></div>
+      <div class="welcome"><div class="welcome-icon">️</div><h2 style="color:var(--danger);">Вы не допущены к экзамену</h2><p style="color:#D1D5DB;">Обратитесь к менеджеру автошколы «Вектор» для уточнения информации.</p></div>
       <button id="btnBackDenied" style="margin-top:16px;">Вернуться на главную</button>
     </div>
   </div>
@@ -363,526 +365,518 @@ select option { background: var(--dark); color: var(--white); }
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+<script>
+// ===== FIREBASE COMPAT (без модулей!) =====
+try {
+  const firebaseConfig = {
+    apiKey: "AIzaSyD34YA1pjOHwseGYvVGX733vlL3-yz2JCA",
+    authDomain: "autoscool-vektor.firebaseapp.com",
+    projectId: "autoscool-vektor",
+    storageBucket: "autoscool-vektor.firebasestorage.app",
+    messagingSenderId: "787222367012",
+    appId: "1:787222367012:web:faabfdf10f7676b2cd01b1",
+    measurementId: "G-41R6E85YH8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  console.log('✅ Firebase загружен');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD34YA1pjOHwseGYvVGX733vlL3-yz2JCA",
-  authDomain: "autoscool-vektor.firebaseapp.com",
-  projectId: "autoscool-vektor",
-  storageBucket: "autoscool-vektor.firebasestorage.app",
-  messagingSenderId: "787222367012",
-  appId: "1:787222367012:web:faabfdf10f7676b2cd01b1",
-  measurementId: "G-41R6E85YH8"
-};
+  let curStudent = null, selectedDate = null, selectedTime = null, currentMonth = new Date();
+  let adminCurrentMonth = new Date(), adminCalendarOpen = false, adminSelectedDate = null, adminSelectedTime = null;
+  let pendingStudentFio = null, pendingStudentType = null, currentInstructionIndex = 0;
+  let currentViewDate = new Date();
+  let editBookingId = null, editBookingFio = null, editBookingType = null;
+  let allStudentsCache = [], allBookingsCache = [];
+  let editMode = false, dayNavMode = false;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const studentsRef = collection(db, 'students');
-const bookingsRef = collection(db, 'bookings');
+  const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const instructionImages = ['https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/4CAD503D-4C3A-4AB6-9DD2-834E5E17B20E.webp'];
 
-let curStudent = null, selectedDate = null, selectedTime = null, currentMonth = new Date();
-let adminCurrentMonth = new Date(), adminCalendarOpen = false, adminSelectedDate = null, adminSelectedTime = null;
-let pendingStudentFio = null, pendingStudentType = null, currentInstructionIndex = 0;
-let currentViewDate = new Date(), currentViewDateStr = null;
-let editBookingId = null, editBookingFio = null, editBookingType = null;
-let allStudentsCache = [], allBookingsCache = [];
-let editMode = false, dayNavMode = false;
+  function normalizeFio(str) { return str.trim().toLowerCase().replace(/ё/g, 'е'); }
+  function formatDateForDB(date) { return date.toISOString().split('T')[0]; }
+  function formatDateForDisplay(date) { return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' }); }
 
-const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const instructionImages = ['https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/4CAD503D-4C3A-4AB6-9DD2-834E5E17B20E.webp'];
+  async function findStudent(fio) {
+    const nf = normalizeFio(fio);
+    const snap = await db.collection('students').where('fioNormalized', '==', nf).get();
+    if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+    const all = await db.collection('students').get();
+    for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) return { id: d.id, ...d.data() }; }
+    return null;
+  }
 
-function normalizeFio(str) { return str.trim().toLowerCase().replace(/ё/g, 'е'); }
-function formatDateForDB(date) { return date.toISOString().split('T')[0]; }
-function formatDateForDisplay(date) { return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' }); }
+  async function findBooking(fio) {
+    const nf = normalizeFio(fio);
+    const snap = await db.collection('bookings').where('fioNormalized', '==', nf).get();
+    if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+    const all = await db.collection('bookings').get();
+    for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) return { id: d.id, ...d.data() }; }
+    return null;
+  }
 
-async function findStudent(fio) {
-  const nf = normalizeFio(fio);
-  const q1 = query(studentsRef, where('fioNormalized', '==', nf));
-  const s1 = await getDocs(q1);
-  if (!s1.empty) return { id: s1.docs[0].id, ...s1.docs[0].data() };
-  const all = await getDocs(studentsRef);
-  for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) return { id: d.id, ...d.data() }; }
-  return null;
-}
+  function updateStripes() {
+    const active = document.getElementById('page-main').classList.contains('active');
+    document.getElementById('stripesTop').style.display = active ? 'block' : 'none';
+    document.getElementById('stripesBottom').style.display = active ? 'block' : 'none';
+  }
 
-async function findBooking(fio) {
-  const nf = normalizeFio(fio);
-  const q1 = query(bookingsRef, where('fioNormalized', '==', nf));
-  const s1 = await getDocs(q1);
-  if (!s1.empty) return { id: s1.docs[0].id, ...s1.docs[0].data() };
-  const all = await getDocs(bookingsRef);
-  for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) return { id: d.id, ...d.data() }; }
-  return null;
-}
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    updateStripes();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-function updateStripes() {
-  const active = document.getElementById('page-main').classList.contains('active');
-  document.getElementById('stripesTop').style.display = active ? 'block' : 'none';
-  document.getElementById('stripesBottom').style.display = active ? 'block' : 'none';
-}
+  // ===== НАВИГАЦИЯ =====
+  document.getElementById('btnAdmin').addEventListener('click', () => { document.getElementById('pwd-modal').classList.remove('hidden'); document.getElementById('pw').value = ''; document.getElementById('err').textContent = ''; });
+  document.getElementById('btnStudent').addEventListener('click', () => { showPage('page-student-input'); document.getElementById('sfio').value = ''; });
+  document.getElementById('btnInstruction').addEventListener('click', () => { currentInstructionIndex = 0; updateInstructionView(); document.getElementById('instructionModal').classList.add('show'); });
 
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  updateStripes();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+  document.getElementById('btnLogin').addEventListener('click', () => { if (document.getElementById('pw').value === '0000') { document.getElementById('pwd-modal').classList.add('hidden'); showPage('page-admin'); renderAdmin(); } else { document.getElementById('err').textContent = 'Неверный пароль'; } });
+  document.getElementById('btnCancelPwd').addEventListener('click', () => { document.getElementById('pwd-modal').classList.add('hidden'); });
 
-// ===== НАВИГАЦИЯ =====
-document.getElementById('btnAdmin').addEventListener('click', () => { document.getElementById('pwd-modal').classList.remove('hidden'); document.getElementById('pw').value = ''; document.getElementById('err').textContent = ''; });
-document.getElementById('btnStudent').addEventListener('click', () => { showPage('page-student-input'); document.getElementById('sfio').value = ''; });
-document.getElementById('btnInstruction').addEventListener('click', () => { currentInstructionIndex = 0; updateInstructionView(); document.getElementById('instructionModal').classList.add('show'); });
+  document.getElementById('btnBackToMain').addEventListener('click', () => showPage('page-main'));
+  document.getElementById('btnBackToInput').addEventListener('click', () => showPage('page-student-input'));
+  document.getElementById('btnBackToCal').addEventListener('click', () => showPage('page-student-calendar'));
+  document.getElementById('btnBackDenied').addEventListener('click', () => showPage('page-main'));
+  document.getElementById('btnSaveExit').addEventListener('click', () => { alert('Данные сохранены'); showPage('page-main'); });
 
-document.getElementById('btnLogin').addEventListener('click', () => { if (document.getElementById('pw').value === '0000') { document.getElementById('pwd-modal').classList.add('hidden'); showPage('page-admin'); renderAdmin(); } else { document.getElementById('err').textContent = 'Неверный пароль'; } });
-document.getElementById('btnCancelPwd').addEventListener('click', () => { document.getElementById('pwd-modal').classList.add('hidden'); });
+  // ===== АДМИН: ДОБАВИТЬ =====
+  document.getElementById('btnAddStudent').addEventListener('click', async () => {
+    const f = document.getElementById('fio').value.trim();
+    const type = document.getElementById('studentType').value;
+    if (!f) { alert('Введите ФИО'); return; }
+    try {
+      const nf = normalizeFio(f);
+      const existing = await findStudent(f);
+      if (existing) { alert('Такой ученик уже есть в списке'); return; }
+      await db.collection('students').add({ fio: f, fioNormalized: nf, type: type, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      document.getElementById('fio').value = '';
+      document.getElementById('studentType').value = 'standard';
+      await renderAdmin();
+      alert('Ученик успешно добавлен (' + type.toUpperCase() + ')');
+    } catch (e) { console.error(e); alert('Ошибка: ' + e.message); }
+  });
 
-document.getElementById('btnBackToMain').addEventListener('click', () => showPage('page-main'));
-document.getElementById('btnBackToInput').addEventListener('click', () => showPage('page-student-input'));
-document.getElementById('btnBackToCal').addEventListener('click', () => showPage('page-student-calendar'));
-document.getElementById('btnBackDenied').addEventListener('click', () => showPage('page-main'));
+  document.getElementById('btnAddAndBook').addEventListener('click', async () => {
+    const f = document.getElementById('fio').value.trim();
+    const type = document.getElementById('studentType').value;
+    if (!f) { alert('Сначала введите ФИО'); return; }
+    try {
+      const nf = normalizeFio(f);
+      const existing = await findStudent(f);
+      if (existing) { alert('Такой ученик уже есть в списке'); return; }
+      await db.collection('students').add({ fio: f, fioNormalized: nf, type: type, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      pendingStudentFio = f; pendingStudentType = type;
+      document.getElementById('adminBookSection').classList.remove('hidden');
+      adminCurrentMonth = new Date(); adminSelectedDate = null; adminSelectedTime = null;
+      document.getElementById('adminDateDisplay').textContent = 'Нажмите для выбора даты';
+      document.getElementById('adminTimeSlotsContainer').classList.add('hidden');
+      renderAdminCalendar();
+      await renderAdmin();
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  });
 
-document.getElementById('btnSaveExit').addEventListener('click', () => { alert('Данные сохранены'); showPage('page-main'); });
+  // ===== АДМИН: КАЛЕНДАРЬ =====
+  document.getElementById('adminDateDisplay').addEventListener('click', () => { adminCalendarOpen = !adminCalendarOpen; document.getElementById('adminCalendarPopup').classList.toggle('show', adminCalendarOpen); if (adminCalendarOpen) renderAdminCalendar(); });
+  document.getElementById('adminPrevMonth').addEventListener('click', () => { adminCurrentMonth.setMonth(adminCurrentMonth.getMonth() - 1); renderAdminCalendar(); });
+  document.getElementById('adminNextMonth').addEventListener('click', () => { adminCurrentMonth.setMonth(adminCurrentMonth.getMonth() + 1); renderAdminCalendar(); });
 
-// ===== АДМИН: ДОБАВИТЬ УЧЕНИКА =====
-document.getElementById('btnAddStudent').addEventListener('click', async () => {
-  const f = document.getElementById('fio').value.trim();
-  const type = document.getElementById('studentType').value;
-  if (!f) { alert('Введите ФИО'); return; }
-  try {
-    const nf = normalizeFio(f);
-    const existing = await findStudent(f);
-    if (existing) { alert('Такой ученик уже есть в списке'); return; }
-    await addDoc(studentsRef, { fio: f, fioNormalized: nf, type: type, createdAt: new Date() });
-    document.getElementById('fio').value = '';
-    document.getElementById('studentType').value = 'standard';
-    await renderAdmin();
-    alert('Ученик успешно добавлен (' + type.toUpperCase() + ')');
-  } catch (e) { console.error(e); alert('Ошибка'); }
-});
+  function renderAdminCalendar() {
+    const year = adminCurrentMonth.getFullYear(), month = adminCurrentMonth.getMonth();
+    document.getElementById('adminMonthYear').textContent = monthNames[month] + ' ' + year;
+    const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+    const startDow = firstDay.getDay() || 7;
+    let grid = '<div class="calendar-day-name">Пн</div><div class="calendar-day-name">Вт</div><div class="calendar-day-name">Ср</div><div class="calendar-day-name">Чт</div><div class="calendar-day-name">Пт</div><div class="calendar-day-name">Сб</div><div class="calendar-day-name">Вс</div>';
+    for (let i = 1; i < startDow; i++) grid += '<div></div>';
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const date = new Date(year, month, day), dow = date.getDay();
+      const allowed = (dow === 2 || dow === 4 || dow === 5);
+      const selected = adminSelectedDate && adminSelectedDate.toDateString() === date.toDateString();
+      let cls = 'calendar-day'; if (!allowed) cls += ' disabled'; if (selected) cls += ' active';
+      if (allowed) grid += '<div class="' + cls + '" data-y="' + year + '" data-m="' + (month+1) + '" data-d="' + day + '">' + day + '</div>';
+      else grid += '<div class="' + cls + '">' + day + '</div>';
+    }
+    document.getElementById('adminCalendarGrid').innerHTML = grid;
+    document.querySelectorAll('#adminCalendarGrid .calendar-day:not(.disabled)').forEach(el => {
+      el.addEventListener('click', () => {
+        adminSelectedDate = new Date(+el.dataset.y, +el.dataset.m - 1, +el.dataset.d);
+        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('adminDateDisplay').textContent = adminSelectedDate.toLocaleDateString('ru-RU', opts);
+        adminCalendarOpen = false; document.getElementById('adminCalendarPopup').classList.remove('show');
+        renderAdminTimeSlots(); document.getElementById('adminTimeSlotsContainer').classList.remove('hidden');
+      });
+    });
+  }
 
-document.getElementById('btnAddAndBook').addEventListener('click', async () => {
-  const f = document.getElementById('fio').value.trim();
-  const type = document.getElementById('studentType').value;
-  if (!f) { alert('Сначала введите ФИО'); return; }
-  try {
-    const nf = normalizeFio(f);
-    const existing = await findStudent(f);
-    if (existing) { alert('Такой ученик уже есть в списке'); return; }
-    await addDoc(studentsRef, { fio: f, fioNormalized: nf, type: type, createdAt: new Date() });
-    pendingStudentFio = f; pendingStudentType = type;
-    document.getElementById('adminBookSection').classList.remove('hidden');
+  async function renderAdminTimeSlots() {
+    if (!adminSelectedDate) return;
+    const dateStr = formatDateForDB(adminSelectedDate);
+    let html = '';
+    try {
+      const snap = await db.collection('bookings').where('date', '==', dateStr).get();
+      const booked = {}; snap.forEach(d => { booked[d.data().time] = d.data().fio; });
+      for (let h = 9; h <= 11; h++) {
+        const startMin = (h === 9) ? 15 : 0;
+        for (let m = startMin; m < 60; m += 15) {
+          const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+          const isBooked = booked[ts] !== undefined, isSelected = adminSelectedTime === ts;
+          let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
+          const ft = isBooked ? booked[ts] : '';
+          html += '<div class="' + cls + '" data-time="' + ts + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
+        }
+      }
+      document.getElementById('adminTimeSlots').innerHTML = html;
+      document.querySelectorAll('#adminTimeSlots .admin-time-slot:not(.booked)').forEach(el => {
+        el.addEventListener('click', () => {
+          adminSelectedTime = el.dataset.time;
+          document.querySelectorAll('#adminTimeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
+          el.classList.add('selected');
+        });
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  document.getElementById('btnConfirmAdminBooking').addEventListener('click', async () => {
+    if (!adminSelectedDate || !adminSelectedTime || !pendingStudentFio) { alert('Выберите дату и время'); return; }
+    try {
+      await db.collection('bookings').add({ fio: pendingStudentFio, fioNormalized: normalizeFio(pendingStudentFio), type: pendingStudentType || 'standard', date: formatDateForDB(adminSelectedDate), time: adminSelectedTime, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      alert('✅ Ученик записан!\nДата: ' + adminSelectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + adminSelectedTime);
+      document.getElementById('fio').value = ''; document.getElementById('studentType').value = 'standard';
+      document.getElementById('adminBookSection').classList.add('hidden');
+      pendingStudentFio = null; pendingStudentType = null; adminSelectedDate = null; adminSelectedTime = null;
+      await renderAdmin();
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  });
+
+  // ===== ЗАПИСИ НА ДАТУ =====
+  document.getElementById('btnTodayBookings').addEventListener('click', async () => {
+    const container = document.getElementById('todayListContainer');
+    if (!container.classList.contains('hidden')) { container.classList.add('hidden'); return; }
+    container.classList.remove('hidden');
+    await loadDayBookings(currentViewDate);
+  });
+
+  async function loadDayBookings(date) {
+    const container = document.getElementById('todayListContainer');
+    const dateStr = formatDateForDB(date);
+    container.innerHTML = '<div class="loading">Загрузка...</div>';
+    try {
+      const snap = await db.collection('bookings').where('date', '==', dateStr).get();
+      const bookings = []; snap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
+      const isToday = dateStr === new Date().toISOString().split('T')[0];
+      const isYesterday = dateStr === new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const isTomorrow = dateStr === new Date(Date.now() + 86400000).toISOString().split('T')[0];
+      let label = formatDateForDisplay(date);
+      if (isToday) label += ' (сегодня)'; else if (isYesterday) label += ' (вчера)'; else if (isTomorrow) label += ' (завтра)';
+      let html = '<div class="today-list"><div class="today-nav">';
+      html += '<button class="btn-nav" id="navPrevDay">‹</button>';
+      html += '<span class="today-nav-label">' + label + '</span>';
+      html += '<button class="btn-nav" id="navNextDay">›</button>';
+      html += '<button class="btn-calendar-nav" id="navCalBtn">📅</button>';
+      html += '</div>';
+      if (bookings.length === 0) { html += '<div class="today-empty">На эту дату никто не записан</div>'; }
+      else {
+        html += '<h4>📋 Записи (' + bookings.length + ')</h4>';
+        bookings.sort((a, b) => a.time.localeCompare(b.time));
+        for (const b of bookings) {
+          const tl = b.type === 'vip' ? 'VIP' : 'Std', tc = b.type === 'vip' ? 'type-vip' : 'type-standard';
+          html += '<div class="today-item"><span class="t-time">' + b.time + '</span><span class="t-name">' + b.fio + '</span><span class="type-badge ' + tc + '">' + tl + '</span></div>';
+        }
+      }
+      html += '</div>';
+      container.innerHTML = html;
+      document.getElementById('navPrevDay').addEventListener('click', () => { currentViewDate.setDate(currentViewDate.getDate() - 1); loadDayBookings(currentViewDate); });
+      document.getElementById('navNextDay').addEventListener('click', () => { currentViewDate.setDate(currentViewDate.getDate() + 1); loadDayBookings(currentViewDate); });
+      document.getElementById('navCalBtn').addEventListener('click', () => { currentMonth = new Date(currentViewDate); renderModalCalendar(); document.getElementById('calendarModal').classList.add('show'); dayNavMode = true; });
+    } catch (e) { console.error(e); container.innerHTML = '<div class="today-list"><div class="today-empty" style="color:var(--danger);">Ошибка</div></div>'; }
+  }
+
+  // ===== СВОРАЧИВАЕМЫЕ СПИСКИ =====
+  document.getElementById('headerStudents').addEventListener('click', () => { document.getElementById('studentsList').classList.toggle('expanded'); document.getElementById('studentsArrow').classList.toggle('open'); });
+  document.getElementById('headerBookings').addEventListener('click', () => { document.getElementById('bookingsList').classList.toggle('expanded'); document.getElementById('bookingsArrow').classList.toggle('open'); });
+
+  // ===== ПОИСК =====
+  document.getElementById('studentSearch').addEventListener('input', () => {
+    const q = normalizeFio(document.getElementById('studentSearch').value);
+    document.querySelectorAll('#studentList .admin-item').forEach(item => { item.style.display = (item.dataset.fio || '').includes(q) ? 'flex' : 'none'; });
+  });
+  document.getElementById('bookingSearch').addEventListener('input', () => {
+    const q = normalizeFio(document.getElementById('bookingSearch').value);
+    document.querySelectorAll('#bookingList .admin-item').forEach(item => { item.style.display = (item.dataset.fio || '').includes(q) ? 'flex' : 'none'; });
+  });
+
+  // ===== РЕНДЕР СПИСКОВ =====
+  async function renderAdmin() {
+    try {
+      const ss = await db.collection('students').get();
+      allStudentsCache = []; ss.forEach(d => allStudentsCache.push({ id: d.id, ...d.data() }));
+      const bs = await db.collection('bookings').get();
+      allBookingsCache = []; bs.forEach(d => allBookingsCache.push({ id: d.id, ...d.data() }));
+      document.getElementById('stCount').textContent = allStudentsCache.length;
+      document.getElementById('bkCount').textContent = allBookingsCache.length;
+      renderStudentList();
+      renderBookingList();
+    } catch (e) { console.error(e); }
+  }
+
+  function renderStudentList() {
+    let h = '';
+    for (const s of allStudentsCache) {
+      const type = s.type || 'standard', tl = type === 'vip' ? 'VIP' : 'Standard', tc = type === 'vip' ? 'type-vip' : 'type-standard';
+      let booking = null;
+      for (const b of allBookingsCache) { if (normalizeFio(b.fio || '') === normalizeFio(s.fio || '')) { booking = b; break; } }
+      h += '<div class="admin-item" data-fio="' + normalizeFio(s.fio) + '">';
+      h += '<div class="admin-item-left"><span class="name">' + s.fio + '</span><div class="info-row"><span class="type-badge ' + tc + '">' + tl + '</span>';
+      if (booking) { const d = new Date(booking.date).toLocaleDateString('ru-RU'); h += '<span class="info"> ' + d + ' ' + booking.time + '</span>'; }
+      h += '</div></div><div class="admin-item-right">';
+      if (booking) { h += '<button class="btn-edit" data-action="edit" data-fio="' + s.fio + '" data-type="' + type + '" data-bid="' + booking.id + '" data-bdate="' + booking.date + '" data-btime="' + booking.time + '">Изменить</button>'; }
+      else { h += '<button class="btn-book" data-action="book" data-fio="' + s.fio + '" data-type="' + type + '">Записать</button>'; }
+      h += '<button class="btn-danger" data-action="delStudent" data-id="' + s.id + '">Удалить</button>';
+      h += '</div></div>';
+    }
+    document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB;text-align:center;padding:20px;">Список пуст</p>';
+    bindListButtons('studentList');
+  }
+
+  function renderBookingList() {
+    let h = '';
+    for (const b of allBookingsCache) {
+      const d = new Date(b.date).toLocaleDateString('ru-RU'), bt = b.type || 'standard', btl = bt === 'vip' ? 'VIP' : 'Standard', btc = bt === 'vip' ? 'type-vip' : 'type-standard';
+      h += '<div class="admin-item" data-fio="' + normalizeFio(b.fio) + '">';
+      h += '<div class="admin-item-left"><span class="name">' + b.fio + '</span><div class="info-row"><span class="type-badge ' + btc + '">' + btl + '</span><span class="info"> ' + d + ' ' + b.time + '</span></div></div>';
+      h += '<div class="admin-item-right">';
+      h += '<button class="btn-edit" data-action="edit" data-fio="' + b.fio + '" data-type="' + bt + '" data-bid="' + b.id + '" data-bdate="' + b.date + '" data-btime="' + b.time + '">Изменить</button>';
+      h += '<button class="btn-danger" data-action="delBooking" data-id="' + b.id + '">Удалить</button>';
+      h += '</div></div>';
+    }
+    document.getElementById('bookingList').innerHTML = h || '<p style="color:#D1D5DB;text-align:center;padding:20px;">Записей пока нет</p>';
+    bindListButtons('bookingList');
+  }
+
+  function bindListButtons(containerId) {
+    document.querySelectorAll('#' + containerId + ' [data-action]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.action;
+        if (action === 'delStudent') { if (confirm('Удалить ученика?')) { db.collection('students').doc(btn.dataset.id).delete().then(renderAdmin); } }
+        else if (action === 'delBooking') { if (confirm('Удалить запись?')) { db.collection('bookings').doc(btn.dataset.id).delete().then(renderAdmin); } }
+        else if (action === 'edit') { startEditBooking(btn.dataset.fio, btn.dataset.type, btn.dataset.bid, btn.dataset.bdate, btn.dataset.btime); }
+        else if (action === 'book') { bookStudentFromList(btn.dataset.fio, btn.dataset.type); }
+      });
+    });
+  }
+
+  function startEditBooking(fio, type, bid, bdate, btime) {
+    editBookingId = bid; editBookingFio = fio; editBookingType = type;
+    currentMonth = new Date(bdate + 'T00:00:00');
+    selectedDate = new Date(bdate + 'T00:00:00');
+    selectedTime = btime;
+    renderModalCalendar();
+    document.getElementById('calendarModal').classList.add('show');
+    editMode = true;
+  }
+
+  function bookStudentFromList(fio, type) {
+    pendingStudentFio = fio; pendingStudentType = type;
     adminCurrentMonth = new Date(); adminSelectedDate = null; adminSelectedTime = null;
     document.getElementById('adminDateDisplay').textContent = 'Нажмите для выбора даты';
     document.getElementById('adminTimeSlotsContainer').classList.add('hidden');
+    document.getElementById('adminBookSection').classList.remove('hidden');
     renderAdminCalendar();
-    await renderAdmin();
-  } catch (e) { console.error(e); alert('Ошибка'); }
-});
-
-// ===== АДМИН: КАЛЕНДАРЬ =====
-document.getElementById('adminDateDisplay').addEventListener('click', () => { adminCalendarOpen = !adminCalendarOpen; document.getElementById('adminCalendarPopup').classList.toggle('show', adminCalendarOpen); if (adminCalendarOpen) renderAdminCalendar(); });
-document.getElementById('adminPrevMonth').addEventListener('click', () => { adminCurrentMonth.setMonth(adminCurrentMonth.getMonth() - 1); renderAdminCalendar(); });
-document.getElementById('adminNextMonth').addEventListener('click', () => { adminCurrentMonth.setMonth(adminCurrentMonth.getMonth() + 1); renderAdminCalendar(); });
-
-function renderAdminCalendar() {
-  const year = adminCurrentMonth.getFullYear(), month = adminCurrentMonth.getMonth();
-  document.getElementById('adminMonthYear').textContent = monthNames[month] + ' ' + year;
-  const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
-  const startDow = firstDay.getDay() || 7;
-  let grid = '<div class="calendar-day-name">Пн</div><div class="calendar-day-name">Вт</div><div class="calendar-day-name">Ср</div><div class="calendar-day-name">Чт</div><div class="calendar-day-name">Пт</div><div class="calendar-day-name">Сб</div><div class="calendar-day-name">Вс</div>';
-  for (let i = 1; i < startDow; i++) grid += '<div></div>';
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(year, month, day), dow = date.getDay();
-    const allowed = (dow === 2 || dow === 4 || dow === 5);
-    const selected = adminSelectedDate && adminSelectedDate.toDateString() === date.toDateString();
-    let cls = 'calendar-day'; if (!allowed) cls += ' disabled'; if (selected) cls += ' active';
-    if (allowed) { const y = year, m = month + 1, d = day; grid += '<div class="' + cls + '" data-y="' + y + '" data-m="' + m + '" data-d="' + d + '">' + day + '</div>'; }
-    else grid += '<div class="' + cls + '">' + day + '</div>';
+    document.getElementById('adminBookSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-  document.getElementById('adminCalendarGrid').innerHTML = grid;
-  document.querySelectorAll('#adminCalendarGrid .calendar-day:not(.disabled)').forEach(el => {
-    el.addEventListener('click', () => {
-      adminSelectedDate = new Date(+el.dataset.y, +el.dataset.m - 1, +el.dataset.d);
-      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('adminDateDisplay').textContent = adminSelectedDate.toLocaleDateString('ru-RU', opts);
-      adminCalendarOpen = false; document.getElementById('adminCalendarPopup').classList.remove('show');
-      renderAdminTimeSlots(); document.getElementById('adminTimeSlotsContainer').classList.remove('hidden');
-    });
-  });
-}
 
-async function renderAdminTimeSlots() {
-  if (!adminSelectedDate) return;
-  const dateStr = formatDateForDB(adminSelectedDate);
-  let html = '';
-  try {
-    const q = query(bookingsRef, where('date', '==', dateStr));
-    const snap = await getDocs(q);
-    const booked = {}; snap.forEach(d => { booked[d.data().time] = d.data().fio; });
-    for (let h = 9; h <= 11; h++) {
-      const startMin = (h === 9) ? 15 : 0;
-      for (let m = startMin; m < 60; m += 15) {
-        const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-        const isBooked = booked[ts] !== undefined, isSelected = adminSelectedTime === ts;
-        let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
-        const ft = isBooked ? booked[ts] : '';
-        html += '<div class="' + cls + '" data-time="' + ts + '" data-booked="' + isBooked + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
-      }
+  // ===== УЧЕНИК =====
+  document.getElementById('btnCheckStudent').addEventListener('click', async () => {
+    const f = document.getElementById('sfio').value.trim();
+    if (!f) { alert('Введите ФИО'); return; }
+    try {
+      const student = await findStudent(f);
+      if (!student) { showPage('page-denied'); return; }
+      curStudent = student;
+      const booking = await findBooking(f);
+      if (booking) {
+        const d = new Date(booking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('existingInfo').innerHTML = '<p style="margin:8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin:8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
+        document.getElementById('existing-modal').classList.remove('hidden');
+      } else { showPage('page-student-calendar'); initCalendar(); }
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  });
+
+  document.getElementById('btnCloseExisting').addEventListener('click', () => { document.getElementById('existing-modal').classList.add('hidden'); showPage('page-main'); });
+  document.getElementById('btnChangeBooking').addEventListener('click', async () => {
+    document.getElementById('existing-modal').classList.add('hidden');
+    try {
+      const nf = normalizeFio(curStudent.fio);
+      const all = await db.collection('bookings').get();
+      for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) { await db.collection('bookings').doc(d.id).delete(); break; } }
+      showPage('page-student-calendar'); initCalendar();
+    } catch (e) { alert('Ошибка'); }
+  });
+
+  function initCalendar() { currentMonth = new Date(); selectedDate = null; selectedTime = null; document.getElementById('dateDisplay').textContent = 'Нажмите для выбора даты'; document.getElementById('timeSlotsContainer').classList.add('hidden'); }
+  document.getElementById('dateDisplay').addEventListener('click', () => { currentMonth = new Date(); renderModalCalendar(); document.getElementById('calendarModal').classList.add('show'); });
+
+  document.getElementById('calPrevMonth').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); renderModalCalendar(); });
+  document.getElementById('calNextMonth').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); renderModalCalendar(); });
+  document.getElementById('btnCloseCalendar').addEventListener('click', () => { document.getElementById('calendarModal').classList.remove('show'); editMode = false; dayNavMode = false; });
+
+  function renderModalCalendar() {
+    const year = currentMonth.getFullYear(), month = currentMonth.getMonth();
+    document.getElementById('modalMonthYear').textContent = monthNames[month] + ' ' + year;
+    const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+    const startDow = firstDay.getDay() || 7;
+    let grid = '<div class="calendar-day-name">Пн</div><div class="calendar-day-name">Вт</div><div class="calendar-day-name">Ср</div><div class="calendar-day-name">Чт</div><div class="calendar-day-name">Пт</div><div class="calendar-day-name">Сб</div><div class="calendar-day-name">Вс</div>';
+    for (let i = 1; i < startDow; i++) grid += '<div></div>';
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const date = new Date(year, month, day), dow = date.getDay();
+      const allowed = (dow === 2 || dow === 4 || dow === 5);
+      const selected = selectedDate && selectedDate.toDateString() === date.toDateString();
+      let cls = 'calendar-day'; if (!allowed) cls += ' disabled'; if (selected) cls += ' active';
+      if (allowed) grid += '<div class="' + cls + '" data-y="' + year + '" data-m="' + (month+1) + '" data-d="' + day + '">' + day + '</div>';
+      else grid += '<div class="' + cls + '">' + day + '</div>';
     }
-    document.getElementById('adminTimeSlots').innerHTML = html;
-    document.querySelectorAll('#adminTimeSlots .admin-time-slot:not(.booked)').forEach(el => {
+    document.getElementById('modalCalendarGrid').innerHTML = grid;
+    document.querySelectorAll('#modalCalendarGrid .calendar-day:not(.disabled)').forEach(el => {
       el.addEventListener('click', () => {
-        adminSelectedTime = el.dataset.time;
-        document.querySelectorAll('#adminTimeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
-        el.classList.add('selected');
+        selectedDate = new Date(+el.dataset.y, +el.dataset.m - 1, +el.dataset.d);
+        document.getElementById('calendarModal').classList.remove('show');
+        if (editMode) { showEditTimeModal(); return; }
+        if (dayNavMode) { currentViewDate = new Date(selectedDate); loadDayBookings(currentViewDate); dayNavMode = false; return; }
+        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('dateDisplay').textContent = selectedDate.toLocaleDateString('ru-RU', opts);
+        renderTimeSlots(); document.getElementById('timeSlotsContainer').classList.remove('hidden');
+        setTimeout(() => document.getElementById('timeSlotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
       });
     });
-  } catch (e) { console.error(e); }
-}
+  }
 
-document.getElementById('btnConfirmAdminBooking').addEventListener('click', async () => {
-  if (!adminSelectedDate || !adminSelectedTime || !pendingStudentFio) { alert('Выберите дату и время'); return; }
-  try {
-    await addDoc(bookingsRef, { fio: pendingStudentFio, fioNormalized: normalizeFio(pendingStudentFio), type: pendingStudentType || 'standard', date: formatDateForDB(adminSelectedDate), time: adminSelectedTime, createdAt: new Date() });
-    alert('✅ Ученик записан!\nДата: ' + adminSelectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + adminSelectedTime);
-    document.getElementById('fio').value = ''; document.getElementById('studentType').value = 'standard';
-    document.getElementById('adminBookSection').classList.add('hidden');
-    pendingStudentFio = null; pendingStudentType = null; adminSelectedDate = null; adminSelectedTime = null;
-    await renderAdmin();
-  } catch (e) { console.error(e); alert('Ошибка'); }
-});
-
-// ===== ЗАПИСИ НА ДАТУ =====
-document.getElementById('btnTodayBookings').addEventListener('click', async () => {
-  const container = document.getElementById('todayListContainer');
-  if (!container.classList.contains('hidden')) { container.classList.add('hidden'); return; }
-  container.classList.remove('hidden');
-  await loadDayBookings(currentViewDate);
-});
-
-async function loadDayBookings(date) {
-  const container = document.getElementById('todayListContainer');
-  const dateStr = formatDateForDB(date);
-  container.innerHTML = '<div class="loading">Загрузка...</div>';
-  try {
-    const q = query(bookingsRef, where('date', '==', dateStr));
-    const snap = await getDocs(q);
-    const bookings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const isToday = dateStr === new Date().toISOString().split('T')[0];
-    const isYesterday = dateStr === new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    const isTomorrow = dateStr === new Date(Date.now() + 86400000).toISOString().split('T')[0];
-    let label = formatDateForDisplay(date);
-    if (isToday) label += ' (сегодня)'; else if (isYesterday) label += ' (вчера)'; else if (isTomorrow) label += ' (завтра)';
-    let html = '<div class="today-list"><div class="today-nav">';
-    html += '<button class="btn-nav" id="navPrevDay">‹</button>';
-    html += '<span class="today-nav-label">' + label + '</span>';
-    html += '<button class="btn-nav" id="navNextDay">›</button>';
-    html += '<button class="btn-calendar-nav" id="navCalBtn">📅</button>';
-    html += '</div>';
-    if (bookings.length === 0) { html += '<div class="today-empty">На эту дату никто не записан</div>'; }
-    else {
-      html += '<h4>📋 Записи (' + bookings.length + ')</h4>';
-      bookings.sort((a, b) => a.time.localeCompare(b.time));
-      for (const b of bookings) {
-        const tl = b.type === 'vip' ? 'VIP' : 'Std', tc = b.type === 'vip' ? 'type-vip' : 'type-standard';
-        html += '<div class="today-item"><span class="t-time">' + b.time + '</span><span class="t-name">' + b.fio + '</span><span class="type-badge ' + tc + '">' + tl + '</span></div>';
+  async function renderTimeSlots() {
+    if (!selectedDate || !curStudent) return;
+    const dateStr = formatDateForDB(selectedDate);
+    let html = '';
+    try {
+      const snap = await db.collection('bookings').where('date', '==', dateStr).get();
+      const booked = {}; snap.forEach(d => { booked[d.data().time] = d.data().fio; });
+      for (let h = 9; h <= 11; h++) {
+        const startMin = (h === 9) ? 15 : 0;
+        for (let m = startMin; m < 60; m += 15) {
+          const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+          const isBooked = booked[ts] !== undefined, isSelected = selectedTime === ts;
+          let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
+          let ft = ''; if (isBooked) ft = booked[ts]; else if (isSelected) ft = curStudent.fio;
+          html += '<div class="' + cls + '" data-time="' + ts + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
+        }
       }
-    }
-    html += '</div>';
-    container.innerHTML = html;
-    document.getElementById('navPrevDay').addEventListener('click', () => { currentViewDate.setDate(currentViewDate.getDate() - 1); loadDayBookings(currentViewDate); });
-    document.getElementById('navNextDay').addEventListener('click', () => { currentViewDate.setDate(currentViewDate.getDate() + 1); loadDayBookings(currentViewDate); });
-    document.getElementById('navCalBtn').addEventListener('click', () => { currentMonth = new Date(currentViewDate); renderModalCalendar(); document.getElementById('calendarModal').classList.add('show'); dayNavMode = true; });
-  } catch (e) { console.error(e); container.innerHTML = '<div class="today-list"><div class="today-empty" style="color:var(--danger);">Ошибка</div></div>'; }
-}
-
-// ===== СВОРАЧИВАЕМЫЕ СПИСКИ =====
-document.getElementById('headerStudents').addEventListener('click', () => { document.getElementById('studentsList').classList.toggle('expanded'); document.getElementById('studentsArrow').classList.toggle('open'); });
-document.getElementById('headerBookings').addEventListener('click', () => { document.getElementById('bookingsList').classList.toggle('expanded'); document.getElementById('bookingsArrow').classList.toggle('open'); });
-
-// ===== ПОИСК =====
-document.getElementById('studentSearch').addEventListener('input', () => {
-  const q = normalizeFio(document.getElementById('studentSearch').value);
-  document.querySelectorAll('#studentList .admin-item').forEach(item => { item.style.display = (item.dataset.fio || '').includes(q) ? 'flex' : 'none'; });
-});
-document.getElementById('bookingSearch').addEventListener('input', () => {
-  const q = normalizeFio(document.getElementById('bookingSearch').value);
-  document.querySelectorAll('#bookingList .admin-item').forEach(item => { item.style.display = (item.dataset.fio || '').includes(q) ? 'flex' : 'none'; });
-});
-
-// ===== РЕНДЕР СПИСКОВ =====
-async function renderAdmin() {
-  try {
-    const ss = await getDocs(studentsRef);
-    allStudentsCache = ss.docs.map(d => ({ id: d.id, ...d.data() }));
-    const bs = await getDocs(bookingsRef);
-    allBookingsCache = bs.docs.map(d => ({ id: d.id, ...d.data() }));
-    document.getElementById('stCount').textContent = allStudentsCache.length;
-    document.getElementById('bkCount').textContent = allBookingsCache.length;
-    renderStudentList();
-    renderBookingList();
-  } catch (e) { console.error(e); }
-}
-
-function renderStudentList() {
-  let h = '';
-  for (const s of allStudentsCache) {
-    const type = s.type || 'standard', tl = type === 'vip' ? 'VIP' : 'Standard', tc = type === 'vip' ? 'type-vip' : 'type-standard';
-    let booking = null;
-    for (const b of allBookingsCache) { if (normalizeFio(b.fio || '') === normalizeFio(s.fio || '')) { booking = b; break; } }
-    h += '<div class="admin-item" data-fio="' + normalizeFio(s.fio) + '">';
-    h += '<div class="admin-item-left"><span class="name">' + s.fio + '</span><div class="info-row"><span class="type-badge ' + tc + '">' + tl + '</span>';
-    if (booking) { const d = new Date(booking.date).toLocaleDateString('ru-RU'); h += '<span class="info"> ' + d + ' ' + booking.time + '</span>'; }
-    h += '</div></div><div class="admin-item-right">';
-    if (booking) { h += '<button class="btn-edit" data-action="edit" data-fio="' + s.fio + '" data-type="' + type + '" data-bid="' + booking.id + '" data-bdate="' + booking.date + '" data-btime="' + booking.time + '">Изменить</button>'; }
-    else { h += '<button class="btn-book" data-action="book" data-fio="' + s.fio + '" data-type="' + type + '">Записать</button>'; }
-    h += '<button class="btn-danger" data-action="delStudent" data-id="' + s.id + '">Удалить</button>';
-    h += '</div></div>';
-  }
-  document.getElementById('studentList').innerHTML = h || '<p style="color:#D1D5DB;text-align:center;padding:20px;">Список пуст</p>';
-  bindListButtons('studentList');
-}
-
-function renderBookingList() {
-  let h = '';
-  for (const b of allBookingsCache) {
-    const d = new Date(b.date).toLocaleDateString('ru-RU'), bt = b.type || 'standard', btl = bt === 'vip' ? 'VIP' : 'Standard', btc = bt === 'vip' ? 'type-vip' : 'type-standard';
-    h += '<div class="admin-item" data-fio="' + normalizeFio(b.fio) + '">';
-    h += '<div class="admin-item-left"><span class="name">' + b.fio + '</span><div class="info-row"><span class="type-badge ' + btc + '">' + btl + '</span><span class="info"> ' + d + ' ' + b.time + '</span></div></div>';
-    h += '<div class="admin-item-right">';
-    h += '<button class="btn-edit" data-action="edit" data-fio="' + b.fio + '" data-type="' + bt + '" data-bid="' + b.id + '" data-bdate="' + b.date + '" data-btime="' + b.time + '">Изменить</button>';
-    h += '<button class="btn-danger" data-action="delBooking" data-id="' + b.id + '">Удалить</button>';
-    h += '</div></div>';
-  }
-  document.getElementById('bookingList').innerHTML = h || '<p style="color:#D1D5DB;text-align:center;padding:20px;">Записей пока нет</p>';
-  bindListButtons('bookingList');
-}
-
-function bindListButtons(containerId) {
-  document.querySelectorAll('#' + containerId + ' [data-action]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const action = btn.dataset.action;
-      if (action === 'delStudent') { if (confirm('Удалить ученика?')) { deleteDoc(doc(db, 'students', btn.dataset.id)).then(renderAdmin); } }
-      else if (action === 'delBooking') { if (confirm('Удалить запись?')) { deleteDoc(doc(db, 'bookings', btn.dataset.id)).then(renderAdmin); } }
-      else if (action === 'edit') { startEditBooking(btn.dataset.fio, btn.dataset.type, btn.dataset.bid, btn.dataset.bdate, btn.dataset.btime); }
-      else if (action === 'book') { bookStudentFromList(btn.dataset.fio, btn.dataset.type); }
-    });
-  });
-}
-
-// ===== ИЗМЕНЕНИЕ ЗАПИСИ =====
-function startEditBooking(fio, type, bid, bdate, btime) {
-  editBookingId = bid; editBookingFio = fio; editBookingType = type;
-  currentMonth = new Date(bdate + 'T00:00:00');
-  selectedDate = new Date(bdate + 'T00:00:00');
-  selectedTime = btime;
-  renderModalCalendar();
-  document.getElementById('calendarModal').classList.add('show');
-  editMode = true;
-}
-
-function bookStudentFromList(fio, type) {
-  pendingStudentFio = fio; pendingStudentType = type;
-  adminCurrentMonth = new Date(); adminSelectedDate = null; adminSelectedTime = null;
-  document.getElementById('adminDateDisplay').textContent = 'Нажмите для выбора даты';
-  document.getElementById('adminTimeSlotsContainer').classList.add('hidden');
-  document.getElementById('adminBookSection').classList.remove('hidden');
-  renderAdminCalendar();
-  document.getElementById('adminBookSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-// ===== УЧЕНИК: ПРОВЕРКА =====
-document.getElementById('btnCheckStudent').addEventListener('click', async () => {
-  const f = document.getElementById('sfio').value.trim();
-  if (!f) { alert('Введите ФИО'); return; }
-  try {
-    const student = await findStudent(f);
-    if (!student) { showPage('page-denied'); return; }
-    curStudent = student;
-    const booking = await findBooking(f);
-    if (booking) {
-      const d = new Date(booking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      document.getElementById('existingInfo').innerHTML = '<p style="margin:8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin:8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
-      document.getElementById('existing-modal').classList.remove('hidden');
-    } else { showPage('page-student-calendar'); initCalendar(); }
-  } catch (e) { console.error(e); alert('Ошибка'); }
-});
-
-document.getElementById('btnCloseExisting').addEventListener('click', () => { document.getElementById('existing-modal').classList.add('hidden'); showPage('page-main'); });
-document.getElementById('btnChangeBooking').addEventListener('click', async () => {
-  document.getElementById('existing-modal').classList.add('hidden');
-  try {
-    const nf = normalizeFio(curStudent.fio);
-    const all = await getDocs(bookingsRef);
-    for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) { await deleteDoc(d.ref); break; } }
-    showPage('page-student-calendar'); initCalendar();
-  } catch (e) { alert('Ошибка'); }
-});
-
-// ===== КАЛЕНДАРЬ УЧЕНИКА =====
-function initCalendar() { currentMonth = new Date(); selectedDate = null; selectedTime = null; document.getElementById('dateDisplay').textContent = 'Нажмите для выбора даты'; document.getElementById('timeSlotsContainer').classList.add('hidden'); }
-document.getElementById('dateDisplay').addEventListener('click', () => { currentMonth = new Date(); renderModalCalendar(); document.getElementById('calendarModal').classList.add('show'); });
-
-document.getElementById('calPrevMonth').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); renderModalCalendar(); });
-document.getElementById('calNextMonth').addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); renderModalCalendar(); });
-document.getElementById('btnCloseCalendar').addEventListener('click', () => { document.getElementById('calendarModal').classList.remove('show'); editMode = false; dayNavMode = false; });
-
-function renderModalCalendar() {
-  const year = currentMonth.getFullYear(), month = currentMonth.getMonth();
-  document.getElementById('modalMonthYear').textContent = monthNames[month] + ' ' + year;
-  const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
-  const startDow = firstDay.getDay() || 7;
-  let grid = '<div class="calendar-day-name">Пн</div><div class="calendar-day-name">Вт</div><div class="calendar-day-name">Ср</div><div class="calendar-day-name">Чт</div><div class="calendar-day-name">Пт</div><div class="calendar-day-name">Сб</div><div class="calendar-day-name">Вс</div>';
-  for (let i = 1; i < startDow; i++) grid += '<div></div>';
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(year, month, day), dow = date.getDay();
-    const allowed = (dow === 2 || dow === 4 || dow === 5);
-    const selected = selectedDate && selectedDate.toDateString() === date.toDateString();
-    let cls = 'calendar-day'; if (!allowed) cls += ' disabled'; if (selected) cls += ' active';
-    if (allowed) grid += '<div class="' + cls + '" data-y="' + year + '" data-m="' + (month+1) + '" data-d="' + day + '">' + day + '</div>';
-    else grid += '<div class="' + cls + '">' + day + '</div>';
-  }
-  document.getElementById('modalCalendarGrid').innerHTML = grid;
-  document.querySelectorAll('#modalCalendarGrid .calendar-day:not(.disabled)').forEach(el => {
-    el.addEventListener('click', () => {
-      selectedDate = new Date(+el.dataset.y, +el.dataset.m - 1, +el.dataset.d);
-      document.getElementById('calendarModal').classList.remove('show');
-      if (editMode) { showEditTimeModal(); return; }
-      if (dayNavMode) { currentViewDate = new Date(selectedDate); loadDayBookings(currentViewDate); dayNavMode = false; return; }
-      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('dateDisplay').textContent = selectedDate.toLocaleDateString('ru-RU', opts);
-      renderTimeSlots(); document.getElementById('timeSlotsContainer').classList.remove('hidden');
-      setTimeout(() => document.getElementById('timeSlotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-    });
-  });
-}
-
-async function renderTimeSlots() {
-  if (!selectedDate || !curStudent) return;
-  const dateStr = formatDateForDB(selectedDate);
-  let html = '';
-  try {
-    const q = query(bookingsRef, where('date', '==', dateStr));
-    const snap = await getDocs(q);
-    const booked = {}; snap.forEach(d => { booked[d.data().time] = d.data().fio; });
-    for (let h = 9; h <= 11; h++) {
-      const startMin = (h === 9) ? 15 : 0;
-      for (let m = startMin; m < 60; m += 15) {
-        const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-        const isBooked = booked[ts] !== undefined, isSelected = selectedTime === ts;
-        let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
-        let ft = ''; if (isBooked) ft = booked[ts]; else if (isSelected) ft = curStudent.fio;
-        html += '<div class="' + cls + '" data-time="' + ts + '" data-booked="' + isBooked + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
-      }
-    }
-    document.getElementById('timeSlots').innerHTML = html;
-    document.querySelectorAll('#timeSlots .admin-time-slot:not(.booked)').forEach(el => {
-      el.addEventListener('click', () => {
-        selectedTime = el.dataset.time;
-        document.querySelectorAll('#timeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
-        el.classList.add('selected'); el.querySelector('.fio').textContent = curStudent.fio;
+      document.getElementById('timeSlots').innerHTML = html;
+      document.querySelectorAll('#timeSlots .admin-time-slot:not(.booked)').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedTime = el.dataset.time;
+          document.querySelectorAll('#timeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
+          el.classList.add('selected'); el.querySelector('.fio').textContent = curStudent.fio;
+        });
       });
-    });
-  } catch (e) { console.error(e); }
-}
+    } catch (e) { console.error(e); }
+  }
 
-document.getElementById('btnShowConfirmation').addEventListener('click', () => {
-  if (!selectedTime) { alert('Выберите время'); return; }
-  document.getElementById('confirmFio').textContent = curStudent.fio;
-  document.getElementById('confirmDate').textContent = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('confirmTime').textContent = selectedTime;
-  showPage('page-student-confirm');
-});
+  document.getElementById('btnShowConfirmation').addEventListener('click', () => {
+    if (!selectedTime) { alert('Выберите время'); return; }
+    document.getElementById('confirmFio').textContent = curStudent.fio;
+    document.getElementById('confirmDate').textContent = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('confirmTime').textContent = selectedTime;
+    showPage('page-student-confirm');
+  });
 
-document.getElementById('btnConfirmBooking').addEventListener('click', async () => {
-  if (!selectedDate || !selectedTime || !curStudent) return;
-  try {
-    const nf = normalizeFio(curStudent.fio);
-    const all = await getDocs(bookingsRef);
-    for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) { await deleteDoc(d.ref); break; } }
-    await addDoc(bookingsRef, { fio: curStudent.fio, fioNormalized: nf, type: curStudent.type || 'standard', date: formatDateForDB(selectedDate), time: selectedTime, createdAt: new Date() });
-    alert('✅ Вы успешно записаны!\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
-    selectedDate = null; selectedTime = null; showPage('page-main');
-  } catch (e) { console.error(e); alert('Ошибка'); }
-});
+  document.getElementById('btnConfirmBooking').addEventListener('click', async () => {
+    if (!selectedDate || !selectedTime || !curStudent) return;
+    try {
+      const nf = normalizeFio(curStudent.fio);
+      const all = await db.collection('bookings').get();
+      for (const d of all.docs) { if (normalizeFio(d.data().fio || '') === nf) { await db.collection('bookings').doc(d.id).delete(); break; } }
+      await db.collection('bookings').add({ fio: curStudent.fio, fioNormalized: nf, type: curStudent.type || 'standard', date: formatDateForDB(selectedDate), time: selectedTime, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      alert('✅ Вы успешно записаны!\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
+      selectedDate = null; selectedTime = null; showPage('page-main');
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  });
 
-// ===== МОДАЛКА ИЗМЕНЕНИЯ ВРЕМЕНИ =====
-function showEditTimeModal() {
-  const dateLabel = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  let html = '<div class="modal" id="editTimeModal" style="display:flex;">';
-  html += '<div class="modal-box" style="max-width:420px;">';
-  html += '<h2 style="margin-bottom:8px;">Выберите время</h2>';
-  html += '<p style="color:#6B7280;margin-bottom:16px;font-size:14px;">' + dateLabel + '</p>';
-  html += '<div id="editTimeSlots"></div>';
-  html += '<button id="btnConfirmEdit" style="margin-top:16px;">Подтвердить изменение</button>';
-  html += '<button id="btnCancelEdit" style="margin-top:8px;color:#6B7280;border-color:#E5E7EB;">Отмена</button>';
-  html += '</div></div>';
-  document.body.insertAdjacentHTML('beforeend', html);
-  document.getElementById('btnCancelEdit').addEventListener('click', () => { document.getElementById('editTimeModal').remove(); editMode = false; });
-  document.getElementById('btnConfirmEdit').addEventListener('click', confirmEditBooking);
-  loadEditTimeSlots();
-}
+  function showEditTimeModal() {
+    const dateLabel = selectedDate.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let html = '<div class="modal" id="editTimeModal" style="display:flex;">';
+    html += '<div class="modal-box" style="max-width:420px;">';
+    html += '<h2 style="margin-bottom:8px;">Выберите время</h2>';
+    html += '<p style="color:#6B7280;margin-bottom:16px;font-size:14px;">' + dateLabel + '</p>';
+    html += '<div id="editTimeSlots"></div>';
+    html += '<button id="btnConfirmEdit" style="margin-top:16px;">Подтвердить изменение</button>';
+    html += '<button id="btnCancelEdit" style="margin-top:8px;color:#6B7280;border-color:#E5E7EB;">Отмена</button>';
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    document.getElementById('btnCancelEdit').addEventListener('click', () => { document.getElementById('editTimeModal').remove(); editMode = false; });
+    document.getElementById('btnConfirmEdit').addEventListener('click', confirmEditBooking);
+    loadEditTimeSlots();
+  }
 
-async function loadEditTimeSlots() {
-  if (!selectedDate) return;
-  const dateStr = formatDateForDB(selectedDate);
-  let html = '';
-  try {
-    const q = query(bookingsRef, where('date', '==', dateStr));
-    const snap = await getDocs(q);
-    const booked = {};
-    snap.forEach(d => { const b = d.data(); if (normalizeFio(b.fio || '') !== normalizeFio(editBookingFio || '')) booked[b.time] = b.fio; });
-    for (let h = 9; h <= 11; h++) {
-      const startMin = (h === 9) ? 15 : 0;
-      for (let m = startMin; m < 60; m += 15) {
-        const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-        const isBooked = booked[ts] !== undefined, isSelected = selectedTime === ts;
-        let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
-        const ft = isBooked ? booked[ts] : '';
-        html += '<div class="' + cls + '" data-time="' + ts + '" data-booked="' + isBooked + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
+  async function loadEditTimeSlots() {
+    if (!selectedDate) return;
+    const dateStr = formatDateForDB(selectedDate);
+    let html = '';
+    try {
+      const snap = await db.collection('bookings').where('date', '==', dateStr).get();
+      const booked = {};
+      snap.forEach(d => { const b = d.data(); if (normalizeFio(b.fio || '') !== normalizeFio(editBookingFio || '')) booked[b.time] = b.fio; });
+      for (let h = 9; h <= 11; h++) {
+        const startMin = (h === 9) ? 15 : 0;
+        for (let m = startMin; m < 60; m += 15) {
+          const ts = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+          const isBooked = booked[ts] !== undefined, isSelected = selectedTime === ts;
+          let cls = 'admin-time-slot'; if (isBooked) cls += ' booked'; if (isSelected) cls += ' selected';
+          const ft = isBooked ? booked[ts] : '';
+          html += '<div class="' + cls + '" data-time="' + ts + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
+        }
       }
-    }
-    document.getElementById('editTimeSlots').innerHTML = html;
-    document.querySelectorAll('#editTimeSlots .admin-time-slot:not(.booked)').forEach(el => {
-      el.addEventListener('click', () => {
-        selectedTime = el.dataset.time;
-        document.querySelectorAll('#editTimeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
-        el.classList.add('selected');
+      document.getElementById('editTimeSlots').innerHTML = html;
+      document.querySelectorAll('#editTimeSlots .admin-time-slot:not(.booked)').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedTime = el.dataset.time;
+          document.querySelectorAll('#editTimeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
+          el.classList.add('selected');
+        });
       });
-    });
-  } catch (e) { console.error(e); }
-}
+    } catch (e) { console.error(e); }
+  }
 
-async function confirmEditBooking() {
-  if (!selectedDate || !selectedTime) { alert('Выберите дату и время'); return; }
-  try {
-    if (editBookingId) await deleteDoc(doc(db, 'bookings', editBookingId));
-    await addDoc(bookingsRef, { fio: editBookingFio, fioNormalized: normalizeFio(editBookingFio), type: editBookingType || 'standard', date: formatDateForDB(selectedDate), time: selectedTime, createdAt: new Date() });
-    alert('✅ Запись изменена!\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
-    document.getElementById('editTimeModal').remove();
-    editBookingId = null; editBookingFio = null; editBookingType = null; editMode = false;
-    await renderAdmin();
-  } catch (e) { console.error(e); alert('Ошибка'); }
-}
+  async function confirmEditBooking() {
+    if (!selectedDate || !selectedTime) { alert('Выберите дату и время'); return; }
+    try {
+      if (editBookingId) await db.collection('bookings').doc(editBookingId).delete();
+      await db.collection('bookings').add({ fio: editBookingFio, fioNormalized: normalizeFio(editBookingFio), type: editBookingType || 'standard', date: formatDateForDB(selectedDate), time: selectedTime, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      alert('✅ Запись изменена!\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
+      document.getElementById('editTimeModal').remove();
+      editBookingId = null; editBookingFio = null; editBookingType = null; editMode = false;
+      await renderAdmin();
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  }
 
-// ===== ИНСТРУКЦИЯ =====
-function updateInstructionView() {
-  document.getElementById('instructionImage').src = instructionImages[currentInstructionIndex];
-  document.getElementById('instructionCounter').textContent = (currentInstructionIndex + 1) + ' / ' + instructionImages.length;
-  document.getElementById('instrPrev').style.display = currentInstructionIndex > 0 ? 'flex' : 'none';
-  document.getElementById('instrNext').style.display = currentInstructionIndex < instructionImages.length - 1 ? 'flex' : 'none';
-}
-document.getElementById('btnCloseInstruction').addEventListener('click', () => document.getElementById('instructionModal').classList.remove('show'));
-document.getElementById('instrPrev').addEventListener('click', () => { if (currentInstructionIndex > 0) { currentInstructionIndex--; updateInstructionView(); } });
-document.getElementById('instrNext').addEventListener('click', () => { if (currentInstructionIndex < instructionImages.length - 1) { currentInstructionIndex++; updateInstructionView(); } });
+  // ===== ИНСТРУКЦИЯ =====
+  function updateInstructionView() {
+    document.getElementById('instructionImage').src = instructionImages[currentInstructionIndex];
+    document.getElementById('instructionCounter').textContent = (currentInstructionIndex + 1) + ' / ' + instructionImages.length;
+    document.getElementById('instrPrev').style.display = currentInstructionIndex > 0 ? 'flex' : 'none';
+    document.getElementById('instrNext').style.display = currentInstructionIndex < instructionImages.length - 1 ? 'flex' : 'none';
+  }
+  document.getElementById('btnCloseInstruction').addEventListener('click', () => document.getElementById('instructionModal').classList.remove('show'));
+  document.getElementById('instrPrev').addEventListener('click', () => { if (currentInstructionIndex > 0) { currentInstructionIndex--; updateInstructionView(); } });
+  document.getElementById('instrNext').addEventListener('click', () => { if (currentInstructionIndex < instructionImages.length - 1) { currentInstructionIndex++; updateInstructionView(); } });
 
-// ===== СТАРТ =====
-showPage('page-main');
-updateStripes();
-console.log('✅ Приложение загружено');
+  // ===== СТАРТ =====
+  showPage('page-main');
+  updateStripes();
+  console.log('✅ Приложение запущено, кнопки готовы');
+
+} catch (initError) {
+  console.error('❌ Ошибка инициализации:', initError);
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;"><h2>Ошибка загрузки</h2><p style="color:red;">' + initError.message + '</p><p>Проверьте подключение к интернету</p></div>';
+}
 </script>
 </body>
 </html>
