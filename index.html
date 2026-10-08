@@ -265,7 +265,7 @@ select option { background: var(--dark); color: var(--white); }
           <span class="collapsible-arrow" id="studentsArrow">▶</span>
         </div>
         <div class="collapsible-content" id="studentsList">
-          <input type="text" class="search-input" id="studentSearch" placeholder=" Поиск по ФИО...">
+          <input type="text" class="search-input" id="studentSearch" placeholder="🔍 Поиск по ФИО...">
           <div id="studentList" style="margin-top:12px;"><div class="loading">Загрузка...</div></div>
         </div>
       </div>
@@ -276,7 +276,7 @@ select option { background: var(--dark); color: var(--white); }
           <span class="collapsible-arrow" id="bookingsArrow">▶</span>
         </div>
         <div class="collapsible-content" id="bookingsList">
-          <input type="text" class="search-input" id="bookingSearch" placeholder=" Поиск по ФИО...">
+          <input type="text" class="search-input" id="bookingSearch" placeholder="🔍 Поиск по ФИО...">
           <div id="bookingList" style="margin-top:12px;"><div class="loading">Загрузка...</div></div>
         </div>
       </div>
@@ -330,7 +330,7 @@ select option { background: var(--dark); color: var(--white); }
         <div class="detail"><strong>Дата</strong><span id="confirmDate"></span></div>
         <div class="detail"><strong>Время</strong><span id="confirmTime"></span></div>
       </div>
-      <div class="screenshot-hint"> Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
+      <div class="screenshot-hint">📸 Рекомендуем сделать скриншот экрана, чтобы не забыть, когда Вам сдавать экзамен</div>
       <button class="btn-primary" id="btnConfirmBooking">Подтвердить</button>
     </div>
   </div>
@@ -405,6 +405,17 @@ try {
   function normalizeFio(str) { return str.trim().toLowerCase().replace(/ё/g, 'е'); }
   function formatDateForDB(date) { return date.toISOString().split('T')[0]; }
   function formatDateForDisplay(date) { return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' }); }
+  
+  // ✅ ИСПРАВЛЕНИЕ: правильный парсинг даты без смещения часового пояса
+  function parseDateLocal(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  
+  // ✅ ИСПРАВЛЕНИЕ: получение локальной строки даты (без UTC)
+  function getLocalDateStr(date) {
+    return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+  }
 
   async function findStudent(fio) {
     const nf = normalizeFio(fio);
@@ -565,25 +576,34 @@ try {
 
   async function loadDayBookings(date) {
     const container = document.getElementById('todayListContainer');
-    const dateStr = formatDateForDB(date);
+    const dateStr = getLocalDateStr(date);
     container.innerHTML = '<div class="loading">Загрузка...</div>';
     try {
       const snap = await db.collection('bookings').where('date', '==', dateStr).get();
       const bookings = []; snap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
-      const isToday = dateStr === new Date().toISOString().split('T')[0];
-      const isYesterday = dateStr === new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      const isTomorrow = dateStr === new Date(Date.now() + 86400000).toISOString().split('T')[0];
+      
+      // ✅ ИСПРАВЛЕНИЕ: корректное определение сегодня/вчера/завтра без UTC
+      const today = new Date();
+      const todayStr = getLocalDateStr(today);
+      const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+      const yesterdayStr = getLocalDateStr(yesterday);
+      const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+      const tomorrowStr = getLocalDateStr(tomorrow);
+      
       let label = formatDateForDisplay(date);
-      if (isToday) label += ' (сегодня)'; else if (isYesterday) label += ' (вчера)'; else if (isTomorrow) label += ' (завтра)';
+      if (dateStr === todayStr) label += ' (сегодня)';
+      else if (dateStr === yesterdayStr) label += ' (вчера)';
+      else if (dateStr === tomorrowStr) label += ' (завтра)';
+      
       let html = '<div class="today-list"><div class="today-nav">';
       html += '<button class="btn-nav" id="navPrevDay">‹</button>';
       html += '<span class="today-nav-label">' + label + '</span>';
       html += '<button class="btn-nav" id="navNextDay">›</button>';
-      html += '<button class="btn-calendar-nav" id="navCalBtn"></button>';
+      html += '<button class="btn-calendar-nav" id="navCalBtn">📅</button>';
       html += '</div>';
       if (bookings.length === 0) { html += '<div class="today-empty">На эту дату никто не записан</div>'; }
       else {
-        html += '<h4>📋 Записи (' + bookings.length + ')</h4>';
+        html += '<h4> Записи (' + bookings.length + ')</h4>';
         bookings.sort((a, b) => a.time.localeCompare(b.time));
         for (const b of bookings) {
           const tl = b.type === 'vip' ? 'VIP' : 'Std', tc = b.type === 'vip' ? 'type-vip' : 'type-standard';
@@ -631,7 +651,12 @@ try {
       for (const b of allBookingsCache) { if (normalizeFio(b.fio || '') === normalizeFio(s.fio || '')) { booking = b; break; } }
       h += '<div class="admin-item" data-fio="' + normalizeFio(s.fio) + '">';
       h += '<div class="admin-item-left"><span class="name">' + s.fio + '</span><div class="info-row"><span class="type-badge ' + tc + '">' + tl + '</span>';
-      if (booking) { const d = new Date(booking.date).toLocaleDateString('ru-RU'); h += '<span class="info"> ' + d + ' ' + booking.time + '</span>'; }
+      // ✅ ИСПРАВЛЕНИЕ: правильный парсинг даты
+      if (booking) {
+        const [y, m, d] = booking.date.split('-');
+        const dateObj = new Date(y, m-1, d);
+        h += '<span class="info"> ' + dateObj.toLocaleDateString('ru-RU') + ' ' + booking.time + '</span>';
+      }
       h += '</div></div><div class="admin-item-right">';
       if (booking) { h += '<button class="btn-edit" data-action="edit" data-fio="' + s.fio + '" data-type="' + type + '" data-bid="' + booking.id + '" data-bdate="' + booking.date + '" data-btime="' + booking.time + '">Изменить</button>'; }
       else { h += '<button class="btn-book" data-action="book" data-fio="' + s.fio + '" data-type="' + type + '">Записать</button>'; }
@@ -645,9 +670,13 @@ try {
   function renderBookingList() {
     let h = '';
     for (const b of allBookingsCache) {
-      const d = new Date(b.date).toLocaleDateString('ru-RU'), bt = b.type || 'standard', btl = bt === 'vip' ? 'VIP' : 'Standard', btc = bt === 'vip' ? 'type-vip' : 'type-standard';
+      // ✅ ИСПРАВЛЕНИЕ: правильный парсинг даты
+      const [y, m, d] = b.date.split('-');
+      const dateObj = new Date(y, m-1, d);
+      const dateStr = dateObj.toLocaleDateString('ru-RU');
+      const bt = b.type || 'standard', btl = bt === 'vip' ? 'VIP' : 'Standard', btc = bt === 'vip' ? 'type-vip' : 'type-standard';
       h += '<div class="admin-item" data-fio="' + normalizeFio(b.fio) + '">';
-      h += '<div class="admin-item-left"><span class="name">' + b.fio + '</span><div class="info-row"><span class="type-badge ' + btc + '">' + btl + '</span><span class="info"> ' + d + ' ' + b.time + '</span></div></div>';
+      h += '<div class="admin-item-left"><span class="name">' + b.fio + '</span><div class="info-row"><span class="type-badge ' + btc + '">' + btl + '</span><span class="info"> ' + dateStr + ' ' + b.time + '</span></div></div>';
       h += '<div class="admin-item-right">';
       h += '<button class="btn-edit" data-action="edit" data-fio="' + b.fio + '" data-type="' + bt + '" data-bid="' + b.id + '" data-bdate="' + b.date + '" data-btime="' + b.time + '">Изменить</button>';
       h += '<button class="btn-danger" data-action="delBooking" data-id="' + b.id + '">Удалить</button>';
@@ -672,8 +701,10 @@ try {
 
   function startEditBooking(fio, type, bid, bdate, btime) {
     editBookingId = bid; editBookingFio = fio; editBookingType = type;
-    currentMonth = new Date(bdate + 'T00:00:00');
-    selectedDate = new Date(bdate + 'T00:00:00');
+    // ✅ ИСПРАВЛЕНИЕ: правильный парсинг даты
+    const [y, m, d] = bdate.split('-');
+    currentMonth = new Date(y, m-1, d);
+    selectedDate = new Date(y, m-1, d);
     selectedTime = btime;
     renderModalCalendar();
     document.getElementById('calendarModal').classList.add('show');
@@ -699,8 +730,11 @@ try {
       curStudent = student;
       const booking = await findBooking(f);
       if (booking) {
-        const d = new Date(booking.date).toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('existingInfo').innerHTML = '<p style="margin:8px 0;"><strong>Дата:</strong> ' + d + '</p><p style="margin:8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
+        // ✅ ИСПРАВЛЕНИЕ: правильный парсинг даты
+        const [y, m, d] = booking.date.split('-');
+        const dateObj = new Date(y, m-1, d);
+        const dateLabel = dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('existingInfo').innerHTML = '<p style="margin:8px 0;"><strong>Дата:</strong> ' + dateLabel + '</p><p style="margin:8px 0;"><strong>Время:</strong> ' + booking.time + '</p>';
         document.getElementById('existing-modal').classList.remove('hidden');
       } else { showPage('page-student-calendar'); initCalendar(); }
     } catch (e) { console.error(e); alert('Ошибка'); }
