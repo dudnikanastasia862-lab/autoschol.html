@@ -197,25 +197,6 @@ select option { background: var(--dark); color: var(--white); }
 .instruction-nav:hover { background: rgba(255,255,255,0.3); transform: translateY(-50%); }
 .instruction-prev { left: 20px; } .instruction-next { right: 20px; }
 .instruction-counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: var(--white); font-size: 14px; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 20px; z-index: 301; }
-
-.migrate-banner {
-  background: #FEF3C7;
-  border: 2px solid #F59E0B;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin: 12px 0;
-  color: #92400E;
-  font-size: 14px;
-  text-align: center;
-}
-.migrate-banner button {
-  background: #F59E0B;
-  color: white;
-  padding: 8px 16px;
-  margin-top: 8px;
-  font-size: 13px;
-  box-shadow: none;
-}
 </style>
 </head>
 <body>
@@ -248,9 +229,8 @@ select option { background: var(--dark); color: var(--white); }
     <div class="page-logo"><img class="logo glow" src="https://raw.githack.com/dudnikanastasia862-lab/autoschol.html/main/IMG_4973.png" alt="Вектор"></div>
     <div class="graphite-block">
       <h2>Панель администратора</h2>
-      <div id="migrateBanner" class="migrate-banner hidden"></div>
       <div class="admin-section">
-        <h3>➕ Добавить ученика</h3>
+        <h3> Добавить ученика</h3>
         <input id="fio" placeholder="ФИО ученика">
         <label class="form-label">Тип обучения:</label>
         <select id="studentType"><option value="standard">Standard</option><option value="vip">VIP</option></select>
@@ -296,7 +276,7 @@ select option { background: var(--dark); color: var(--white); }
           <span class="collapsible-arrow" id="bookingsArrow">▶</span>
         </div>
         <div class="collapsible-content" id="bookingsList">
-          <input type="text" class="search-input" id="bookingSearch" placeholder="🔍 Поиск по ФИО...">
+          <input type="text" class="search-input" id="bookingSearch" placeholder=" Поиск по ФИО...">
           <div id="bookingList" style="margin-top:12px;"><div class="loading">Загрузка...</div></div>
         </div>
       </div>
@@ -625,7 +605,7 @@ try {
       html += '</div>';
       if (bookings.length === 0) { html += '<div class="today-empty">На эту дату никто не записан</div>'; }
       else {
-        html += '<h4>📋 Записи (' + bookings.length + ')</h4>';
+        html += '<h4> Записи (' + bookings.length + ')</h4>';
         bookings.sort((a, b) => a.time.localeCompare(b.time));
         for (const b of bookings) {
           const tl = b.type === 'vip' ? 'VIP' : 'Std', tc = b.type === 'vip' ? 'type-vip' : 'type-standard';
@@ -652,43 +632,6 @@ try {
     document.querySelectorAll('#bookingList .admin-item').forEach(item => { item.style.display = (item.dataset.fio || '').includes(q) ? 'flex' : 'none'; });
   });
 
-  // ✅ АВТОМАТИЧЕСКАЯ МИГРАЦИЯ: исправляет даты в старых записях
-  async function migrateBookings() {
-    try {
-      const snap = await db.collection('bookings').get();
-      let fixedCount = 0;
-      for (const doc of snap.docs) {
-        const data = doc.data();
-        if (!data.date) continue;
-        // Проверяем: если дата в базе парсится как локальная и даёт другой день при конвертации через toISOString
-        const localDate = parseDateLocal(data.date);
-        const isoDateStr = localDate.toISOString().split('T')[0];
-        // Если ISO дата отличается от сохранённой — значит запись была сохранена с багом UTC
-        // Но мы не можем автоматически определить правильную дату, поэтому просто проверяем формат
-        // Если дата уже в правильном формате YYYY-MM-DD — оставляем как есть
-        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!dateRegex.test(data.date)) {
-          // Неправильный формат — пропускаем
-          continue;
-        }
-        // Проверяем: если при парсинге как UTC и конвертации в локальную дату получается другой день
-        const utcParsed = new Date(data.date + 'T00:00:00Z');
-        const localStr = getLocalDateStr(utcParsed);
-        if (localStr !== data.date) {
-          // Дата была сохранена через toISOString (UTC баг)
-          // Правильная дата — это локальная дата, которую видел админ при выборе
-          // Но мы не можем её восстановить автоматически
-          // Поэтому помечаем запись для ручного исправления
-          console.log('Запись с возможной ошибкой даты:', data.fio, data.date, '-> локально:', localStr);
-        }
-      }
-      return fixedCount;
-    } catch (e) {
-      console.error('Ошибка миграции:', e);
-      return 0;
-    }
-  }
-
   async function renderAdmin() {
     try {
       const ss = await db.collection('students').get();
@@ -697,59 +640,9 @@ try {
       allBookingsCache = []; bs.forEach(d => allBookingsCache.push({ id: d.id, ...d.data() }));
       document.getElementById('stCount').textContent = allStudentsCache.length;
       document.getElementById('bkCount').textContent = allBookingsCache.length;
-      
-      // Проверяем наличие записей с ошибкой даты и показываем баннер
-      let hasDateBug = false;
-      for (const b of allBookingsCache) {
-        if (b.date) {
-          const utcParsed = new Date(b.date + 'T00:00:00Z');
-          const localStr = getLocalDateStr(utcParsed);
-          if (localStr !== b.date) {
-            hasDateBug = true;
-            break;
-          }
-        }
-      }
-      
-      if (hasDateBug) {
-        const banner = document.getElementById('migrateBanner');
-        banner.classList.remove('hidden');
-        banner.innerHTML = '⚠️ Обнаружены записи с ошибкой даты (из-за часового пояса). <button id="btnFixDates" class="btn-primary" style="margin-top:8px;">Исправить даты (+1 день)</button>';
-        document.getElementById('btnFixDates').addEventListener('click', fixDates);
-      } else {
-        document.getElementById('migrateBanner').classList.add('hidden');
-      }
-      
       renderStudentList();
       renderBookingList();
     } catch (e) { console.error(e); }
-  }
-
-  // ✅ Исправление дат: добавляет 1 день ко всем записям, которые были сохранены с UTC багом
-  async function fixDates() {
-    if (!confirm('Исправить даты записей? Это добавит 1 день ко всем записям, которые были сохранены с ошибкой часового пояса.')) return;
-    
-    try {
-      const snap = await db.collection('bookings').get();
-      let fixedCount = 0;
-      for (const doc of snap.docs) {
-        const data = doc.data();
-        if (!data.date) continue;
-        const utcParsed = new Date(data.date + 'T00:00:00Z');
-        const localStr = getLocalDateStr(utcParsed);
-        if (localStr !== data.date) {
-          // Эта запись была сохранена с UTC багом, исправляем
-          const correctDate = localStr;
-          await db.collection('bookings').doc(doc.id).update({ date: correctDate });
-          fixedCount++;
-        }
-      }
-      alert('✅ Исправлено записей: ' + fixedCount);
-      await renderAdmin();
-    } catch (e) {
-      console.error(e);
-      alert('Ошибка при исправлении: ' + e.message);
-    }
   }
 
   function renderStudentList() {
@@ -975,4 +868,47 @@ try {
           html += '<div class="' + cls + '" data-time="' + ts + '"><span class="time">' + ts + '</span><span class="fio">' + ft + '</span></div>';
         }
       }
-      document.getElementById('edit
+      document.getElementById('editTimeSlots').innerHTML = html;
+      document.querySelectorAll('#editTimeSlots .admin-time-slot:not(.booked)').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedTime = el.dataset.time;
+          document.querySelectorAll('#editTimeSlots .admin-time-slot').forEach(s => s.classList.remove('selected'));
+          el.classList.add('selected');
+        });
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  async function confirmEditBooking() {
+    if (!selectedDate || !selectedTime) { alert('Выберите дату и время'); return; }
+    try {
+      if (editBookingId) await db.collection('bookings').doc(editBookingId).delete();
+      await db.collection('bookings').add({ fio: editBookingFio, fioNormalized: normalizeFio(editBookingFio), type: editBookingType || 'standard', date: formatDateForDB(selectedDate), time: selectedTime, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      alert('✅ Запись изменена!\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime);
+      document.getElementById('editTimeModal').remove();
+      editBookingId = null; editBookingFio = null; editBookingType = null; editMode = false;
+      await renderAdmin();
+    } catch (e) { console.error(e); alert('Ошибка'); }
+  }
+
+  function updateInstructionView() {
+    document.getElementById('instructionImage').src = instructionImages[currentInstructionIndex];
+    document.getElementById('instructionCounter').textContent = (currentInstructionIndex + 1) + ' / ' + instructionImages.length;
+    document.getElementById('instrPrev').style.display = currentInstructionIndex > 0 ? 'flex' : 'none';
+    document.getElementById('instrNext').style.display = currentInstructionIndex < instructionImages.length - 1 ? 'flex' : 'none';
+  }
+  document.getElementById('btnCloseInstruction').addEventListener('click', () => document.getElementById('instructionModal').classList.remove('show'));
+  document.getElementById('instrPrev').addEventListener('click', () => { if (currentInstructionIndex > 0) { currentInstructionIndex--; updateInstructionView(); } });
+  document.getElementById('instrNext').addEventListener('click', () => { if (currentInstructionIndex < instructionImages.length - 1) { currentInstructionIndex++; updateInstructionView(); } });
+
+  showPage('page-main');
+  updateStripes();
+  console.log('✅ Приложение запущено');
+
+} catch (initError) {
+  console.error('❌ Ошибка:', initError);
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;"><h2>Ошибка загрузки</h2><p style="color:red;">' + initError.message + '</p></div>';
+}
+</script>
+</body>
+</html>
